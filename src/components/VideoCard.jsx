@@ -4,7 +4,7 @@ import React from 'react'
 
 function VideoCard() {
   return (
-    <div className='flex flex-col gap-4 sm"mb-4 sm:rounded-xl'>
+    <div className='flex flex-col gap-4 sm:mb-4 sm:rounded-xl'>
       <AspectRatio
         ratio={16 / 9}
         className='relative'>
@@ -54,7 +54,7 @@ function VideoCard() {
           <Text
             as='p'
             weight={'medium'}
-            size={'3'}
+            size={'2'}
             className='pr-8 sm:pr-6 line-clamp-2'
           >
             Exploring the Hidden Gems of Paris: A Local's Guide
@@ -67,9 +67,9 @@ function VideoCard() {
             Jane Doe
           </Text>
           <Flex gap={'2'} align={'center'}>
-            <Text as='span' color='gray' size={'2'} >151K views</Text>
-            <Text as='span' color='gray' size={'2'} >•</Text>
-            <Text as='span' color='gray' size={'2'} >1 year ago</Text>
+            <Text as='span' color='gray' size={'1'} >151K views</Text>
+            <Text as='span' color='gray' size={'1'} >•</Text>
+            <Text as='span' color='gray' size={'1'} >1 year ago</Text>
           </Flex>
         </Flex>
       </Flex>

@@ -13,8 +13,8 @@ function App() {
   return (
     <div className='flex flex-col min-h-screen '>
       <Navbar toggleMenu={toggleMenu} />
-      <Sidebar showMenu={showMenu} toggleMenu={toggleMenu} />
       <div className='flex flex-1'>
+        <Sidebar showMenu={showMenu} toggleMenu={toggleMenu} />
         <Container showMenu={showMenu}>
           {Array.from({ length: 10 }).fill(1).map((_, i) => (
             <VideoCard key={i} />

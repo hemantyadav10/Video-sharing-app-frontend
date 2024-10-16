@@ -5,7 +5,7 @@ import React from 'react'
 function Navbar({ toggleMenu }) {
 
   return (
-    <div className='sticky top-0 right-0 z-40 grid w-full grid-cols-2 sm:grid-cols-3 px-6 py-3 backdrop-blur-md bg-[#111113]/80 border-b border-[#484848]  h-16'>
+    <div className='sticky top-0 right-0 z-40 grid w-full grid-cols-2 sm:grid-cols-3 px-6 py-3 backdrop-blur-md bg-[#0c0c0d]/80  border-b border-[#484848]  h-16'>
       <span className='flex items-center col-span-1 gap-4 '>
         <IconButton
           onClick={toggleMenu}
@@ -39,15 +39,12 @@ function Navbar({ toggleMenu }) {
             >
               <PlusIcon height="20" /> Create
             </Button>
-
           </Dialog.Trigger>
-
           <Dialog.Content maxWidth="450px">
             <Dialog.Title>Upload Video</Dialog.Title>
             <Dialog.Description size="2" mb="4">
               Make changes to your profile.
             </Dialog.Description>
-
             <Flex direction="column" gap="3">
               <label>
                 <Text as="div" size="2" mb="1" weight="bold">
@@ -83,7 +80,7 @@ function Navbar({ toggleMenu }) {
         </Dialog.Root>
         <DropdownMenu.Root >
           <DropdownMenu.Trigger>
-            <div className='transition-all cursor-pointer hover:brightness-75'>
+            <IconButton radius='full' className='hover:brightness-75'>
               <Avatar
                 radius='full'
                 size={'2'}
@@ -91,7 +88,7 @@ function Navbar({ toggleMenu }) {
                 alt='avatar'
                 fallback="A"
               />
-            </div>
+            </IconButton>
           </DropdownMenu.Trigger>
           <DropdownMenu.Content variant='soft' sideOffset={"1"} alignOffset={'3'} align='start'>
             <div className='w-52'>
@@ -113,15 +110,29 @@ function Navbar({ toggleMenu }) {
                 </Flex>
               </Flex>
               <DropdownMenu.Separator />
-              <DropdownMenu.Item ><PersonIcon />View Profile</DropdownMenu.Item>
-              <DropdownMenu.Item ><MagicWandIcon /> Creator Studio</DropdownMenu.Item>
-              <DropdownMenu.Item ><QuestionMarkCircledIcon />Help</DropdownMenu.Item>
-              <DropdownMenu.Item ><GearIcon />Settings</DropdownMenu.Item>
+              <DropdownMenu.Item >
+                <PersonIcon /> View Profile
+              </DropdownMenu.Item>
+              <DropdownMenu.Item >
+                <MagicWandIcon /> Creator Studio
+              </DropdownMenu.Item>
+              <DropdownMenu.Item >
+                <QuestionMarkCircledIcon /> Help
+              </DropdownMenu.Item>
+              <DropdownMenu.Item >
+                <GearIcon /> Settings
+              </DropdownMenu.Item>
               <DropdownMenu.Separator />
-              <DropdownMenu.Item ><FileTextIcon /> Terms of Service</DropdownMenu.Item>
-              <DropdownMenu.Item ><LockClosedIcon /> Privacy</DropdownMenu.Item>
+              <DropdownMenu.Item >
+                <FileTextIcon /> Terms of Service
+              </DropdownMenu.Item>
+              <DropdownMenu.Item >
+                <LockClosedIcon /> Privacy
+              </DropdownMenu.Item>
               <DropdownMenu.Separator />
-              <DropdownMenu.Item ><ExitIcon /> Logout</DropdownMenu.Item>
+              <DropdownMenu.Item >
+                <ExitIcon /> Logout
+              </DropdownMenu.Item>
             </div>
           </DropdownMenu.Content>
         </DropdownMenu.Root>

@@ -1,5 +1,5 @@
-import { HomeIcon, CounterClockwiseClockIcon, ListBulletIcon, HeartIcon, AvatarIcon, HamburgerMenuIcon } from '@radix-ui/react-icons'
-import { Button, IconButton } from '@radix-ui/themes'
+import { HomeIcon, CounterClockwiseClockIcon, ListBulletIcon, HeartIcon, AvatarIcon, HamburgerMenuIcon, BookmarkFilledIcon } from '@radix-ui/react-icons'
+import { Button, IconButton, Text } from '@radix-ui/themes'
 import React from 'react'
 
 function Sidebar({ showMenu, toggleMenu }) {
@@ -32,35 +32,47 @@ function Sidebar({ showMenu, toggleMenu }) {
   ]
 
   return (
-    <div className={`bg-[#111113] h-screen fixed border-[#484848] md:h-[calc(100vh-64px)] md:sticky md:top-16 ${showMenu ? '' : '-translate-x-full'} ease-in-out duration-200 z-50 border-r w-56`}>
-      <div className='flex flex-col gap-5 '>
-        <span className='flex items-center h-16 col-span-1 gap-4 px-6 border-b border-transparent md:hidden'>
-          <IconButton
-            onClick={toggleMenu}
-            variant='ghost'
-            highContrast
-            color='gray'
-            radius='full'
-          >
-            <HamburgerMenuIcon height='20' width='20' />
-          </IconButton>
-          Logo
-        </span>
-        <div className='flex flex-col gap-5 px-5 md:py-6'>
-          {sidebarItems.map((item) => (
-            <Button
-              key={item.name}
-              size={'3'}
+    <>
+      <div className={`bg-[#0c0c0d] top-0 h-screen fixed border-[#484848] md:h-[calc(100vh-64px)] md:sticky md:top-16 ${showMenu ? 'md:w-56 ' : '-translate-x-full md:translate-x-0 md:w-auto '} transition ease-in  z-50 border-r w-56 `} >
+        <div className='flex flex-col gap-5 '>
+          <span className='flex items-center h-16 col-span-1 gap-4 px-6 border-b border-transparent md:hidden'>
+            <IconButton
+              onClick={toggleMenu}
               variant='ghost'
               highContrast
-              className="justify-start px-3 py-3"
+              color='gray'
+              radius='full'
             >
-              {item.icon && <item.icon className="mr-2" height={'20'} width={"20"} />}{item.name}
-            </Button>
-          ))}
+              <HamburgerMenuIcon height='20' width='20' />
+            </IconButton>
+            Logo
+          </span>
+          <div className={`flex-col hidden gap-8 px-4 py-7 ${showMenu ? "" : "md:flex"}`}>
+            {
+              sidebarItems.map((item) => (
+                <IconButton key={item.name} variant='ghost' size={'4'} highContrast className='flex flex-col w-full gap-1 '>
+                  {<item.icon height={'20'} width={'20'} />} <Text className='text-[10px]' >{item.name}</Text>
+                </IconButton>
+              ))
+            }
+          </div>
+          <div className={`flex flex-col gap-5 px-5 md:py-6 ${showMenu ? "" : "md:hidden"}`}>
+            {sidebarItems.map((item) => (
+              <Button
+                key={item.name}
+                size={'2'}
+                variant='ghost'
+                highContrast
+                className="justify-start px-3 py-3"
+              >
+                {item.icon && <item.icon className="mr-2" height={'20'} width={"20"} />}{item.name}
+              </Button>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+      <div onClick={toggleMenu} className={`absolute inset-0 z-40 w-full md:hidden bg-black/70 ${showMenu ? "" : "hidden"}`}></div>
+    </>
   )
 }
 
