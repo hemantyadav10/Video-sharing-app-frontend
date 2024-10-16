@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
 import Navbar from './components/Navbar.jsx'
 import Sidebar from './components/Sidebar.jsx'
-import Container from './components/Container.jsx'
-import VideoCard from './components/VideoCard.jsx'
 import BottomBar from './components/BottomBar.jsx'
+import { Outlet } from 'react-router-dom'
 
 function App() {
   const [showMenu, setShowMenu] = useState(false)
@@ -15,11 +14,7 @@ function App() {
       <Navbar toggleMenu={toggleMenu} />
       <div className='flex flex-1'>
         <Sidebar showMenu={showMenu} toggleMenu={toggleMenu} />
-        <Container showMenu={showMenu}>
-          {Array.from({ length: 10 }).fill(1).map((_, i) => (
-            <VideoCard key={i} />
-          ))}
-        </Container>
+        <Outlet context={[showMenu]}/>
       </div>
       <BottomBar />
     </div>

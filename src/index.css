@@ -6,6 +6,18 @@
 	@apply box-border;
 }
 
+.tabNav {
+	@apply py-3 text-center border-b-[3px];
+}
+
+.tabNav_active {
+	@apply bg-[#2f62ff3c] border-b-[#435db1];
+}
+
+.tabNav_inactive {
+	@apply border-transparent hover:border-[#484848] text-[#f1f7feb5] active:bg-[#ddeaf814];
+}
+
 .radix-themes {
 	--cursor-button: pointer;
 	--cursor-checkbox: pointer;
@@ -17,4 +29,3 @@
 	--cursor-slider-thumb-active: grabbing;
 	--cursor-switch: pointer;
 }
-

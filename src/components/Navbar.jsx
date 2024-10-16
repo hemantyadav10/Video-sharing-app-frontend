@@ -1,6 +1,7 @@
 import { ExitIcon, FileTextIcon, GearIcon, HamburgerMenuIcon, LockClosedIcon, MagicWandIcon, MagnifyingGlassIcon, PersonIcon, PlusIcon, QuestionMarkCircledIcon } from '@radix-ui/react-icons'
 import { Avatar, Button, Dialog, DropdownMenu, Flex, IconButton, Text, TextField } from '@radix-ui/themes'
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 function Navbar({ toggleMenu }) {
 
@@ -16,7 +17,9 @@ function Navbar({ toggleMenu }) {
         >
           <HamburgerMenuIcon height='20' width='20' />
         </IconButton>
-        Logo
+        <Link to='/'>
+          Logo
+        </Link>
       </span>
       <div className='hidden col-span-1 sm:flex'>
         <TextField.Root
@@ -110,9 +113,11 @@ function Navbar({ toggleMenu }) {
                 </Flex>
               </Flex>
               <DropdownMenu.Separator />
-              <DropdownMenu.Item >
-                <PersonIcon /> View Profile
-              </DropdownMenu.Item>
+              <Link to='/channel/hemant'>
+                <DropdownMenu.Item >
+                  <PersonIcon /> View Profile
+                </DropdownMenu.Item>
+              </Link>
               <DropdownMenu.Item >
                 <MagicWandIcon /> Creator Studio
               </DropdownMenu.Item>

@@ -5,7 +5,7 @@ import React from 'react'
 function BottomBar() {
 
   return (
-    <div className='fixed bottom-0 left-0 right-0 bg-[#111113]/80 grid grid-cols-4 py-2 justify-between items-center backdrop-blur-md border-t border-[#484848] sm:hidden h-16'>
+    <div className='fixed bottom-0 left-0 right-0 bg-[#0c0c0d]/80 grid grid-cols-4 py-2 justify-between items-center backdrop-blur-md border-t border-[#484848] sm:hidden h-16 z-50'>
       <div className='flex flex-col items-center gap-1 text-center cols-span-1'>
         <IconButton variant='ghost' color='gray' radius='full' highContrast>
           <HomeIcon height='20' width='20' />
