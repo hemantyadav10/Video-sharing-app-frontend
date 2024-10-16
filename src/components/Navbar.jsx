@@ -124,9 +124,11 @@ function Navbar({ toggleMenu }) {
               <DropdownMenu.Item >
                 <QuestionMarkCircledIcon /> Help
               </DropdownMenu.Item>
-              <DropdownMenu.Item >
-                <GearIcon /> Settings
-              </DropdownMenu.Item>
+              <Link to='/settings'>
+                <DropdownMenu.Item >
+                  <GearIcon /> Settings
+                </DropdownMenu.Item>
+              </Link>
               <DropdownMenu.Separator />
               <DropdownMenu.Item >
                 <FileTextIcon /> Terms of Service

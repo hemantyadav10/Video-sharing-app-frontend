@@ -7,7 +7,7 @@ function ChannelVideos() {
     <div>
       <div>
         <SegmentedControl.Root defaultValue="inbox" >
-          <SegmentedControl.Item value="inbox">Lates</SegmentedControl.Item>
+          <SegmentedControl.Item value="inbox">Latest</SegmentedControl.Item>
           <SegmentedControl.Item value="drafts">Popular</SegmentedControl.Item>
           <SegmentedControl.Item value="sent">Oldest</SegmentedControl.Item>
         </SegmentedControl.Root>

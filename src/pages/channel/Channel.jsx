@@ -1,7 +1,7 @@
 import { Pencil1Icon } from '@radix-ui/react-icons'
 import { AspectRatio, Button, Flex, Heading, TabNav, Text } from '@radix-ui/themes'
 import React from 'react'
-import { NavLink, Outlet, useLocation, useParams } from 'react-router-dom'
+import { Link, NavLink, Outlet, useLocation, useParams } from 'react-router-dom'
 
 function Channel() {
   const { username } = useParams()
@@ -49,21 +49,23 @@ function Channel() {
             </Text>
           </Flex>
         </div>
-        <div className='py-4 md:py-0'>
+        <div className='py-4 space-x-4 md:py-0'>
           <Button variant=''>
             Subscribe
           </Button>
-          {/* <Button variant=''>
-          <Pencil1Icon />
-          Edit
-        </Button> */}
+          <Link to='/settings'>
+            <Button variant='surface'>
+              <Pencil1Icon />
+              Edit
+            </Button>
+          </Link>
         </div>
       </div>
 
       {/* subscribe or edit button */}
 
 
-      <div className=' grid grid-cols-3 sm:flex px-4 text-xs border-b border-[#484848] font-medium mt-2 border-t border-t-[#111113] xl:px-20 sticky top-[63px] z-30 bg-[#111113] lg:px-10'>
+      <div className=' grid grid-cols-3 sm:flex px-4 text-sm border-b border-[#484848] font-medium mt-2 border-t border-t-[#111113] xl:px-20 sticky top-[63px] z-30 bg-[#111113] lg:px-10'>
         <NavLink
           to='/channel/hemant/videos'
           className={() => `tabNav ${isVideosActive ? "tabNav_active" : "tabNav_inactive"} px-6`}

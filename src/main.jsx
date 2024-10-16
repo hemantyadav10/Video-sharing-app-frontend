@@ -10,16 +10,24 @@ import Channel from './pages/channel/Channel.jsx';
 import ChannelVideos from './pages/channel/ChannelVideos.jsx';
 import ChannelPlaylists from './pages/channel/ChannelPlaylists.jsx';
 import ChannelTweets from './pages/channel/ChannelTweets.jsx';
+import ChangePassword from './pages/settings/ChangePassword.jsx'
+import PersonalInfo from './pages/settings/PersonalInfo.jsx'
+import Settings from './pages/settings/Settings.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<App />}>
       <Route index element={<Home />} />
-      <Route path='/channel/:username' element={<Channel />}>
+      <Route path='channel/:username' element={<Channel />}>
         <Route index element={<ChannelVideos />} />
         <Route path='videos' element={<ChannelVideos />} />
         <Route path='playlists' element={<ChannelPlaylists />} />
         <Route path='tweets' element={<ChannelTweets />} />
+      </Route>
+      <Route path='settings' element={<Settings />}>
+        <Route index element={<PersonalInfo />} />
+        <Route path='change-password' element={<ChangePassword />} />
+        <Route path='personalInfo' element={<PersonalInfo />} />
       </Route>
     </Route>
   )

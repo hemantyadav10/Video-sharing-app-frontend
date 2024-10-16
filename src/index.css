@@ -7,7 +7,7 @@
 }
 
 .tabNav {
-	@apply py-3 text-center border-b-[3px];
+	@apply py-2 text-center border-b-[3px];
 }
 
 .tabNav_active {
