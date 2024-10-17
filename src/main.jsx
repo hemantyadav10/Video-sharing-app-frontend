@@ -16,6 +16,7 @@ import Settings from './pages/settings/Settings.jsx';
 import Login from './pages/auth/Login.jsx';
 import Signup from './pages/auth/Signup.jsx';
 import Playlist from './pages/Playlist.jsx';
+import LikedVideos from './pages/LikedVideos.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -34,6 +35,7 @@ const router = createBrowserRouter(
           <Route path='personalInfo' element={<PersonalInfo />} />
         </Route>
         <Route path='playlist/:playlistId' element={<Playlist />} />
+        <Route path='liked-videos' element={<LikedVideos />} />
       </Route>
       <Route path='/login' element={<Login />} />
       <Route path='/signup' element={<Signup />} />
