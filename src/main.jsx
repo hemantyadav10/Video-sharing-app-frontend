@@ -18,6 +18,8 @@ import Signup from './pages/auth/Signup.jsx';
 import Playlist from './pages/Playlist.jsx';
 import LikedVideos from './pages/LikedVideos.jsx';
 import AllPlaylists from './pages/AllPlaylists.jsx';
+import SubscriptionVideos from './pages/SubscriptionVideos.jsx';
+import SubscribedChannels from './pages/SubscribedChannels.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -38,6 +40,8 @@ const router = createBrowserRouter(
         <Route path='playlist/:playlistId' element={<Playlist />} />
         <Route path='liked-videos' element={<LikedVideos />} />
         <Route path='playlists' element={<AllPlaylists />} />
+        <Route path='subscriptions' element={<SubscriptionVideos />} />
+        <Route path='subscriptions/channels' element={<SubscribedChannels />} />
       </Route>
       <Route path='/login' element={<Login />} />
       <Route path='/signup' element={<Signup />} />
