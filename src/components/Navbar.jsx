@@ -1,9 +1,24 @@
-import { ExitIcon, FileTextIcon, GearIcon, HamburgerMenuIcon, LockClosedIcon, MagicWandIcon, MagnifyingGlassIcon, PersonIcon, PlusIcon, QuestionMarkCircledIcon } from '@radix-ui/react-icons'
-import { Avatar, Button, Dialog, DropdownMenu, Flex, IconButton, Text, TextField } from '@radix-ui/themes'
-import React from 'react'
-import { Link } from 'react-router-dom'
+import { ArrowBottomLeftIcon, ArrowLeftIcon, Cross1Icon, ExitIcon, FileTextIcon, GearIcon, HamburgerMenuIcon, LockClosedIcon, MagicWandIcon, MagnifyingGlassIcon, PersonIcon, PlusIcon, QuestionMarkCircledIcon } from '@radix-ui/react-icons'
+import { Avatar, Button, Dialog, DropdownMenu, Flex, IconButton, Text, TextField, Tooltip } from '@radix-ui/themes'
+import React, { useState } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 
 function Navbar({ toggleMenu }) {
+  const [searchParams, setSearchParams] = useSearchParams('')
+  const [query, setQuery] = useState(searchParams.get('search_query') || '')
+  const navigate = useNavigate();
+  const [showSearchBar, setShowSearchBar] = useState(false)
+
+
+  const handleSearch = (e) => {
+    e.preventDefault()
+    if (query.trim()) {
+      navigate('/results')
+      searchParams.set('search_query', query.trim())
+      setSearchParams(searchParams)
+    }
+  }
+
 
   return (
     <div className='sticky top-0 right-0 z-40 grid w-full grid-cols-2 sm:grid-cols-3 px-6 py-3 backdrop-blur-md bg-[#0c0c0d]/80  border-b border-[#484848]  h-16'>
@@ -14,6 +29,7 @@ function Navbar({ toggleMenu }) {
           highContrast
           color='gray'
           radius='full'
+          size={'3'}
         >
           <HamburgerMenuIcon height='20' width='20' />
         </IconButton>
@@ -21,17 +37,43 @@ function Navbar({ toggleMenu }) {
           Logo
         </Link>
       </span>
-      <div className='hidden col-span-1 sm:flex'>
+      <form onSubmit={handleSearch} className='hidden col-span-1 sm:flex'>
         <TextField.Root
-          className='w-full'
-          radius='full'
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          className='w-full rounded-l-full'
           size={'3'}
           placeholder="Search">
-          <TextField.Slot>
+          <TextField.Slot >
             <MagnifyingGlassIcon height="18" width="18" />
-          </TextField.Slot>
+          </TextField.Slot >
+          {query && <TextField.Slot side='right' className='pl-3'>
+            <IconButton
+              radius='full'
+              type='button'
+              size="2"
+              variant="ghost"
+              color='gray'
+              highContrast
+              onClick={() => setQuery('')}
+            >
+              <Cross1Icon height="16" width="16" />
+            </IconButton>
+          </TextField.Slot>}
         </TextField.Root>
-      </div>
+        <Tooltip content="Search">
+          <IconButton
+            aria-label='Search'
+            type={query.trim() ? 'submit' : 'button'}
+            highContrast
+            variant='soft'
+            size={'4'}
+            className='w-16 h-full rounded-r-full'
+          >
+            <MagnifyingGlassIcon height="22" width="22" />
+          </IconButton>
+        </Tooltip>
+      </form>
       <div className='items-center justify-end hidden col-span-1 gap-4 sm:flex'>
         <Dialog.Root>
           <Dialog.Trigger>
@@ -137,18 +179,68 @@ function Navbar({ toggleMenu }) {
                 <LockClosedIcon /> Privacy
               </DropdownMenu.Item>
               <DropdownMenu.Separator />
-              <DropdownMenu.Item >
-                <ExitIcon /> Logout
-              </DropdownMenu.Item>
+              <Link to='/login'>
+                <DropdownMenu.Item >
+                  <ExitIcon /> Logout
+                </DropdownMenu.Item>
+              </Link>
             </div>
           </DropdownMenu.Content>
         </DropdownMenu.Root>
       </div>
-      <div className='flex items-center justify-end cols-span-1 sm:hidden'>
-        <IconButton variant='ghost' highContrast color='gray' radius='full'>
-          <MagnifyingGlassIcon height={'20'} width={'20'} />
-        </IconButton>
+      <div className={`flex items-center justify-end cols-span-1 sm:hidden ${showSearchBar && 'hidden'}`}>
+        <Tooltip content='Search'>
+          <IconButton onClick={() => setShowSearchBar(true)} size={'3'} variant='ghost' highContrast color='gray' radius='full'>
+            <MagnifyingGlassIcon height={'20'} width={'20'} />
+          </IconButton>
+        </Tooltip>
       </div>
+      {showSearchBar && <div className='absolute left-0 right-0 flex items-center justify-center h-16 border-b bg-[#0c0c0d]  sm:hidden border-[#484848] gap-4 px-6'>
+        <Tooltip content='Back'>
+          <IconButton size={'3'} radius='full' highContrast variant='ghost' onClick={() => setShowSearchBar(false)}>
+            <ArrowLeftIcon height={'24'} width={'24'} />
+          </IconButton>
+        </Tooltip>
+        <form onSubmit={handleSearch} className='flex flex-1'>
+          <TextField.Root
+            autoFocus 
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            className='w-full rounded-l-full'
+            size={'3'}
+            placeholder="Search">
+            <TextField.Slot >
+              <MagnifyingGlassIcon height="18" width="18" />
+            </TextField.Slot >
+            {query && <TextField.Slot side='right' className='pl-3'>
+              <IconButton
+                radius='full'
+                type='button'
+                size="2"
+                variant="ghost"
+                color='gray'
+                highContrast
+                onClick={() => setQuery('')}
+              >
+                <Cross1Icon height="16" width="16" />
+              </IconButton>
+            </TextField.Slot>}
+          </TextField.Root>
+          <Tooltip content="Search">
+            <IconButton
+              aria-label='Search'
+              type={query.trim() ? 'submit' : 'button'}
+              highContrast
+              variant='soft'
+              size={'4'}
+              className='w-16 h-auto rounded-r-full'
+            >
+              <MagnifyingGlassIcon height="22" width="22" />
+            </IconButton>
+          </Tooltip>
+        </form>
+      </div>
+      }
     </div>
   )
 }

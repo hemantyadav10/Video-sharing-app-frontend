@@ -43,6 +43,7 @@ function Sidebar({ showMenu, toggleMenu }) {
               highContrast
               color='gray'
               radius='full'
+              size={'3'}
             >
               <HamburgerMenuIcon height='20' width='20' />
             </IconButton>
@@ -61,15 +62,18 @@ function Sidebar({ showMenu, toggleMenu }) {
           </div>
           <div className={`flex flex-col gap-5 px-5 md:py-6 ${showMenu ? "" : "md:hidden"}`}>
             {sidebarItems.map((item) => (
-              <Button
-                key={item.name}
-                size={'2'}
-                variant='ghost'
-                highContrast
-                className="justify-start px-3 py-3"
-              >
-                {item.icon && <item.icon className="mr-2" height={'20'} width={"20"} />}{item.name}
-              </Button>
+              <NavLink key={item.name} to={item.slug} className={({ isActive }) => `${isActive ? "" : ""}`}>
+                <Button
+                  key={item.name}
+                  size={'2'}
+                  variant='ghost'
+                  highContrast
+                  className="justify-start w-full px-3 py-3"
+                >
+                  {item.icon && <item.icon className="mr-2" height={'20'} width={"20"} />}{item.name}
+                </Button>
+              </NavLink>
+
             ))}
           </div>
         </div>
