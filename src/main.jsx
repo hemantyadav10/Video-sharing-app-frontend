@@ -21,6 +21,7 @@ import AllPlaylists from './pages/AllPlaylists.jsx';
 import SubscriptionVideos from './pages/SubscriptionVideos.jsx';
 import SubscribedChannels from './pages/SubscribedChannels.jsx';
 import SearchResults from './pages/SearchResults.jsx';
+import History from './pages/History.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -44,6 +45,7 @@ const router = createBrowserRouter(
         <Route path='subscriptions' element={<SubscriptionVideos />} />
         <Route path='subscriptions/channels' element={<SubscribedChannels />} />
         <Route path='results' element={<SearchResults />} />
+        <Route path='history' element={<History />} />
       </Route>
       <Route path='/login' element={<Login />} />
       <Route path='/signup' element={<Signup />} />

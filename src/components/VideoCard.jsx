@@ -1,8 +1,8 @@
-import { BookmarkIcon, DotsVerticalIcon } from '@radix-ui/react-icons'
-import {  Avatar, DropdownMenu, Flex, IconButton, Text } from '@radix-ui/themes'
+import { BookmarkIcon, CropIcon, Cross1Icon, DotsVerticalIcon } from '@radix-ui/react-icons'
+import { Avatar, DropdownMenu, Flex, IconButton, Text, Tooltip } from '@radix-ui/themes'
 import React from 'react'
 
-function VideoCard({ hideAvatar = false, list = false }) {
+function VideoCard({ hideAvatar = false, list = false, moreOptionsButton = true, removeFromHistoryButton = false }) {
   return (
     <div className={`flex  gap-4 sm:mb-4 rounded-xl ${list ? 'sm:grid sm:grid-cols-12 flex-col max-w-6xl ' : 'flex-col '}  line-clamp-1`}>
       <div
@@ -23,7 +23,19 @@ function VideoCard({ hideAvatar = false, list = false }) {
         gapX='3'
         className={`relative ${list ? "sm:col-span-7" : ""}`}
       >
-        <DropdownMenu.Root>
+        {removeFromHistoryButton &&
+          <Tooltip width={'100px'} content='Remove from watch history'>
+            <IconButton
+              variant='ghost'
+              className='absolute rounded-full sm:right-[6px] top-1 right-2'
+              highContrast
+              color='gray'
+            >
+              <Cross1Icon height={'20'} width={'20'} />
+            </IconButton>
+          </Tooltip>
+        }
+        {moreOptionsButton && <DropdownMenu.Root>
           <DropdownMenu.Trigger>
             <IconButton
               variant='ghost'
@@ -39,8 +51,8 @@ function VideoCard({ hideAvatar = false, list = false }) {
               <BookmarkIcon /> Save to Playlist
             </DropdownMenu.Item>
           </DropdownMenu.Content>
-        </DropdownMenu.Root>
-        {!hideAvatar  && <Avatar
+        </DropdownMenu.Root>}
+        {!hideAvatar && <Avatar
           radius='full'
           size={'3'}
           src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
@@ -65,7 +77,7 @@ function VideoCard({ hideAvatar = false, list = false }) {
             color='gray'
             className={`${list && "sm:order-2 flex items-center gap-3"} `}
           >
-            {list && <img src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop" alt="" className='hidden rounded-full size-6 sm:block'/>}
+            {list && <img src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop" alt="" className='hidden rounded-full size-6 sm:block' />}
             Jane Doe
           </Text>
           <Flex gap={'2'} align={'center'} className={`${list && "sm:order-1"}`}>
