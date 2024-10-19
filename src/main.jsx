@@ -22,6 +22,18 @@ import SubscriptionVideos from './pages/SubscriptionVideos.jsx';
 import SubscribedChannels from './pages/SubscribedChannels.jsx';
 import SearchResults from './pages/SearchResults.jsx';
 import History from './pages/History.jsx';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      staleTime: 60 * 2 * 1000,
+      retry: 3
+    },
+  },
+});
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -55,9 +67,9 @@ const router = createBrowserRouter(
 
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  <QueryClientProvider client={queryClient}>
     <Theme appearance='dark'>
       <RouterProvider router={router} />
     </Theme>
-  </StrictMode>,
+  </QueryClientProvider>
 )
