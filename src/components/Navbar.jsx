@@ -163,9 +163,12 @@ function Navbar({ toggleMenu }) {
               <DropdownMenu.Item >
                 <MagicWandIcon /> Creator Studio
               </DropdownMenu.Item>
-              <DropdownMenu.Item >
-                <QuestionMarkCircledIcon /> Help
-              </DropdownMenu.Item>
+              <Link to='/login'>
+                <DropdownMenu.Item >
+                  <ExitIcon /> Logout
+                </DropdownMenu.Item>
+              </Link>
+              <DropdownMenu.Separator />
               <Link to='/settings'>
                 <DropdownMenu.Item >
                   <GearIcon /> Settings
@@ -173,17 +176,14 @@ function Navbar({ toggleMenu }) {
               </Link>
               <DropdownMenu.Separator />
               <DropdownMenu.Item >
+                <QuestionMarkCircledIcon /> Help
+              </DropdownMenu.Item>
+              <DropdownMenu.Item >
                 <FileTextIcon /> Terms of Service
               </DropdownMenu.Item>
               <DropdownMenu.Item >
                 <LockClosedIcon /> Privacy
               </DropdownMenu.Item>
-              <DropdownMenu.Separator />
-              <Link to='/login'>
-                <DropdownMenu.Item >
-                  <ExitIcon /> Logout
-                </DropdownMenu.Item>
-              </Link>
             </div>
           </DropdownMenu.Content>
         </DropdownMenu.Root>
@@ -203,7 +203,7 @@ function Navbar({ toggleMenu }) {
         </Tooltip>
         <form onSubmit={handleSearch} className='flex flex-1'>
           <TextField.Root
-            autoFocus 
+            autoFocus
             value={query}
             onChange={e => setQuery(e.target.value)}
             className='w-full rounded-l-full'

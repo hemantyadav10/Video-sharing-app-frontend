@@ -23,6 +23,7 @@ import SubscribedChannels from './pages/SubscribedChannels.jsx';
 import SearchResults from './pages/SearchResults.jsx';
 import History from './pages/History.jsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 
 export const queryClient = new QueryClient({
@@ -40,7 +41,7 @@ const router = createBrowserRouter(
     <Route>
       <Route path='/' element={<App />}>
         <Route index element={<Home />} />
-        <Route path='channel/:username' element={<Channel />}>
+        <Route path='channel/:userId' element={<Channel />}>
           <Route index element={<ChannelVideos />} />
           <Route path='videos' element={<ChannelVideos />} />
           <Route path='playlists' element={<ChannelPlaylists />} />
@@ -70,6 +71,7 @@ createRoot(document.getElementById('root')).render(
   <QueryClientProvider client={queryClient}>
     <Theme appearance='dark'>
       <RouterProvider router={router} />
+      <ReactQueryDevtools initialIsOpen={false} />
     </Theme>
   </QueryClientProvider>
 )

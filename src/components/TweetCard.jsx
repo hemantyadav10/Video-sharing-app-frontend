@@ -2,19 +2,36 @@ import { BookmarkIcon, DotsVerticalIcon, HeartFilledIcon, HeartIcon, Pencil1Icon
 import { Avatar, Button, DropdownMenu, IconButton, Text } from '@radix-ui/themes'
 import React from 'react'
 
-function TweetCard() {
+function TweetCard({
+  tweetData,
+  loading,
+}) {
+
+  console.log(tweetData)
   return (
     <div className='flex gap-3 pb-4 border-b border-[#484848]'>
       <Avatar
         radius='full'
-        src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
+        src={tweetData?.owner.avatar}
         fallback="A"
       />
       <div className='w-full'>
         <div className='flex items-center justify-between '>
           <div>
-            <Text as='span' size={'2'} mr={'3'}>John Doe</Text>
-            <Text as='span' size={'1'} color='gray'>Just now</Text>
+            <Text
+              as='span'
+              size={'2'}
+              mr={'3'}
+            >
+              @{tweetData?.owner.username}
+            </Text>
+            <Text
+              as='span'
+              size={'1'}
+              color='gray'
+            >
+              {tweetData?.createdAt}
+            </Text>
           </div>
           <DropdownMenu.Root>
             <DropdownMenu.Trigger>
@@ -25,7 +42,7 @@ function TweetCard() {
                 radius='full'
                 size={'2'}
               >
-                <DotsVerticalIcon  />
+                <DotsVerticalIcon />
               </IconButton>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content variant='soft'>
@@ -39,9 +56,15 @@ function TweetCard() {
           </DropdownMenu.Root>
         </div>
 
-        <Text as='p' size={'2'} className='pr-4 '>First tweet from this channel sdhfkhsdkjfhksjjk</Text>
+        <Text
+          as='p'
+          size={'2'}
+          className='pr-4 '
+        >
+          {tweetData?.content}
+        </Text>
         <Button variant='ghost' highContrast color='red' size={'1'} mt='2'>
-          <HeartIcon /> 1.3K
+          <HeartIcon /> {tweetData?.likesCount}
         </Button>
       </div>
 

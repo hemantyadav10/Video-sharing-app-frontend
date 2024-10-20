@@ -1,31 +1,47 @@
 import { BookmarkIcon, CropIcon, Cross1Icon, DotsVerticalIcon } from '@radix-ui/react-icons'
-import { Avatar, DropdownMenu, Flex, IconButton, Text, Tooltip } from '@radix-ui/themes'
+import { Avatar, DropdownMenu, Flex, IconButton, Skeleton, Text, Tooltip } from '@radix-ui/themes'
 import React from 'react'
+import { Link } from 'react-router-dom'
 
-function VideoCard({ hideAvatar = false, list = false, moreOptionsButton = true, removeFromHistoryButton = false }) {
+function VideoCard({
+  hideAvatar = false,
+  list = false,
+  moreOptionsButton = true,
+  removeFromHistoryButton = false,
+  videoData,
+  loading,
+  hideUsername = false,
+  error
+}) {
   return (
-    <div className={`flex  gap-4 sm:mb-4 rounded-xl ${list ? 'sm:grid sm:grid-cols-12 flex-col max-w-6xl ' : 'flex-col '}  line-clamp-1`}>
-      <div
-        className={`relative  aspect-video  ${list ? "sm:col-span-5" : ""}`}>
-        <img
-          src="https://images.unsplash.com/photo-1479030160180-b1860951d696?&auto=format&fit=crop&w=1200&q=80"
-          alt="A house in a forest"
-          className={`object-cover object-center  rounded-xl aspect-video `}
-        />
-        <Text
-          className='absolute bottom-2 right-2 p-[2px] px-1 text-xs bg-black/70 font-medium rounded-md'
-          as='span'
-        >
-          19:21
-        </Text>
-      </div>
+    <div className={`flex gap-4 sm:mb-4 rounded-t-xl ${list ? 'sm:grid sm:grid-cols-12 flex-col max-w-6xl ' : 'flex-col '}  line-clamp-1 `}>
+      <Skeleton loading={loading}>
+        <div
+          className={`relative rounded-xl aspect-video  ${list ? "sm:col-span-5" : ""}`}>
+          <img
+            src={videoData?.thumbnail || 'https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop'}
+            alt={videoData?.title || "Video thumbnail"}
+            className={`object-cover object-center w-full rounded-xl aspect-video `}
+          />
+          <Text
+            className='absolute bottom-2 right-2 p-[2px] px-1 text-xs bg-black/70 font-medium rounded-md'
+            as='span'
+          >
+            {videoData?.duration}
+          </Text>
+        </div>
+      </Skeleton>
       <Flex
         gapX='3'
         className={`relative ${list ? "sm:col-span-7" : ""}`}
       >
-        {removeFromHistoryButton &&
-          <Tooltip width={'100px'} content='Remove from watch history'>
+        {removeFromHistoryButton && loading &&
+          <Tooltip
+            width={'100px'}
+            content='Remove from watch history'
+          >
             <IconButton
+              aria-label="Remove from watch history"
               variant='ghost'
               className='absolute rounded-full sm:right-[6px] top-1 right-2'
               highContrast
@@ -35,9 +51,10 @@ function VideoCard({ hideAvatar = false, list = false, moreOptionsButton = true,
             </IconButton>
           </Tooltip>
         }
-        {moreOptionsButton && <DropdownMenu.Root>
-          <DropdownMenu.Trigger>
+        {moreOptionsButton && <DropdownMenu.Root >
+          <DropdownMenu.Trigger hidden={loading}>
             <IconButton
+              aria-label="More options"
               variant='ghost'
               className='absolute rounded-full sm:right-[6px] top-1 right-3'
               highContrast
@@ -52,13 +69,19 @@ function VideoCard({ hideAvatar = false, list = false, moreOptionsButton = true,
             </DropdownMenu.Item>
           </DropdownMenu.Content>
         </DropdownMenu.Root>}
-        {!hideAvatar && <Avatar
-          radius='full'
-          size={'3'}
-          src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
-          fallback="A"
-          className={`${list && " sm:hidden"}`}
-        />}
+        {!hideAvatar &&
+          <Skeleton loading={loading}>
+            <Link to={`/channel/${videoData?.owner?._id}`} className='w-10 h-10 rounded-full aspect-square'>
+              <Avatar
+                radius='full'
+                size={'3'}
+                src={videoData?.owner?.avatar}
+                fallback="A"
+                className={`${list && " sm:hidden"} w-full h-full object-cover object-center`}
+              />
+            </Link>
+          </Skeleton>
+        }
         <Flex
           direction={'column'}
           gapY={'2'}
@@ -69,22 +92,31 @@ function VideoCard({ hideAvatar = false, list = false, moreOptionsButton = true,
             size={'2'}
             className={`pr-8  line-clamp-2 ${list ? "md:text-base lg:text-lg" : ""}`}
           >
-            Exploring the Hidden Gems of Paris: A Local's Guide This approach will avoid any issue with query parameters not being immediately reflected in the URL.
+            <Skeleton loading={loading}>
+              {videoData?.title}
+            </Skeleton>
           </Text>
-          <Text
-            as='p'
-            size={'1'}
-            color='gray'
-            className={`${list && "sm:order-2 flex items-center gap-3"} `}
-          >
-            {list && <img src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop" alt="" className='hidden rounded-full size-6 sm:block' />}
-            Jane Doe
-          </Text>
-          <Flex gap={'2'} align={'center'} className={`${list && "sm:order-1"}`}>
-            <Text as='span' color='gray' size={'1'} >151K views</Text>
-            <Text as='span' color='gray' size={'1'} >•</Text>
-            <Text as='span' color='gray' size={'1'} >1 year ago</Text>
-          </Flex>
+          {!hideUsername && <Skeleton loading={loading}>
+            <Link to={`/channel/${videoData?.owner?._id}`}>
+              <Text
+                as='p'
+                size={'1'}
+                color='gray'
+                className={`${list && "sm:order-2 flex items-center gap-3"}`}
+              >
+                {list && <img src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop" alt="" className='hidden rounded-full size-6 sm:block' />}
+                {videoData?.owner?.username}
+              </Text>
+            </Link>
+          </Skeleton>}
+          <Skeleton loading={loading}>
+
+            <Flex gap={'2'} align={'center'} className={`${list && "sm:order-1"}`}>
+              <Text as='span' color='gray' size={'1'} >{videoData?.views} views</Text>
+              <Text as='span' color='gray' size={'1'} >•</Text>
+              <Text as='span' color='gray' size={'1'} >{videoData?.createdAt}</Text>
+            </Flex>
+          </Skeleton>
           {list && <div className={`${list && "hidden sm:block sm:order-3"}`}>
             <Text
               as='p'
