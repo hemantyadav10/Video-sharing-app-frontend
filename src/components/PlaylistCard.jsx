@@ -10,7 +10,7 @@ function PlaylistCard({
   console.log(playlistData)
   return (
     <div className='space-y-3'>
-      <Link to={'/playlist/123'} className='relative aspect-video'>
+      <Link to={`/playlist/${playlistData._id}`} className='relative aspect-video'>
         <AspectRatio
           ratio={16 / 9}
           className='z-[3]'>

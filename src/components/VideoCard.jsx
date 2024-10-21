@@ -2,6 +2,8 @@ import { BookmarkIcon, CropIcon, Cross1Icon, DotsVerticalIcon } from '@radix-ui/
 import { Avatar, DropdownMenu, Flex, IconButton, Skeleton, Text, Tooltip } from '@radix-ui/themes'
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { timeAgo } from '../utils/formatTimeAgo'
+import { formatVideoDuration } from '../utils/formatVideoDuration'
 
 function VideoCard({
   hideAvatar = false,
@@ -16,8 +18,11 @@ function VideoCard({
   return (
     <div className={`flex gap-4 sm:mb-4 rounded-t-xl ${list ? 'sm:grid sm:grid-cols-12 flex-col max-w-6xl ' : 'flex-col '}  line-clamp-1 `}>
       <Skeleton loading={loading}>
-        <div
-          className={`relative rounded-xl aspect-video  ${list ? "sm:col-span-5" : ""}`}>
+        <Link
+          to={`/watch/${videoData?._id}`}
+          state={{ thumbnail: videoData?.thumbnail }}
+           className={`relative rounded-xl aspect-video  ${list ? "sm:col-span-5" : ""}`}
+        >
           <img
             src={videoData?.thumbnail || 'https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop'}
             alt={videoData?.title || "Video thumbnail"}
@@ -27,9 +32,9 @@ function VideoCard({
             className='absolute bottom-2 right-2 p-[2px] px-1 text-xs bg-black/70 font-medium rounded-md'
             as='span'
           >
-            {videoData?.duration}
+            {formatVideoDuration(videoData?.duration)}
           </Text>
-        </div>
+        </Link>
       </Skeleton>
       <Flex
         gapX='3'
@@ -93,7 +98,11 @@ function VideoCard({
             className={`pr-8  line-clamp-2 ${list ? "md:text-base lg:text-lg" : ""}`}
           >
             <Skeleton loading={loading}>
-              {videoData?.title}
+              <Link
+                to={`/watch/${videoData?._id}`}
+              >
+                {videoData?.title}
+              </Link>
             </Skeleton>
           </Text>
           {!hideUsername && <Skeleton loading={loading}>
@@ -110,11 +119,11 @@ function VideoCard({
             </Link>
           </Skeleton>}
           <Skeleton loading={loading}>
-
-            <Flex gap={'2'} align={'center'} className={`${list && "sm:order-1"}`}>
+            <Flex gap={'1'} align={'center'} className={`${list && "sm:order-1"}`}>
               <Text as='span' color='gray' size={'1'} >{videoData?.views} views</Text>
               <Text as='span' color='gray' size={'1'} >•</Text>
-              <Text as='span' color='gray' size={'1'} >{videoData?.createdAt}</Text>
+              <Text as='span' color='gray' size={'1'} >
+                {timeAgo(videoData?.createdAt)}</Text>
             </Flex>
           </Skeleton>
           {list && <div className={`${list && "hidden sm:block sm:order-3"}`}>
@@ -130,7 +139,7 @@ function VideoCard({
           </div>}
         </Flex>
       </Flex>
-    </div>
+    </div >
   )
 }
 

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { getUserPlaylists } from "../../api/playlistApi"
+import { getPlaylistById, getUserPlaylists } from "../../api/playlistApi"
 
 const useFetchUserPlaylists = (userId) => {
   return useQuery({
@@ -8,6 +8,14 @@ const useFetchUserPlaylists = (userId) => {
   })
 }
 
+const useFetchPlaylistById = (playlistId) => {
+  return useQuery({
+    queryKey: ['playlist', playlistId],
+    queryFn: () => getPlaylistById(playlistId)
+  })
+}
+
 export {
-  useFetchUserPlaylists
+  useFetchUserPlaylists,
+  useFetchPlaylistById
 }

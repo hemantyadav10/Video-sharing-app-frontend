@@ -5,7 +5,13 @@ const fetchAllVideos = async () => {
   return response.data;
 };
 
+const fetchVideoById = async (videoId) => {
+  const res = await apiClient.get(`/videos/${videoId}`)
+  return res.data;
+}
+
 
 export {
-  fetchAllVideos
+  fetchAllVideos, 
+  fetchVideoById,
 }

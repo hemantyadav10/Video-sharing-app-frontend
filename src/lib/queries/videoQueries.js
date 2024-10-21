@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { fetchAllVideos } from "../../api/videoApi"
+import { fetchAllVideos, fetchVideoById } from "../../api/videoApi"
 
 const useFetchVideos = () => {
   return useQuery({
@@ -8,8 +8,14 @@ const useFetchVideos = () => {
   })
 }
 
-
+const useFetchVideoById = (videoId) => {
+  return useQuery({
+    queryKey: ['video', videoId],
+    queryFn: () => fetchVideoById(videoId),
+  })
+}
 
 export {
-  useFetchVideos
+  useFetchVideos,
+  useFetchVideoById
 }

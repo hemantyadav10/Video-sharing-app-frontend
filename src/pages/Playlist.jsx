@@ -1,42 +1,54 @@
 import { Pencil1Icon, PlusIcon, TrashIcon } from '@radix-ui/react-icons'
 import { AlertDialog, Avatar, Button, Dialog, Flex, IconButton, Text, TextArea, TextField, Tooltip } from '@radix-ui/themes'
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import VideoCard2 from '../components/VideoCard2'
+import { useFetchPlaylistById } from '../lib/queries/playlistQueries'
 
 function PlaylistVideos() {
+  const { playlistId } = useParams();
+  const { data: playlist } = useFetchPlaylistById(playlistId)
+
+  console.log(playlist)
   return (
     <div className="flex flex-col w-full mb-16 lg:flex-row lg:p-6">
-      <div className="relative p-4 bg-contain bg-center bg-[url('https://i.ytimg.com/vi/7DVpag3cO0g/hqdefault.jpg?sqp=-oaymwEcCPYBEIoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCo4d1MrapwkyGUHY9C63DYEH3ALg')] sm:p-6 overflow-hidden lg:rounded-t-2xl lg:h-[calc(100vh-122px)] lg:sticky lg:top-[88px] sm:px-24 md:px-6" >
+      <div
+        className={`relative p-4 bg-cover bg-center sm:p-6 overflow-hidden lg:rounded-t-2xl lg:h-[calc(100vh-122px)] lg:sticky lg:top-[88px] sm:px-24 md:px-6`}
+        style={{ backgroundImage: `url(${playlist?.data.videos[0].thumbnail})` }}
+      >
         <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/20 to-[#111113] backdrop-blur-xl"></div>
         <div className="relative z-10 flex flex-col w-full gap-6 text-xs md:flex-row md:items-center lg:flex-col lg:w-80 ">
           <div className='w-full'>
             <img
-              src="https://i.ytimg.com/vi/7DVpag3cO0g/hqdefault.jpg?sqp=-oaymwEcCPYBEIoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCo4d1MrapwkyGUHY9C63DYEH3ALg"
+              src={playlist?.data.videos[0].thumbnail}
               alt=""
               className="object-cover object-center w-full rounded-xl aspect-video"
             />
           </div>
-          <div className='flex flex-col gap-4 text-white'>
+          <div className='flex flex-col w-full gap-4 text-white'>
             <p className='text-xl font-bold sm:text-2xl'>
-              Next Auth with MongoDB | chai aur NextJS
+              {playlist?.data.name}
             </p>
             <div className='space-y-2'>
               <div className='flex items-center gap-2'>
                 <Avatar
                   radius='full'
                   size={'1'}
-                  src="https://yt3.ggpht.com/1FEdfq3XpKE9UrkT4eOc5wLF2Bz-42sskTi0RkK4nPh4WqCbVmmrDZ5SVEV3WyvPdkfR8sw2=s48-c-k-c0x00ffffff-no-rj"
+                  src={playlist?.data.owner.avatar}
                   alt='avatar'
                   fallback="A"
                 />
-                <p className='font-medium '> by Chai aur Code</p>
+                <p className='font-medium '>
+                  by {playlist?.data.owner.username}
+                </p>
               </div>
               <p className=''>
-                Playlist • 8 videos
+                Playlist • {playlist?.data.totalVideos} videos
               </p>
             </div>
-            <p>Let's learn NextJS authentication with Mongodb and understand what are hidden superpowers of NextJS with chai</p>
+            <p>
+              {playlist?.data.description}
+            </p>
             <div className='flex justify-end gap-2 '>
               {/* Add videos to playlist */}
               <Link to={'/channel/hemant/videos'}>
@@ -119,10 +131,14 @@ function PlaylistVideos() {
       </div>
       <div className='flex flex-col flex-1 py-4 sm:px-2 lg:py-0'>
 
-        {Array.from({ length: 10 }).fill(1).map((_, i) => (
-          <VideoCard2 key={i} videoNumber={i + 1} />
+        {playlist?.data.videos.map((video, i) => (
+          <VideoCard2
+            key={i}
+            videoNumber={i + 1}
+            video={video}
+          />
         ))}
-        <hr class="border-t border-[#484848]" />
+        <hr className="border-t border-[#484848]" />
 
       </div>
     </div>

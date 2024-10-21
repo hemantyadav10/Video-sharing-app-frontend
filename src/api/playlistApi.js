@@ -6,6 +6,13 @@ const getUserPlaylists = async (userId) => {
   return res.data
 }
 
+const getPlaylistById = async (playlistId) => {
+  const res = await apiClient.get(`/playlist/${playlistId}`)
+
+  return res.data;
+}
+
 export {
-  getUserPlaylists 
+  getUserPlaylists,
+  getPlaylistById
 }

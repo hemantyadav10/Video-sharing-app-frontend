@@ -24,6 +24,7 @@ import SearchResults from './pages/SearchResults.jsx';
 import History from './pages/History.jsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import VideoPage from './pages/VideoPage.jsx';
 
 
 export const queryClient = new QueryClient({
@@ -59,6 +60,7 @@ const router = createBrowserRouter(
         <Route path='subscriptions/channels' element={<SubscribedChannels />} />
         <Route path='results' element={<SearchResults />} />
         <Route path='history' element={<History />} />
+        <Route path='/watch/:videoId' element={<VideoPage />} />
       </Route>
       <Route path='/login' element={<Login />} />
       <Route path='/signup' element={<Signup />} />
