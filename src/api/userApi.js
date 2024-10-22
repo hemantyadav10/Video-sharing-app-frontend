@@ -10,7 +10,25 @@ const getUserVideos = async (userId) => {
   return res.data
 }
 
+const loginUser = async (data) => {
+  const res = await apiClient.post('/users/login', data)
+  return res.data
+}
+
+const logoutUser = async () => {
+  const res = await apiClient.post('users/logout')
+  return res.data
+}
+
+const getCurrentUser = async () => {
+  const res = await apiClient.get('/users/current-user');
+  return res.data;
+}
+
 export {
   getUserChannelInfo,
-  getUserVideos
+  getUserVideos,
+  loginUser,
+  logoutUser,
+  getCurrentUser
 }

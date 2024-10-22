@@ -1,4 +1,3 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
 import "@radix-ui/themes/styles.css";
@@ -25,6 +24,7 @@ import History from './pages/History.jsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import VideoPage from './pages/VideoPage.jsx';
+import AuthProvider from './context/authContext.jsx';
 
 
 export const queryClient = new QueryClient({
@@ -71,9 +71,11 @@ const router = createBrowserRouter(
 
 createRoot(document.getElementById('root')).render(
   <QueryClientProvider client={queryClient}>
-    <Theme appearance='dark'>
-      <RouterProvider router={router} />
-      <ReactQueryDevtools initialIsOpen={false} />
-    </Theme>
+    <AuthProvider>
+      <Theme appearance='dark'>
+        <RouterProvider router={router} />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </Theme>
+    </AuthProvider>
   </QueryClientProvider>
 )

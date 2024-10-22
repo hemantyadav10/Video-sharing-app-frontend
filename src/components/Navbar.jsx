@@ -1,14 +1,16 @@
-import { ArrowBottomLeftIcon, ArrowLeftIcon, Cross1Icon, ExitIcon, FileTextIcon, GearIcon, HamburgerMenuIcon, LockClosedIcon, MagicWandIcon, MagnifyingGlassIcon, PersonIcon, PlusIcon, QuestionMarkCircledIcon } from '@radix-ui/react-icons'
+import { ArrowLeftIcon, Cross1Icon, ExitIcon, FileTextIcon, GearIcon, HamburgerMenuIcon, LockClosedIcon, MagicWandIcon, MagnifyingGlassIcon, PersonIcon, PlusIcon, QuestionMarkCircledIcon } from '@radix-ui/react-icons'
 import { Avatar, Button, Dialog, DropdownMenu, Flex, IconButton, Text, TextField, Tooltip } from '@radix-ui/themes'
 import React, { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { userLogoutUser } from '../lib/queries/userQueries'
+import { useAuth } from '../context/authContext'
 
 function Navbar({ toggleMenu }) {
   const [searchParams, setSearchParams] = useSearchParams('')
   const [query, setQuery] = useState(searchParams.get('search_query') || '')
   const navigate = useNavigate();
   const [showSearchBar, setShowSearchBar] = useState(false)
-
+  const { logout, isAuthenticated } = useAuth()
 
   const handleSearch = (e) => {
     e.preventDefault()
@@ -17,6 +19,10 @@ function Navbar({ toggleMenu }) {
       searchParams.set('search_query', query.trim())
       setSearchParams(searchParams)
     }
+  }
+
+  const handleLogout = async () => {
+    await logout()
   }
 
 
@@ -123,7 +129,8 @@ function Navbar({ toggleMenu }) {
             </Flex>
           </Dialog.Content>
         </Dialog.Root>
-        <DropdownMenu.Root >
+
+        {isAuthenticated && <DropdownMenu.Root >
           <DropdownMenu.Trigger>
             <IconButton radius='full' className='hover:brightness-75'>
               <Avatar
@@ -163,11 +170,9 @@ function Navbar({ toggleMenu }) {
               <DropdownMenu.Item >
                 <MagicWandIcon /> Creator Studio
               </DropdownMenu.Item>
-              <Link to='/login'>
-                <DropdownMenu.Item >
-                  <ExitIcon /> Logout
-                </DropdownMenu.Item>
-              </Link>
+              <DropdownMenu.Item onClick={handleLogout}>
+                <ExitIcon /> Logout
+              </DropdownMenu.Item>
               <DropdownMenu.Separator />
               <Link to='/settings'>
                 <DropdownMenu.Item >
@@ -187,6 +192,7 @@ function Navbar({ toggleMenu }) {
             </div>
           </DropdownMenu.Content>
         </DropdownMenu.Root>
+        }
       </div>
       <div className={`flex items-center justify-end cols-span-1 sm:hidden ${showSearchBar && 'hidden'}`}>
         <Tooltip content='Search'>

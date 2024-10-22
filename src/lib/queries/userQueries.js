@@ -1,5 +1,11 @@
-import { useQuery } from "@tanstack/react-query"
-import { getUserChannelInfo, getUserVideos } from "../../api/userApi"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import {
+  getCurrentUser,
+  getUserChannelInfo,
+  getUserVideos,
+  loginUser,
+  logoutUser
+} from "../../api/userApi"
 
 const useFetchUserChannelInfo = (userId) => {
   return useQuery({
@@ -15,7 +21,31 @@ const useFetchUserVideos = (userId) => {
   })
 }
 
+const useLoginUser = () => {
+  return useMutation({
+    mutationFn: (data) => loginUser(data)
+  })
+}
+
+const userLogoutUser = () => {
+  return useMutation({
+    mutationFn: logoutUser
+  })
+}
+
+const useGetCurrentUser = (token) => {
+  return useQuery({
+    queryKey: ['currentUser'],
+    queryFn: getCurrentUser,
+    enabled: !!token,
+    retry: false
+  })
+}
+
 export {
   useFetchUserChannelInfo,
-  useFetchUserVideos
+  useFetchUserVideos,
+  useLoginUser,
+  userLogoutUser,
+  useGetCurrentUser
 }
