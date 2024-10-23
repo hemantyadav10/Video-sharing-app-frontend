@@ -1,5 +1,5 @@
 import { EyeNoneIcon, EyeOpenIcon, InfoCircledIcon } from '@radix-ui/react-icons';
-import { Button, IconButton, Text, TextField } from '@radix-ui/themes';
+import { Button, Callout, IconButton, Text, TextField } from '@radix-ui/themes';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
@@ -10,14 +10,29 @@ function Login() {
   const [showPassword, setShowPassword] = useState(true)
   const { login, user, isAuthenticated, isLoading } = useAuth()
   const navigate = useNavigate()
+  const [error, setError] = useState('')
 
 
   const handleLogin = async (data) => {
+    const emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    const isEmail = emailPattern.test(data.username)
+    let formData = isEmail ?
+      {
+        email: data.username,
+        password: data.password
+      } : data;
+    setError('')
     try {
-      await login(data)
-      navigate('/')
+      await login(formData)
+      setError('')
     } catch (error) {
-      console.log(error)
+      if (error.response.status === 401) {
+        setError('Invalid credentials. Please check your username or password.')
+        console.log('Invalid credentials')
+      } else if (error.response.status === 404) {
+        setError('User not found with the provided username or email')
+        console.log('User does not exist')
+      }
     }
   }
 
@@ -37,7 +52,7 @@ function Login() {
           >
             Don't have an account?
             <Link
-              className='text-xs font-medium hover:underline'
+              className='text-xs font-medium hover:opacity-80 active:opacity-100'
               to={'/signup'}
             >
               <Text as='span' color='blue'>
@@ -45,6 +60,14 @@ function Login() {
               </Text>
             </Link>
           </Text>
+          {error && <Callout.Root variant='surface' color="red">
+            <Callout.Icon>
+              <InfoCircledIcon />
+            </Callout.Icon>
+            <Callout.Text>
+              {error}
+            </Callout.Text>
+          </Callout.Root>}
           <label>
             <Text as="div" size="2" mb="2" >
               Username/Email*
@@ -103,8 +126,8 @@ function Login() {
             type='submit'
             size={'3'}
             highContrast
-            color='blue'
             className='text-sm font-bold'
+            color='blue'
           >
             SIGN IN
           </Button>
