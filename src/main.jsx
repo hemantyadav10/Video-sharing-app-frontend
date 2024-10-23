@@ -25,6 +25,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import VideoPage from './pages/VideoPage.jsx';
 import AuthProvider from './context/authContext.jsx';
+import PublicRoute from './components/PublicRoute.jsx';
 
 
 export const queryClient = new QueryClient({
@@ -62,8 +63,10 @@ const router = createBrowserRouter(
         <Route path='history' element={<History />} />
         <Route path='/watch/:videoId' element={<VideoPage />} />
       </Route>
-      <Route path='/login' element={<Login />} />
-      <Route path='/signup' element={<Signup />} />
+      <Route element={<PublicRoute />}>
+        <Route path='/login' element={<Login />} />
+          <Route path='/signup' element={<Signup />} />
+      </Route>
     </Route>
   )
 )
@@ -72,7 +75,7 @@ const router = createBrowserRouter(
 createRoot(document.getElementById('root')).render(
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <Theme appearance='dark'>
+      <Theme appearance='dark' accentColor='blue'>
         <RouterProvider router={router} />
         <ReactQueryDevtools initialIsOpen={false} />
       </Theme>
