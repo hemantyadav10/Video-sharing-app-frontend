@@ -45,7 +45,7 @@ const useGetCurrentUser = (token) => {
 
 const useFetchUserWatchHistory = (user) => {
   return useQuery({
-    queryKey: ['watch_history'],
+    queryKey: ['watch_history', user],
     queryFn: getUserWatchHistory, 
     enabled: !!user
   })

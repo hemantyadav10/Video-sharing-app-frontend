@@ -6,7 +6,7 @@ import { timeAgo } from '../utils/formatTimeAgo'
 
 function VideoCard2({
   videoNumber = 0,
-  video
+  video,
 }) {
 
   const navigate = useNavigate()
@@ -24,7 +24,8 @@ function VideoCard2({
       </div>
       <div className='flex flex-1 gap-1'>
         <div className='flex-1 '>
-          <p title='NextJs auth project series launch video 1 ' className='mb-2 text-base font-medium line-clamp-2 lg:text-sm xl:text-base'>
+          <p title={video?.title}
+            className='mb-2 text-base font-medium line-clamp-2 lg:text-sm xl:text-base'>
             {video?.title}
           </p>
           <p className='text-xs text-[#f1f7feb5]'>
