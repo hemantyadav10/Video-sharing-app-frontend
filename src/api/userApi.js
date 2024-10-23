@@ -25,10 +25,16 @@ const getCurrentUser = async () => {
   return res.data;
 }
 
+const getUserWatchHistory = async () => {
+  const res = await apiClient.get('/users/watch-history')
+  return res.data
+}
+
 export {
   getUserChannelInfo,
   getUserVideos,
   loginUser,
   logoutUser,
-  getCurrentUser
+  getCurrentUser, 
+  getUserWatchHistory
 }

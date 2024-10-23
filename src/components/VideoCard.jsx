@@ -4,6 +4,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { timeAgo } from '../utils/formatTimeAgo'
 import { formatVideoDuration } from '../utils/formatVideoDuration'
+import { useAuth } from '../context/authContext'
 
 function VideoCard({
   hideAvatar = false,
@@ -15,13 +16,17 @@ function VideoCard({
   hideUsername = false,
   error
 }) {
+  console.log(videoData)
+  const { isAuthenticated } = useAuth()
+  console.log(loading)
+
   return (
-    <div className={`flex gap-4 sm:mb-4 rounded-t-xl ${list ? 'sm:grid sm:grid-cols-12 flex-col max-w-6xl ' : 'flex-col '}  line-clamp-1 `}>
+    <div className={`flex gap-4 sm:mb-4 rounded-t-xl ${list ? 'sm:grid sm:grid-cols-12 w-full flex-col max-w-6xl ' : 'flex-col '}  line-clamp-1 `}>
       <Skeleton loading={loading}>
         <Link
           to={`/watch/${videoData?._id}`}
           state={{ thumbnail: videoData?.thumbnail }}
-           className={`relative rounded-xl aspect-video  ${list ? "sm:col-span-5" : ""}`}
+          className={`relative rounded-xl aspect-video  ${list ? "sm:col-span-5" : ""} `}
         >
           <img
             src={videoData?.thumbnail || 'https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop'}
@@ -40,7 +45,7 @@ function VideoCard({
         gapX='3'
         className={`relative ${list ? "sm:col-span-7" : ""}`}
       >
-        {removeFromHistoryButton && loading &&
+        {removeFromHistoryButton && !loading &&
           <Tooltip
             width={'100px'}
             content='Remove from watch history'
@@ -48,7 +53,7 @@ function VideoCard({
             <IconButton
               aria-label="Remove from watch history"
               variant='ghost'
-              className='absolute rounded-full sm:right-[6px] top-1 right-2'
+              className='absolute rounded-full sm:right-[6px] top-2 right-2'
               highContrast
               color='gray'
             >
@@ -57,7 +62,7 @@ function VideoCard({
           </Tooltip>
         }
         {moreOptionsButton && <DropdownMenu.Root >
-          <DropdownMenu.Trigger hidden={loading}>
+          <DropdownMenu.Trigger hidden={loading || !isAuthenticated}>
             <IconButton
               aria-label="More options"
               variant='ghost'
@@ -76,13 +81,13 @@ function VideoCard({
         </DropdownMenu.Root>}
         {!hideAvatar &&
           <Skeleton loading={loading}>
-            <Link to={`/channel/${videoData?.owner?._id}`} className='w-10 h-10 rounded-full aspect-square'>
+            <Link to={`/channel/${videoData?.owner?._id}`} className={`w-10 h-10 transition-all rounded-full aspect-square hover:brightness-90 ${list && " sm:hidden"}`}>
               <Avatar
                 radius='full'
                 size={'3'}
                 src={videoData?.owner?.avatar}
                 fallback="A"
-                className={`${list && " sm:hidden"} w-full h-full object-cover object-center`}
+                className={` w-full h-full object-cover object-center`}
               />
             </Link>
           </Skeleton>
@@ -91,29 +96,35 @@ function VideoCard({
           direction={'column'}
           gapY={'2'}
         >
-          <Text
-            as='p'
-            weight={'medium'}
-            size={'2'}
-            className={`pr-8  line-clamp-2 ${list ? "md:text-base lg:text-lg" : ""}`}
-          >
-            <Skeleton loading={loading}>
-              <Link
-                to={`/watch/${videoData?._id}`}
-              >
-                {videoData?.title}
-              </Link>
-            </Skeleton>
-          </Text>
+          <Skeleton loading={loading} height={'20px'} >
+            <Link
+              title={videoData?.title}
+              to={`/watch/${videoData?._id}`}
+              className={`text-sm pr-8 line-clamp-2 ${list ? "md:text-base lg:text-lg" : ""} font-medium`}
+            >
+              {videoData?.title}
+            </Link>
+          </Skeleton>
           {!hideUsername && <Skeleton loading={loading}>
-            <Link to={`/channel/${videoData?.owner?._id}`}>
+            <Link to={`/channel/${videoData?.owner?._id}`}
+              className=''
+            >
               <Text
                 as='p'
                 size={'1'}
                 color='gray'
-                className={`${list && "sm:order-2 flex items-center gap-3"}`}
+                className={`${list && "sm:order-2 flex items-center gap-3"} hover:text-white`}
               >
-                {list && <img src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop" alt="" className='hidden rounded-full size-6 sm:block' />}
+                {list &&
+                  <Skeleton loading={loading}>
+                    <Avatar
+                      radius='full'
+                      src={videoData?.owner?.avatar}
+                      fallback="A"
+                      className={`  object-cover object-center hidden  size-6 sm:block`}
+                    />
+                  </Skeleton>
+                }
                 {videoData?.owner?.username}
               </Text>
             </Link>
@@ -133,7 +144,7 @@ function VideoCard({
               color='gray'
               className='line-clamp-1'
             >
-              Any unauthorised use of the beats, including commercial use of tagged beats as well as unauthorised reselling, is considered a direct violation of the Copyright law and is infringing upon the copyrights of the works of FlipTunesMusic. Under the fullest extent of the law, FlipTunesMusic reserves the right to take legal action or pursue financial compensation as a result of any breach or violation of the Licensing Policy.
+              {videoData?.description}
             </Text>
 
           </div>}

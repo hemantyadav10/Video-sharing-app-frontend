@@ -3,6 +3,7 @@ import {
   getCurrentUser,
   getUserChannelInfo,
   getUserVideos,
+  getUserWatchHistory,
   loginUser,
   logoutUser
 } from "../../api/userApi"
@@ -42,10 +43,19 @@ const useGetCurrentUser = (token) => {
   })
 }
 
+const useFetchUserWatchHistory = (user) => {
+  return useQuery({
+    queryKey: ['watch_history'],
+    queryFn: getUserWatchHistory, 
+    enabled: !!user
+  })
+}
+
 export {
   useFetchUserChannelInfo,
   useFetchUserVideos,
   useLoginUser,
   userLogoutUser,
-  useGetCurrentUser
+  useGetCurrentUser,
+  useFetchUserWatchHistory
 }
