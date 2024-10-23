@@ -12,10 +12,10 @@ const AuthContext = createContext({
 })
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
+  const [token, setToken] = useState(localStorage.getItem('token') || null);
   const { data: currentUser, isLoading: loadingUserData } = useGetCurrentUser(token)
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const isAuthenticated = !!user && !!token;
 
 
   const { mutateAsync: loginMutation, isPending: loggingIn } = useLoginUser()
@@ -27,7 +27,7 @@ const AuthProvider = ({ children }) => {
       console.log(res)
       const { user, accessToken } = res.data
       setToken(accessToken)
-      setIsAuthenticated(true)
+      setUser(user)
 
       localStorage.setItem('token', accessToken)
       localStorage.setItem('user', JSON.stringify(user))
@@ -43,7 +43,6 @@ const AuthProvider = ({ children }) => {
 
       setToken(null)
       setUser(null)
-      setIsAuthenticated(false)
 
       localStorage.removeItem('token')
       localStorage.removeItem('user')
@@ -58,7 +57,6 @@ const AuthProvider = ({ children }) => {
     if (storedUser && storedToken) {
       setToken(storedToken)
       setUser(storedUser)
-      setIsAuthenticated(true)
     }
   }, [])
 
