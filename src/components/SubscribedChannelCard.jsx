@@ -1,23 +1,42 @@
-import { Button } from '@radix-ui/themes'
+import { Button, Skeleton } from '@radix-ui/themes'
 import React from 'react'
 import { Link } from 'react-router-dom'
+import SubscriptionButton from './SubscriptionButton'
 
-function SubscribedChannelCard() {
+function SubscribedChannelCard({
+  channel,
+  loading,
+}) {
+
+  console.log(channel)
   return (
     <div className='flex items-center justify-between w-full max-w-3xl gap-4 mx-auto '>
-      <Link to={'/channel/hemant'} className='flex items-center flex-1 gap-4 group' >
-        <div className='transition-all max-w-32 min-w-16 group-hover:brightness-75 group-active:brightness-100'>
-          <img src="https://yt3.googleusercontent.com/ytc/AIdro_m05oPc8I5nhz_ej6JdKoxA6vglaI76AMqtDELBj1s2o0o=s176-c-k-c0x00ffffff-no-rj-mo" alt="" className='w-full rounded-full aspect-square' />
-        </div>
+      <Link to={`/channel/${channel?._id}`} className='flex items-center flex-1 gap-4 group' >
+        <Skeleton className='w-32 min-w-16 aspect-square' loading={loading}>
+          <div className='transition-all rounded-full max-w-32 min-w-16 group-hover:brightness-75 group-active:brightness-100'>
+            <img src={channel?.avatar} alt="" className='object-cover object-center w-full rounded-full aspect-square' />
+          </div>
+        </Skeleton>
         <div className='flex-1 space-y-2'>
-          <p className='text-lg font-medium break-words line-clamp-2'>CodeWithHarry</p>
-          <p className='text-xs text-[#f1f7feb5]'>@CodeWithHarry • 6.77M subscribers</p>
+          <p className='text-lg font-medium break-words line-clamp-2'>
+            <Skeleton height={'28px'} className='w-1/2' loading={loading}>
+              {channel?.fullName}
+            </Skeleton>
+          </p>
+          <Skeleton loading={loading}>
+            <span className='text-xs text-[#f1f7feb5]'>@{channel?.username} • {channel?.subscribersCount} subscribers</span>
+          </Skeleton>
         </div>
       </Link>
       <div className='hidden sm:block'>
-        <Button radius='full' highContrast  variant='soft'>
-          Subscribed
-        </Button>
+        <Skeleton loading={loading}>
+          <SubscriptionButton
+            userId={channel?._id}
+            subscribed={true}
+            loading={loading}
+          />
+        </Skeleton>
+
       </div>
     </div>
   )
