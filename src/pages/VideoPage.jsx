@@ -1,23 +1,66 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Link, useLocation, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { useFetchVideoById } from '../lib/queries/videoQueries'
-import { Button, DropdownMenu, IconButton, Skeleton } from '@radix-ui/themes'
+import { Button, DropdownMenu, Flex, IconButton, Popover, Skeleton, Text } from '@radix-ui/themes'
 import { BookmarkIcon, DotsVerticalIcon, HeartFilledIcon, HeartIcon } from '@radix-ui/react-icons'
 import { timeAgo } from '../utils/formatTimeAgo'
 import CommentSection from '../components/CommentSection'
+import SubscriptionButton from '../components/SubscriptionButton'
+import { useAuth } from '../context/authContext'
+import ThumbsUp from '../assets/ThumbsUpIcon'
+import ThumbsUpSolidIcon from '../assets/ThumbsUpSolidIcon'
+import { useToggleVideoLike } from '../lib/queries/likeQueries'
+import toast from 'react-hot-toast'
 
 function VideoPage() {
   const { videoId } = useParams()
-  const { data: video, isLoading } = useFetchVideoById(videoId)
+  const { isAuthenticated, user } = useAuth()
+  const { data: video, isLoading } = useFetchVideoById(videoId, user?._id)
   const [isExpanded, setIsExpanded] = useState(false);
   const descriptionRef = useRef(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
+  console.log(video)
+  const { mutate: toggleLike } = useToggleVideoLike(videoId)
+  const [isVideoLiked, setIsVideoLiked] = useState(video?.data.isLiked || false)
+  const [videoLikesCount, setVideoLikesCount] = useState(video?.data.likesCount || 0)
+
+  console.log(videoLikesCount)
 
   useEffect(() => {
     if (descriptionRef.current) {
       setIsOverflowing(descriptionRef.current.scrollHeight > descriptionRef.current.clientHeight);
     }
   }, [video?.data.description]);
+
+  useEffect(() => {
+    if (video?.data.isLiked !== undefined) {
+      setIsVideoLiked(video?.data.isLiked);
+    }
+  }, [video?.data.isLiked]);
+
+  useEffect(() => {
+    setVideoLikesCount(video?.data.likesCount);
+  }, [video?.data.likesCount]);
+
+
+
+  const handleToggleLike = async () => {
+    if (isAuthenticated) {
+
+      setIsVideoLiked(prev => !prev)
+      setVideoLikesCount(prev => {
+        return isVideoLiked ? prev - 1 : prev + 1
+      })
+      toggleLike(videoId, {
+        onError: () => {
+          // Revert the optimistic update in case of an error
+          setIsVideoLiked((prev) => !prev);
+          setVideoLikesCount((prev) => !prev);
+          toast.error('Something went wrong. Please try again.');
+        }
+      })
+    }
+  }
 
   return (
     <div className='w-full mb-32 sm:p-6'>
@@ -63,25 +106,62 @@ function VideoPage() {
                   </Link>
                 </Skeleton>
               </div>
-              <Skeleton loading={isLoading}>
-                <Button
-                  radius='full'
-                  color='blue'
-                  highContrast
-                >
-                  Subscribe
-                </Button>
-              </Skeleton>
+              {isAuthenticated ?
+                (user?._id === video?.data.owner._id ?
+                  <Button
+                    radius='full'
+                    variant='soft'
+                    highContrast
+                  >
+                    Edit video
+                  </Button> :
+                  <SubscriptionButton
+                    loading={isLoading}
+                    userId={video?.data.owner._id}
+                    subscribed={video?.data.owner.isSubscribed}
+                  />
+                ) :
+                <Popover.Root >
+                  <Skeleton loading={isLoading}>
+                    <Popover.Trigger>
+                      <Button
+                        color='blur'
+                        highContrast
+                        radius='full'
+                      >
+                        Subscribe
+                      </Button>
+                    </Popover.Trigger>
+                  </Skeleton>
+                  <Popover.Content className='z-10' width="360px">
+                    <Flex p={'2'} direction={'column'} gapY={'3'}>
+                      <Text as='p'>
+                        Want to subscribe to this channel?
+                      </Text>
+                      <Text size={'2'} color='gray'>
+                        Sign in to subscribe to this channel.
+                      </Text>
+                      <Link to={'/login'}>
+                        <Button mt={'4'} radius='full' variant='ghost' className='w-max'>
+                          Sign in
+                        </Button>
+                      </Link>
+                    </Flex>
+                  </Popover.Content>
+                </Popover.Root>
+              }
+
             </div>
             <div className='flex items-center gap-3 rounded-full'>
               <Skeleton loading={isLoading}>
                 <Button
+                  onClick={handleToggleLike}
                   variant='soft'
                   color='gray'
                   highContrast
                   radius='full'
                 >
-                  <HeartIcon /> {video?.data.likesCount}
+                  {isVideoLiked ? <ThumbsUpSolidIcon height='20' width='20' /> : <ThumbsUp height='20' width='20' />} {videoLikesCount}
                 </Button>
               </Skeleton>
 
@@ -118,8 +198,8 @@ function VideoPage() {
               <p
                 ref={descriptionRef}
                 className={`  ${isExpanded ? "h-auto" : "line-clamp-2"} duration-300`}
-                >
-                {video?.data.description} 
+              >
+                {video?.data.description}
               </p>
               {isOverflowing &&
                 <Button
