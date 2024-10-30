@@ -7,14 +7,21 @@ import ThumbsUpSolidIcon from '../assets/ThumbsUpSolidIcon'
 import ThumbsUp from '../assets/ThumbsUpIcon'
 import { useToggleCommentLike } from '../lib/queries/likeQueries'
 import { useNavigate } from 'react-router-dom'
+import { useDeleteComment } from '../lib/queries/commentQueries'
+import toast from 'react-hot-toast'
 
-function CommentCard({ comment, videoId }) {
+function CommentCard({
+  comment,
+  videoId,
+}) {
   const { user, isAuthenticated } = useAuth()
   const [commentLikesCount, setCommentLikesCount] = useState(comment?.likesCount || 0)
   const [isCommentLiked, setIsCommentLiked] = useState(comment?.isLiked || false)
   const navigate = useNavigate();
 
   const { mutate: toggleLike } = useToggleCommentLike(comment?._id, videoId)
+  const { mutate: deleteComment } = useDeleteComment(videoId, user, comment?._id)
+
 
 
   useEffect(() => {
@@ -45,6 +52,18 @@ function CommentCard({ comment, videoId }) {
     }
   }
 
+  const handleDeleteComment = async () => {
+    deleteComment(comment?._id, {
+      onSuccess: () => {
+        console.log('comment deleted')
+        return toast('Comment deleted')
+      },
+      onError: () => {
+        return toast.err('Some error occured. Please try again.')
+      }
+    })
+  }
+
   return (
     <div className='flex gap-4 '>
       <div className='w-10 '>
@@ -64,27 +83,33 @@ function CommentCard({ comment, videoId }) {
               {timeAgo(comment?.createdAt)}
             </span>
           </div>
-          {isAuthenticated && <DropdownMenu.Root>
-            <DropdownMenu.Trigger>
-              <IconButton
-                variant='ghost'
-                highContrast
-                color='gray'
-                radius='full'
-                size={'2'}
-              >
-                <DotsVerticalIcon />
-              </IconButton>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content variant='soft'>
-              <DropdownMenu.Item>
-                <Pencil1Icon /> Edit
-              </DropdownMenu.Item>
-              <DropdownMenu.Item>
-                <TrashIcon /> Delete
-              </DropdownMenu.Item>
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
+          {isAuthenticated &&
+            (user?._id === comment?.owner._id &&
+              < DropdownMenu.Root >
+                <DropdownMenu.Trigger>
+                  <IconButton
+                    variant='ghost'
+                    highContrast
+                    color='gray'
+                    radius='full'
+                    size={'2'}
+                  >
+                    <DotsVerticalIcon />
+                  </IconButton>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content
+                  variant='soft'
+                  className='w-36'
+                >
+                  <DropdownMenu.Item>
+                    <Pencil1Icon /> Edit
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item onClick={handleDeleteComment}>
+                    <TrashIcon /> Delete
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
+            )
           }
         </div>
         <p className='break-words whitespace-pre-wrap'>
@@ -99,14 +124,14 @@ function CommentCard({ comment, videoId }) {
             radius='full'
           >
             {isCommentLiked ?
-              <ThumbsUpSolidIcon height='18' width='18' /> :
-              <ThumbsUp height='18' width='18' />
+              <ThumbsUpSolidIcon height='20' width='20' /> :
+              <ThumbsUp height='20' width='20' />
             }
           </IconButton>
           {commentLikesCount}
         </div>
       </div>
-    </div>
+    </div >
   )
 }
 

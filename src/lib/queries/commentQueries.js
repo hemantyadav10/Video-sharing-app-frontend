@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { addComment, fetchVideoComments } from "../../api/commentApi"
+import { addComment, deleteComment, fetchVideoComments } from "../../api/commentApi"
 import { queryClient } from "../../main"
 
 const useGetVideoComments = (videoId, userId) => {
@@ -38,16 +38,33 @@ const useAddComment = (videoId, user) => {
             totalDocs: prev.data.totalDocs + 1
           }
         }
-
-      }
-      )
+      })
       queryClient.invalidateQueries({ queryKey: ['comments', videoId] });
     }
   })
 }
 
+const useDeleteComment = (videoId, user, commentId) => {
+  return useMutation({
+    mutationFn: (commentId) => deleteComment(commentId),
+    onSuccess: () => {
+      queryClient.setQueryData(['comments', videoId, user._id], (prev) => {
+        return {
+          ...prev,
+          data: {
+            ...prev.data,
+            docs: prev.data.docs.filter((comment) => comment._id !== commentId),
+            totalDocs: prev.data.totalDocs - 1
+          }
+        }
+      })
+      queryClient.invalidateQueries({ queryKey: ['comments', videoId] });
+    }
+  })
+}
 
 export {
   useGetVideoComments,
-  useAddComment
+  useAddComment,
+  useDeleteComment
 }
