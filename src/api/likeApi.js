@@ -10,7 +10,13 @@ const toggleVideoLike = async (videoId) => {
   return res.data;
 }
 
+const toggleCommentLike = async (commentId) => {
+  const res = await apiClient.post(`/likes/toggle/c/${commentId}`)
+  return res.data;
+}
+
 export {
   getUserLikedVideos,
-  toggleVideoLike
+  toggleVideoLike,
+  toggleCommentLike
 }

@@ -1,11 +1,50 @@
 import { DotsVerticalIcon, HeartIcon, Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
 import { DropdownMenu, IconButton } from '@radix-ui/themes'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { timeAgo } from '../utils/formatTimeAgo'
+import { useAuth } from '../context/authContext'
+import ThumbsUpSolidIcon from '../assets/ThumbsUpSolidIcon'
+import ThumbsUp from '../assets/ThumbsUpIcon'
+import { useToggleCommentLike } from '../lib/queries/likeQueries'
+import { useNavigate } from 'react-router-dom'
 
-function CommentCard({ comment }) {
+function CommentCard({ comment, videoId }) {
+  const { user, isAuthenticated } = useAuth()
+  const [commentLikesCount, setCommentLikesCount] = useState(comment?.likesCount || 0)
+  const [isCommentLiked, setIsCommentLiked] = useState(comment?.isLiked || false)
+  const navigate = useNavigate();
 
-  console.log(comment)
+  const { mutate: toggleLike } = useToggleCommentLike(comment?._id, videoId)
+
+
+  useEffect(() => {
+    if (comment?.isLiked !== undefined) {
+      setIsCommentLiked(comment?.isLiked);
+    }
+  }, [comment?.isLiked]);
+
+
+  const handleToggleLike = async () => {
+
+    if (isAuthenticated) {
+
+      setIsCommentLiked(prev => !prev)
+      setCommentLikesCount(prev => {
+        return isCommentLiked ? prev - 1 : prev + 1
+      })
+      toggleLike(comment?._id, {
+        onError: () => {
+          // Revert the optimistic update in case of an error
+          setIsCommentLiked((prev) => !prev);
+          setCommentLikesCount((prev) => !prev);
+          toast.error('Something went wrong. Please try again.');
+        }
+      })
+    } else {
+      navigate('/login')
+    }
+  }
+
   return (
     <div className='flex gap-4 '>
       <div className='w-10 '>
@@ -25,7 +64,7 @@ function CommentCard({ comment }) {
               {timeAgo(comment?.createdAt)}
             </span>
           </div>
-          <DropdownMenu.Root>
+          {isAuthenticated && <DropdownMenu.Root>
             <DropdownMenu.Trigger>
               <IconButton
                 variant='ghost'
@@ -46,20 +85,25 @@ function CommentCard({ comment }) {
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
+          }
         </div>
-        <p>
+        <p className='break-words whitespace-pre-wrap'>
           {comment?.content}
         </p>
         <div className='flex items-center gap-1 mt-2 text-xs'>
           <IconButton
+            onClick={handleToggleLike}
             variant='ghost'
             color='gray'
             highContrast
             radius='full'
           >
-            <HeartIcon height={'18'} width={'18'} />
+            {isCommentLiked ?
+              <ThumbsUpSolidIcon height='18' width='18' /> :
+              <ThumbsUp height='18' width='18' />
+            }
           </IconButton>
-          {comment?.likesCount}
+          {commentLikesCount}
         </div>
       </div>
     </div>

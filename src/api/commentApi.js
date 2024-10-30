@@ -5,6 +5,14 @@ const fetchVideoComments = async (videoId) => {
   return res.data;
 }
 
+const addComment = async (content, videoId) => {
+  const res = await apiClient.post(`/comments/${videoId}`, { content: content })
+  return res.data;
+
+
+}
+
 export {
-  fetchVideoComments
+  fetchVideoComments,
+  addComment
 }
