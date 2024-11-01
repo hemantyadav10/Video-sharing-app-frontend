@@ -15,8 +15,16 @@ const deleteComment = async (commentId) => {
   return res.data;
 }
 
+const updateComment = async (commentId, newComment) => {
+  const res = await apiClient.patch(`/comments/c/${commentId}`, {newComment: newComment})
+  return res.data;
+}
+
+
+
 export {
   fetchVideoComments,
   addComment,
-  deleteComment
+  deleteComment,
+  updateComment
 }

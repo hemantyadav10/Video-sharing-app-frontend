@@ -1,5 +1,5 @@
 import { DotsVerticalIcon, HeartIcon, Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
-import { DropdownMenu, IconButton } from '@radix-ui/themes'
+import { Button, DropdownMenu, IconButton, Text, TextArea } from '@radix-ui/themes'
 import React, { useEffect, useState } from 'react'
 import { timeAgo } from '../utils/formatTimeAgo'
 import { useAuth } from '../context/authContext'
@@ -7,7 +7,7 @@ import ThumbsUpSolidIcon from '../assets/ThumbsUpSolidIcon'
 import ThumbsUp from '../assets/ThumbsUpIcon'
 import { useToggleCommentLike } from '../lib/queries/likeQueries'
 import { useNavigate } from 'react-router-dom'
-import { useDeleteComment } from '../lib/queries/commentQueries'
+import { useDeleteComment, useUpdateComment } from '../lib/queries/commentQueries'
 import toast from 'react-hot-toast'
 
 function CommentCard({
@@ -21,6 +21,9 @@ function CommentCard({
 
   const { mutate: toggleLike } = useToggleCommentLike(comment?._id, videoId)
   const { mutate: deleteComment } = useDeleteComment(videoId, user, comment?._id)
+  const [isEditable, setIsEditable] = useState(false);
+  const [content, setContent] = useState(comment?.content || '')
+  const { mutate: updateComment, isPending: updatingComment } = useUpdateComment(videoId, user, comment?._id)
 
 
 
@@ -64,6 +67,19 @@ function CommentCard({
     })
   }
 
+  const handleUpdateComment = async () => {
+    updateComment(content, {
+      onSuccess: () => {
+        setIsEditable(false)
+        return toast('Comment updated')
+      },
+      onError: (error) => {
+        console.log(error)
+      }
+    })
+  }
+
+
   return (
     <div className='flex gap-4 '>
       <div className='w-10 '>
@@ -73,15 +89,46 @@ function CommentCard({
           className='object-cover object-center rounded-full size-10'
         />
       </div>
-      <div className='flex flex-col flex-1 gap-1 text-sm'>
+      {isEditable && <div className='flex-1'>
+        <TextArea
+          autoFocus
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+        />
+        <div className='flex justify-end gap-2 mt-2 '>
+          <Button
+            onClick={() => {
+              setIsEditable(false)
+              setContent(comment?.content)
+            }}
+            // hidden={!commentText?.trim()}
+            variant='soft'
+            color='gray'
+            highContrast
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleUpdateComment}
+            disabled={!content?.trim() || content?.trim() === comment?.content}
+            loading={updatingComment}
+            variant='soft'
+            highContrast
+          >
+            Save
+          </Button>
+        </div>
+      </div>}
+      {!isEditable && <div className='flex flex-col flex-1 gap-1 text-sm'>
         <div className='flex items-center justify-between gap-1 text-sm '>
           <div className='flex items-center gap-1 text-sm '>
             <span className='font-medium'>
               @{comment?.owner.username}
             </span>
-            <span className='text-xs'>
+            <Text as='span' color='gray' size={'1'}>
               {timeAgo(comment?.createdAt)}
-            </span>
+              {comment?.createdAt !== comment?.updatedAt && ' (edited)'}
+            </Text>
           </div>
           {isAuthenticated &&
             (user?._id === comment?.owner._id &&
@@ -101,10 +148,10 @@ function CommentCard({
                   variant='soft'
                   className='w-36'
                 >
-                  <DropdownMenu.Item>
+                  <DropdownMenu.Item onClick={() => setIsEditable(true)}>
                     <Pencil1Icon /> Edit
                   </DropdownMenu.Item>
-                  <DropdownMenu.Item onClick={handleDeleteComment}>
+                  <DropdownMenu.Item color='red' onClick={handleDeleteComment}>
                     <TrashIcon /> Delete
                   </DropdownMenu.Item>
                 </DropdownMenu.Content>
@@ -128,9 +175,11 @@ function CommentCard({
               <ThumbsUp height='20' width='20' />
             }
           </IconButton>
-          {commentLikesCount}
+          <Text as='span' color='gray' size={'1'}>
+            {commentLikesCount}
+          </Text>
         </div>
-      </div>
+      </div>}
     </div >
   )
 }

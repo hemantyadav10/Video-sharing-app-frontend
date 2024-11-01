@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { addComment, deleteComment, fetchVideoComments } from "../../api/commentApi"
+import { addComment, deleteComment, fetchVideoComments, updateComment } from "../../api/commentApi"
 import { queryClient } from "../../main"
 
 const useGetVideoComments = (videoId, userId) => {
@@ -44,6 +44,30 @@ const useAddComment = (videoId, user) => {
   })
 }
 
+const useUpdateComment = (videoId, user, commentId) => {
+  return useMutation({
+    mutationFn: (newComment) => updateComment(commentId, newComment),
+    onSuccess: (newComment) => {
+      queryClient.setQueryData(['comments', videoId, user._id], (prev) => {
+        return {
+          ...prev,
+          data: {
+            ...prev.data,
+            docs: prev.data.docs.map((comment) => {
+              if (comment._id === commentId) {
+                comment.content = newComment.data.content
+                comment.updatedAt = new Date()
+                return comment
+              }
+              return comment
+            }),
+          }
+        }
+      })
+    }
+  })
+}
+
 const useDeleteComment = (videoId, user, commentId) => {
   return useMutation({
     mutationFn: (commentId) => deleteComment(commentId),
@@ -66,5 +90,6 @@ const useDeleteComment = (videoId, user, commentId) => {
 export {
   useGetVideoComments,
   useAddComment,
-  useDeleteComment
+  useDeleteComment,
+  useUpdateComment
 }
