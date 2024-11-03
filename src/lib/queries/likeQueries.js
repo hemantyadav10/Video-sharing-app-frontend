@@ -12,7 +12,7 @@ const useGetUserLikedVideos = (user) => {
 
 const useToggleVideoLike = (videoId) => {
   return useMutation({
-    mutationFn: () => toggleVideoLike(videoId),
+    mutationFn: (videoId) => toggleVideoLike(videoId),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['video', videoId]

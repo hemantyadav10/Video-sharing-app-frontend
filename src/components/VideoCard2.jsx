@@ -3,13 +3,31 @@ import { DropdownMenu, IconButton } from '@radix-ui/themes'
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { timeAgo } from '../utils/formatTimeAgo'
+import { useToggleVideoLike } from '../lib/queries/likeQueries'
+import { queryClient } from '../main'
+import { useAuth } from '../context/authContext'
 
 function VideoCard2({
   videoNumber = 0,
   video,
 }) {
-
+  const { user } = useAuth()
   const navigate = useNavigate()
+  const { mutate: unlikeVideo } = useToggleVideoLike(video?._id)
+
+  const handleRemoveVideo = async (e) => {
+    e.stopPropagation();
+    unlikeVideo(video?._id, {
+      onSuccess: () => {
+        queryClient.setQueryData(['liked_videos', user?._id], (prev) => {
+          return {
+            ...prev,
+            data: prev.data.filter((item) => item.video._id !== video?._id)
+          }
+        })
+      }
+    })
+  }
 
   return (
     <Link
@@ -39,8 +57,8 @@ function VideoCard2({
                 <DotsVerticalIcon />
               </IconButton>
             </DropdownMenu.Trigger>
-            <DropdownMenu.Content>
-              <DropdownMenu.Item><TrashIcon /> Remove from playlist</DropdownMenu.Item>
+            <DropdownMenu.Content variant='soft'>
+              <DropdownMenu.Item onClick={handleRemoveVideo}><TrashIcon /> Remove from playlist</DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
         </div>
