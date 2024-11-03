@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { getUserLikedVideos, toggleCommentLike, toggleVideoLike } from "../../api/likeApi"
+import { getUserLikedVideos, toggleCommentLike, toggleTweetLike, toggleVideoLike } from "../../api/likeApi"
 import { queryClient } from "../../main"
 
 const useGetUserLikedVideos = (user) => {
@@ -35,9 +35,21 @@ const useToggleCommentLike = (commentId, videoId) => {
   })
 }
 
+const useToggleTweetLike = (tweetId, channelId) => {
+  return useMutation({
+    mutationFn: () => toggleTweetLike(tweetId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['userTweets', channelId]
+      })
+    }
+  })
+}
+
 
 export {
   useGetUserLikedVideos,
   useToggleVideoLike,
-  useToggleCommentLike
+  useToggleCommentLike,
+  useToggleTweetLike
 }

@@ -16,9 +16,15 @@ const deleteTweet = async (tweetId) => {
   return res.data;
 }
 
+const updateTweet = async (tweetId, content) => {
+  const res = await apiClient.patch(`tweets/${tweetId}`, { content: content })
+  return res.data;
+}
+
 
 export {
   getUserTweets,
-  createTweet, 
-  deleteTweet
+  createTweet,
+  deleteTweet,
+  updateTweet
 }

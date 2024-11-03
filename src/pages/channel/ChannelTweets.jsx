@@ -1,17 +1,16 @@
-import { Button, Flex, Spinner, TextArea } from '@radix-ui/themes'
-import React, { useMemo, useState } from 'react'
+import { Button, Spinner, TextArea } from '@radix-ui/themes'
+import React, { useState } from 'react'
 import TweetCard from '../../components/TweetCard'
 import { useCreateTweet, useFetchUserTweets } from '../../lib/queries/tweetQueries'
 import { useOutletContext } from 'react-router-dom'
 import { useAuth } from '../../context/authContext'
-import { set } from 'react-hook-form'
 import toast from 'react-hot-toast'
 
 function ChannelTweets() {
   const { userId } = useOutletContext()
   const { user, isAuthenticated } = useAuth()
-  const { data: userTweets, isLoading, error } = useFetchUserTweets(userId)
-  const { mutate: createTweet, isPending: creatingTweet } = useCreateTweet(user)
+  const { data: userTweets, isLoading } = useFetchUserTweets(userId, user?._id)
+  const { mutate: createTweet, isPending: creatingTweet } = useCreateTweet(user, userId)
   const [content, setContent] = useState('')
 
   const handleCreateTweet = async () => {
@@ -65,6 +64,7 @@ function ChannelTweets() {
             key={tweet._id}
             loading={isLoading}
             tweetData={tweet}
+            channelId={userId}
           />
         ))}
       </div>
