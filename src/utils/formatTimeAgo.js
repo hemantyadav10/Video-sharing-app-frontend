@@ -22,9 +22,12 @@ export function timeAgo(dateString) {
     return formatTime(daysAgo, 'day');
   } else if (weeksAgo < 4) {
     return formatTime(weeksAgo, 'week');
+  } else if (daysAgo < 60) { // Adjust for 1 month as 30 to 59 days
+    return formatTime(1, 'month');
   } else if (monthsAgo < 12) {
     return formatTime(monthsAgo, 'month');
   } else {
     return formatTime(yearsAgo, 'year');
   }
 }
+
