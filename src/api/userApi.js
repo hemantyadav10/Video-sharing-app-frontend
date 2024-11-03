@@ -30,11 +30,17 @@ const getUserWatchHistory = async () => {
   return res.data
 }
 
+const changePassword = async (body) => {
+  const res = await apiClient.post('/users/change-password', body)
+  return res.data
+}
+
 export {
   getUserChannelInfo,
   getUserVideos,
   loginUser,
   logoutUser,
-  getCurrentUser, 
-  getUserWatchHistory
+  getCurrentUser,
+  getUserWatchHistory,
+  changePassword
 }

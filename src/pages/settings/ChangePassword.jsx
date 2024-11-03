@@ -1,7 +1,36 @@
-import { Button, Flex, Text, TextField } from '@radix-ui/themes'
-import React from 'react'
+import { InfoCircledIcon } from '@radix-ui/react-icons'
+import { Button, Callout, Flex, Text, TextField } from '@radix-ui/themes'
+import React, { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useChangePassword } from '../../lib/queries/userQueries'
+import toast from 'react-hot-toast'
 
 function ChangePassword() {
+  const { register, handleSubmit, watch, reset, formState: { errors } } = useForm()
+  const oldPassword = watch('oldPassword')
+  const newPassword = watch('newPassword')
+  const { mutate: changePassword, isPending: loading } = useChangePassword()
+  const [error, setError] = useState(null)
+
+  const handleChangePassword = async (data) => {
+    setError('')
+    const { oldPassword, newPassword } = data
+    changePassword({
+      oldPassword,
+      newPassword
+    }, {
+      onSuccess: () => {
+        reset()
+        toast('Password changed successfully')
+      },
+      onError: (err) => {
+        if (err.response.status === 400) {
+          setError('Current password is incorrect')
+        }
+      }
+    })
+  }
+
   return (
     <div className='flex flex-col items-center mb-8 lg:gap-10 lg:flex-row lg:justify-between lg:items-start'>
       <div className='w-full max-w-lg min-w-fit'>
@@ -12,44 +41,101 @@ function ChangePassword() {
           Please enter your current password to change your password.
         </Text>
       </div>
-      <div className='flex flex-col gap-6 p-6 mt-4 border rounded-xl border-[#484848] max-w-lg lg:max-w-xl w-full lg:mt-0 '>
+      <form onSubmit={handleSubmit(handleChangePassword)} className='flex flex-col gap-6 p-6 mt-4 border rounded-xl border-[#484848] max-w-lg lg:max-w-xl w-full lg:mt-0 '>
+        {error && <Callout.Root variant='surface' color="red">
+          <Callout.Icon>
+            <InfoCircledIcon />
+          </Callout.Icon>
+          <Callout.Text>
+            {error}
+          </Callout.Text>
+        </Callout.Root>}
         <label>
           <Text as="div" size="2" mb="2">
-            Current Password
+            Current Password*
           </Text>
           <TextField.Root
+            color={errors.oldPassword ? 'red' : 'blue'}
+            {...register('oldPassword', {
+              required: 'Current Password is required'
+            })}
             size={'3'}
-            defaultValue="Freja Johnsen"
-            placeholder="Enter your full name"
+            placeholder="Enter current password"
+            className='border-red-500'
           />
+          {errors.oldPassword &&
+            <Text as='p' size={'1'} mt={'2'} color='red' className='flex items-center gap-1 '>
+              <InfoCircledIcon height={"16"} width={"16"} />{errors.oldPassword.message}
+            </Text>
+          }
         </label>
         <label>
           <Text as="div" size="2" mb="2">
-            New password
+            New password*
           </Text>
           <TextField.Root
+            color={errors.newPassword ? 'red' : 'blue'}
+            {...register('newPassword', {
+              required: 'New password is required',
+              minLength: {
+                value: 7,
+                message: 'New password must be atleast 7 characters long'
+              },
+              validate: (value) => {
+                return value !== oldPassword || 'New password must be different from the current password'
+              }
+            })}
             size={'3'}
-            defaultValue="Freja Johnsen"
-            placeholder="Enter your email"
+            placeholder="Enter new password"
           />
+          {errors.newPassword &&
+            <Text as='p' size={'1'} mt={'2'} color='red' className='flex items-center gap-1 '>
+              <InfoCircledIcon height={"16"} width={"16"} />{errors.newPassword.message}
+            </Text>
+          }
         </label>
         <label>
           <Text as="div" size="2" mb="2">
-            Confirm new password
+            Confirm new password*
           </Text>
           <TextField.Root
+            color={errors.confirmPassword ? 'red' : 'blue'}
+            {...register('confirmPassword', {
+              required: 'Please confirm your new password.',
+              validate: (value) => {
+                return value === newPassword || 'New password and confirm password do not match.'
+              }
+            })}
             size={'3'}
-            defaultValue="Freja Johnsen"
-            placeholder="Enter your email"
+            placeholder="Re-enter new password"
           />
+          {errors.confirmPassword &&
+            <Text as='p' size={'1'} mt={'2'} color='red' className='flex items-center gap-1 '>
+              <InfoCircledIcon height={"16"} width={"16"} />{errors.confirmPassword.message}
+            </Text>
+          }
         </label>
         <Flex gap="3" justify="end">
-          <Button variant="soft" color="gray">
+          <Button
+            disabled={loading}
+            highContrast
+            onClick={() => reset()}
+            type='button'
+            variant="soft"
+            color="gray"
+          >
             Cancel
           </Button>
-          <Button variant='surface'>Update password</Button>
+          <Button
+            loading={loading}
+            type='submit'
+            variant='soft'
+            highContrast
+          >
+            Update password
+          </Button>
         </Flex>
-      </div>
+      </form>
     </div>
   )
 }

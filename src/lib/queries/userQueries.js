@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
 import {
+  changePassword,
   getCurrentUser,
   getUserChannelInfo,
   getUserVideos,
@@ -8,10 +9,10 @@ import {
   logoutUser
 } from "../../api/userApi"
 
-const useFetchUserChannelInfo = (userId) => {
+const useFetchUserChannelInfo = (channelId, userId) => {
   return useQuery({
-    queryKey: ['user', userId],
-    queryFn: () => getUserChannelInfo(userId)
+    queryKey: ['user', channelId, userId],
+    queryFn: () => getUserChannelInfo(channelId, userId),
   })
 }
 
@@ -34,11 +35,11 @@ const userLogoutUser = () => {
   })
 }
 
-const useGetCurrentUser = (token) => {
+const useGetCurrentUser = (token, userId) => {
   return useQuery({
-    queryKey: ['currentUser'],
+    queryKey: ['currentUser', userId],
     queryFn: getCurrentUser,
-    enabled: !!token,
+    enabled: !!token && !!userId,
     retry: false
   })
 }
@@ -46,9 +47,15 @@ const useGetCurrentUser = (token) => {
 const useFetchUserWatchHistory = (user) => {
   return useQuery({
     queryKey: ['watch_history', user],
-    queryFn: getUserWatchHistory, 
+    queryFn: getUserWatchHistory,
     enabled: !!user
   })
+}
+
+const useChangePassword = () => {
+return useMutation({
+  mutationFn: (data) => changePassword(data) 
+})
 }
 
 export {
@@ -57,5 +64,6 @@ export {
   useLoginUser,
   userLogoutUser,
   useGetCurrentUser,
-  useFetchUserWatchHistory
+  useFetchUserWatchHistory, 
+  useChangePassword
 }
