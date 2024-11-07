@@ -12,7 +12,13 @@ const getPlaylistById = async (playlistId) => {
   return res.data;
 }
 
+const updatePlaylist = async (playlistId, data) => {
+  const res = await apiClient.patch(`/playlist/${playlistId}`, data)
+  return res.data
+}
+
 export {
   getUserPlaylists,
-  getPlaylistById
+  getPlaylistById, 
+  updatePlaylist
 }
