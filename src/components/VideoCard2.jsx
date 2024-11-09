@@ -10,6 +10,7 @@ import { useAuth } from '../context/authContext'
 function VideoCard2({
   videoNumber = 0,
   video,
+  playlistOwnerId
 }) {
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -50,7 +51,7 @@ function VideoCard2({
             {video?.owner.username} • {video?.views} views • {timeAgo(video?.createdAt)}
           </p>
         </div>
-        <div className='flex items-center justify-center'>
+        {user?._id === playlistOwnerId && <div className='flex items-center justify-center'>
           <DropdownMenu.Root>
             <DropdownMenu.Trigger>
               <IconButton radius='full' color='gray' variant='ghost' highContrast >
@@ -61,7 +62,7 @@ function VideoCard2({
               <DropdownMenu.Item onClick={handleRemoveVideo}><TrashIcon /> Remove from playlist</DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
-        </div>
+        </div>}
       </div>
     </Link>
   )
