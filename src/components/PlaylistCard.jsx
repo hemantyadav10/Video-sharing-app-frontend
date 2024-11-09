@@ -2,6 +2,7 @@ import { AspectRatio, Skeleton, Text } from '@radix-ui/themes'
 import React from 'react'
 import PlaylistIcon from '../assets/PlaylistIcon'
 import { Link } from 'react-router-dom'
+import noThumbnail from '../assets/noThumbnail.webp'
 
 function PlaylistCard({
   playlistData,
@@ -15,9 +16,9 @@ function PlaylistCard({
             ratio={16 / 9}
             className='z-[3]'>
             <img
-              src={playlistData?.thumbnail}
+              src={playlistData?.thumbnail || noThumbnail}
               alt="A house in a forest"
-              className='object-cover w-full h-full border-t border-[#111113] rounded-xl'
+              className='object-cover object-center w-full h-full border-t border-[#111113] rounded-xl'
             />
           </ AspectRatio>
           <div className='absolute bottom-0 z-[2] left-2 right-2 h-[calc(100%+4px)] bg-gray-400 border rounded-xl border-[#111113]'></div>

@@ -17,8 +17,14 @@ const updatePlaylist = async (playlistId, data) => {
   return res.data
 }
 
+const deletePlaylist = async (playlistId) => {
+  const res = await apiClient.delete(`/playlist/${playlistId}`)
+  return res.data
+}
+
 export {
   getUserPlaylists,
-  getPlaylistById, 
-  updatePlaylist
+  getPlaylistById,
+  updatePlaylist,
+  deletePlaylist
 }

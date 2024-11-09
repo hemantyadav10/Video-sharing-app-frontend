@@ -1,18 +1,21 @@
 import { Cross1Icon, InfoCircledIcon, Pencil1Icon, PlusIcon, TrashIcon } from '@radix-ui/react-icons'
 import { AlertDialog, Avatar, Button, Dialog, Flex, IconButton, Text, TextArea, TextField, Tooltip } from '@radix-ui/themes'
 import React, { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import VideoCard2 from '../components/VideoCard2'
-import { useFetchPlaylistById, useUpdatePlaylist } from '../lib/queries/playlistQueries'
+import { useDeletePlaylist, useFetchPlaylistById, useUpdatePlaylist } from '../lib/queries/playlistQueries'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useAuth } from '../context/authContext'
+import noThumbnail from '../assets/noThumbnail.webp'
 
 function PlaylistVideos() {
   const { playlistId } = useParams();
   const { user } = useAuth()
   const { data: playlist } = useFetchPlaylistById(playlistId)
   const { mutate: updatePlaylist, isPending: updatingPlaylist } = useUpdatePlaylist(playlistId)
+  const { mutate: deletePlaylist } = useDeletePlaylist(playlistId, user?._id)
+  const navigate = useNavigate();
   const { register, reset, watch, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
       name: playlist?.data?.name || 'hello',
@@ -57,21 +60,34 @@ function PlaylistVideos() {
     }
   };
 
+  console.log(playlist)
+
+
+  // Function to delete playlist 
+  const handleDeletePlaylist = async () => {
+    deletePlaylist(playlistId, {
+      onSuccess: () => {
+        toast('Playlist deleted')
+        navigate('/playlists')
+      }
+    })
+  }
+
   return (
     <div className="flex flex-col w-full mb-16 lg:flex-row lg:p-6">
       <div
         className={`relative p-4 bg-cover bg-center sm:p-6  lg:rounded-t-2xl lg:h-[calc(100vh-122px)] lg:sticky lg:top-[88px] sm:px-24 md:px-6 overflow-hidden bg-fixed`}
-        style={{ backgroundImage: `url(${playlist?.data?.videos[0].thumbnail})` }}
+        style={{ backgroundImage: `url(${playlist?.data?.videos[0]?.thumbnail})` }}
       >
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/20 to-[#111113] backdrop-blur-xl"></div>
+        <div hidden={!playlist?.data.videos.length} className="absolute inset-0 z-0 bg-gradient-to-b from-white/20 to-[#111113] backdrop-blur-xl"></div>
         <div className="relative z-10 flex flex-col w-full gap-6 text-xs md:flex-row md:items-center lg:flex-col lg:w-80">
-          <div className='w-full'>
+          {playlist?.data?.videos.length > 0 && <div className='w-full'>
             <img
-              src={playlist?.data?.videos[0].thumbnail}
+              src={playlist?.data?.videos[0]?.thumbnail || ''}
               alt=""
               className="object-cover object-center w-full rounded-xl aspect-video"
             />
-          </div>
+          </div>}
           <div className='flex flex-col w-full gap-4 text-white'>
             <p className='text-xl font-bold sm:text-2xl line-clamp-2'>
               {playlist?.data?.name}
@@ -231,7 +247,7 @@ function PlaylistVideos() {
                         </Button>
                       </AlertDialog.Cancel>
                       <AlertDialog.Action>
-                        <Button variant="soft" highContrast>
+                        <Button onClick={handleDeletePlaylist} variant="soft" highContrast>
                           Delete
                         </Button>
                       </AlertDialog.Action>
@@ -244,6 +260,9 @@ function PlaylistVideos() {
         </div>
       </div>
       <div className='flex flex-col flex-1 py-4 sm:px-2 lg:py-0'>
+        {playlist?.data.videos.length === 0 &&
+          <p className='text-sm font-medium text-center'>No videos in this playlist</p>
+        }
 
         {playlist?.data.videos.map((video, i) => (
           <VideoCard2
@@ -253,7 +272,7 @@ function PlaylistVideos() {
             playlistOwnerId={playlist?.data?.owner._id}
           />
         ))}
-        <hr className="border-t border-[#484848]" />
+        <hr hidden={!playlist?.data.videos.length} className="border-t border-[#484848]" />
 
       </div>
     </div>

@@ -1,5 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { getPlaylistById, getUserPlaylists, updatePlaylist } from "../../api/playlistApi"
+import {
+  deletePlaylist,
+  getPlaylistById,
+  getUserPlaylists,
+  updatePlaylist
+} from "../../api/playlistApi"
 import { queryClient } from "../../main"
 
 const useFetchUserPlaylists = (userId) => {
@@ -35,8 +40,28 @@ const useUpdatePlaylist = (playlistId) => {
   })
 }
 
+const useDeletePlaylist = (playlistId, userId) => {
+  return useMutation({
+    mutationFn: () => deletePlaylist(playlistId),
+    onSuccess: () => {
+      queryClient.setQueryData(['playlist', 'all', userId], (prev) => {
+        return {
+          ...prev,
+          data: prev.data.filter((playlist) => {
+            return playlist._id !== playlistId
+          })
+        }
+      })
+
+      queryClient.invalidateQueries({ queryKey: ['playlist', 'all', userId] })
+      queryClient.removeQueries({ queryKey: ['playlist', playlistId] })
+    }
+  })
+}
+
 export {
   useFetchUserPlaylists,
   useFetchPlaylistById,
-  useUpdatePlaylist
+  useUpdatePlaylist,
+  useDeletePlaylist
 }
