@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useGetCurrentUser, useLoginUser, userLogoutUser } from "../lib/queries/userQueries";
+import toast from "react-hot-toast";
 
 const AuthContext = createContext({
   user: null,
@@ -14,7 +15,7 @@ const AuthContext = createContext({
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
   const [token, setToken] = useState(localStorage.getItem('token') || null);
-  const { data: currentUser, isLoading: loadingUserData } = useGetCurrentUser(token)
+  const { data: currentUser, isLoading: loadingUserData } = useGetCurrentUser(token, user?._id)
   const isAuthenticated = !!user && !!token;
 
 
@@ -40,7 +41,7 @@ const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await logoutMutation()
-
+      toast.success('Logged out successfully!')
       setToken(null)
       setUser(null)
 
@@ -48,6 +49,7 @@ const AuthProvider = ({ children }) => {
       localStorage.removeItem('user')
     } catch (error) {
       console.log('Logout failed', error)
+      toast.error('Logout unsuccessful. Please try again.')
     }
   }
 
@@ -66,7 +68,8 @@ const AuthProvider = ({ children }) => {
     login,
     logout,
     isAuthenticated,
-    isLoading: loadingUserData || loggingIn || loggingOut
+    isLoading: loadingUserData || loggingIn || loggingOut, 
+    setUser, 
   }
 
   return (

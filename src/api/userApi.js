@@ -35,6 +35,11 @@ const changePassword = async (body) => {
   return res.data
 }
 
+const updateAccountDetails = async (details) => {
+  const res = await apiClient.patch('/users/update-account', details)
+  return res.data
+}
+
 export {
   getUserChannelInfo,
   getUserVideos,
@@ -42,5 +47,6 @@ export {
   logoutUser,
   getCurrentUser,
   getUserWatchHistory,
-  changePassword
+  changePassword,
+  updateAccountDetails
 }

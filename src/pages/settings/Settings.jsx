@@ -1,12 +1,19 @@
 import { Pencil1Icon } from '@radix-ui/react-icons';
-import { Button, Flex, Heading, Text } from '@radix-ui/themes';
+import { Button, Flex, Heading, Skeleton, Text } from '@radix-ui/themes';
 import React from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import CameraIcon from '../../assets/CameraIcon';
+import { useAuth } from '../../context/authContext';
+import { useFetchUserChannelInfo, useFetchUserVideos } from '../../lib/queries/userQueries';
 
 function Settings() {
   const location = useLocation();
   const isVideosActive = location.pathname === '/settings' || location.pathname === '/settings/personalInfo';
+  const { user, isAuthenticated } = useAuth()
+  const { data: channel, isLoading: loadingProfileInfo } = useFetchUserChannelInfo(user?._id)
+  const { data: videoData, isLoading: loadingVideos } = useFetchUserVideos(user?._id)
+
+
 
   return (
     <div className='flex flex-col flex-1'>
@@ -14,14 +21,14 @@ function Settings() {
       {/* cover image and profile image */}
       <div className='relative'>
         <img
-          src="https://images.unsplash.com/photo-1479030160180-b1860951d696?&auto=format&fit=crop&w=1200&q=80"
+          src="https://storage.googleapis.com/support-kms-prod/Ch5HG5RGzGnfHhvVSD93gdoEvWm5IPGUkOnS"
           alt="A house in a forest"
           className='object-cover object-center w-full h-32 cursor-pointer sm:h-40 md:h-48 lg:h-52'
         />
 
         {/* profile image */}
         <div className='absolute bottom-0 translate-y-1/2 rounded-full shadow-md cursor-pointer size-24 left-4 shadow-black/50 md:size-36 md:translate-y-3/4 xl:left-20 lg:left-10 group'>
-          <img src="https://images.unsplash.com/photo-1479030160180-b1860951d696?&auto=format&fit=crop&w=1200&q=80 " alt=""
+          <img src={user?.avatar} alt=""
             className='object-cover w-full rounded-full aspect-square object-square '
           />
           <span className='absolute inset-0 flex items-center justify-center transition-opacity duration-200 rounded-full opacity-0 group-hover:opacity-100 bg-black/40'><CameraIcon /></span>
@@ -32,27 +39,31 @@ function Settings() {
       {/* user info */}
       <div className='justify-between px-4 pt-16 md:py-8 md:ml-40 md:flex xl:px-20 lg:px-10'>
         <div>
-          <Heading as='h3' >
-            Jane Doe
+          <Heading as='h3' className='capitalize'>
+            {user?.fullName}
           </Heading>
           <Text size={'2'} color='gray'>
-            @tranzai
+            @{user?.username}
           </Text>
           <Flex gapX={'2'}>
             <Text size={'2'} color='gray'>
-              500K subscribers
+              <Skeleton loading={loadingProfileInfo}>
+                {channel?.data.subscribersCount} subscribers
+              </Skeleton>
             </Text>
             <Text size={'2'} color='gray'>
               •
             </Text>
             <Text size={'2'} color='gray'>
-              10 videos
+              <Skeleton loading={loadingVideos}>
+                {videoData?.data.totalDocs} videos
+              </Skeleton>
             </Text>
           </Flex>
         </div>
         <div className='py-4 space-x-4 md:py-0'>
-          <Link to='/channel/hemant'>
-            <Button>
+          <Link to={`/channel/${user?._id}`}>
+            <Button variant='soft' highContrast >
               View Channel
             </Button>
           </Link>

@@ -6,7 +6,8 @@ import {
   getUserVideos,
   getUserWatchHistory,
   loginUser,
-  logoutUser
+  logoutUser,
+  updateAccountDetails
 } from "../../api/userApi"
 
 const useFetchUserChannelInfo = (channelId, userId) => {
@@ -53,9 +54,15 @@ const useFetchUserWatchHistory = (user) => {
 }
 
 const useChangePassword = () => {
-return useMutation({
-  mutationFn: (data) => changePassword(data) 
-})
+  return useMutation({
+    mutationFn: (data) => changePassword(data)
+  })
+}
+
+const useUpdateAccountDetails = () => {
+  return useMutation({
+    mutationFn: (data) => updateAccountDetails(data)
+  })
 }
 
 export {
@@ -64,6 +71,7 @@ export {
   useLoginUser,
   userLogoutUser,
   useGetCurrentUser,
-  useFetchUserWatchHistory, 
-  useChangePassword
+  useFetchUserWatchHistory,
+  useChangePassword,
+  useUpdateAccountDetails
 }

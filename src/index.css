@@ -7,15 +7,15 @@
 }
 
 .tabNav {
-	@apply py-2 text-center border-b-[3px];
+	@apply py-2 text-center border-b-[3px]  transition-all  ;
 }
 
 .tabNav_active {
-	@apply bg-[#2f62ff3c] border-b-[#435db1];
+	@apply bg-[#0077ff3a] border-b-[#2870bd] text-[#c2e6ff] ;
 }
 
 .tabNav_inactive {
-	@apply border-transparent hover:border-[#484848] text-[#f1f7feb5] active:bg-[#ddeaf814];
+	@apply border-transparent hover:border-[#2870bd] text-[#f1f7feb5] active:bg-[#0081fd6b] ;
 }
 
 .radix-themes {
