@@ -22,9 +22,22 @@ const deletePlaylist = async (playlistId) => {
   return res.data
 }
 
+const createPlaylist = async (data) => {
+  const res = await apiClient.post('/playlist', data)
+  return res.data
+}
+
+const addVideoToPlaylist = async (videoId, playlistId) => {
+  const res = await apiClient.patch(`/playlist/add/${videoId}/${playlistId}`)
+
+  return res.data
+}
+
 export {
   getUserPlaylists,
   getPlaylistById,
   updatePlaylist,
-  deletePlaylist
+  deletePlaylist,
+  createPlaylist,
+  addVideoToPlaylist
 }
