@@ -5,10 +5,12 @@ import {
   deletePlaylist,
   getPlaylistById,
   getUserPlaylists,
+  removeVideoFromPlaylist,
   updatePlaylist
 } from "../../api/playlistApi"
 import { queryClient } from "../../main"
 
+// Fetches all playlists for a specific user by their ID
 const useFetchUserPlaylists = (userId) => {
   return useQuery({
     queryKey: ['playlist', 'all', userId],
@@ -16,6 +18,7 @@ const useFetchUserPlaylists = (userId) => {
   })
 }
 
+// Fetches a single playlist by its ID
 const useFetchPlaylistById = (playlistId) => {
   return useQuery({
     queryKey: ['playlist', playlistId],
@@ -23,6 +26,7 @@ const useFetchPlaylistById = (playlistId) => {
   })
 }
 
+// Updates a playlist's details (name, description) and refreshes cache
 const useUpdatePlaylist = (playlistId) => {
   return useMutation({
     mutationFn: (data) => updatePlaylist(playlistId, data),
@@ -41,11 +45,13 @@ const useUpdatePlaylist = (playlistId) => {
         }
       })
 
+      // Invalidate the 'all playlists' query to ensure up-to-date data
       queryClient.invalidateQueries({ queryKey: ['playlist', 'all'] })
     }
   })
 }
 
+// Deletes a playlist by its ID and removes it from the user’s playlist cache
 const useDeletePlaylist = (playlistId, userId) => {
   return useMutation({
     mutationFn: () => deletePlaylist(playlistId),
@@ -61,11 +67,13 @@ const useDeletePlaylist = (playlistId, userId) => {
         }
       })
 
+      // Remove the specific playlist from cache
       queryClient.removeQueries({ queryKey: ['playlist', playlistId] })
     }
   })
 }
 
+// Creates a new playlist and adds it to the 'all playlists' cache for the user
 const useCreatePlaylist = (userId) => {
   return useMutation({
     mutationFn: (data) => createPlaylist(data),
@@ -92,6 +100,7 @@ const useCreatePlaylist = (userId) => {
   })
 }
 
+// Adds a video to a specific playlist and updates the relevant caches
 const useAddVideoToPlaylist = (video, userId) => {
   return useMutation({
     mutationFn: ({ videoId, playlistId }) => addVideoToPlaylist(videoId, playlistId),
@@ -99,6 +108,7 @@ const useAddVideoToPlaylist = (video, userId) => {
 
       queryClient.setQueryData(['playlist', res.data._id], (prev) => {
         if (!prev) return;
+
         return {
           ...prev,
           data: {
@@ -113,8 +123,10 @@ const useAddVideoToPlaylist = (video, userId) => {
         }
       })
 
+      // Update the user’s 'all playlists' cache to reflect the new video in the playlist
       queryClient.setQueryData(['playlist', 'all', userId], (prev) => {
         if (!prev) return;
+
         return {
           ...prev,
           data: prev.data.map((playlist) => {
@@ -135,11 +147,59 @@ const useAddVideoToPlaylist = (video, userId) => {
   })
 }
 
+// Removes a video from a playlist and updates the cache accordingly
+const useRemoveVideoFromPlaylist = (video, userId) => {
+  return useMutation({
+    mutationFn: ({ videoId, playlistId }) => removeVideoFromPlaylist(videoId, playlistId),
+    onSuccess: (res) => {
+      console.log(res)
+      // Update the playlist cache with the removed video
+      queryClient.setQueryData(['playlist', res.data._id], (prev) => {
+        if (!prev) return;
+
+        // Filter out the removed video from the playlist's videos list
+        return {
+          ...prev,
+          data: {
+            ...prev.data,
+            totalVideos: prev.data.totalVideos - 1,
+            updatedAt: new Date(),
+            videos: prev.data.videos.filter((v) => v._id !== video._id)
+          }
+        };
+      });
+
+      // Update the 'all playlists' cache to reflect the removal of the video
+      queryClient.setQueryData(['playlist', 'all', userId], (prev) => {
+        if (!prev) return;
+
+        return {
+          ...prev,
+          data: prev.data.map((playlist) => {
+            if (playlist._id === res.data._id) {
+              return {
+                ...playlist,
+                totalVideos: playlist.totalVideos - 1,
+                updatedAt: new Date(),
+                videos: playlist.videos.filter((id) => id !== video._id),
+                thumbnail: playlist.totalVideos === 1 ? null : playlist.thumbnail
+              };
+            }
+            return playlist;
+          })
+        };
+      });
+    },
+  });
+};
+
+
 export {
   useFetchUserPlaylists,
   useFetchPlaylistById,
   useUpdatePlaylist,
   useDeletePlaylist,
   useCreatePlaylist,
-  useAddVideoToPlaylist
+  useAddVideoToPlaylist,
+  useRemoveVideoFromPlaylist
 }

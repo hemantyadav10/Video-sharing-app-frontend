@@ -2,7 +2,7 @@ import { BookmarkIcon, DotsVerticalIcon, PlusIcon } from '@radix-ui/react-icons'
 import { Button, Checkbox, CheckboxGroup, Dialog, DropdownMenu, Flex, IconButton, Spinner, Text } from '@radix-ui/themes'
 import React, { useEffect, useState } from 'react'
 import CloseButton from './CloseButton'
-import { useAddVideoToPlaylist, useFetchUserPlaylists } from '../lib/queries/playlistQueries'
+import { useAddVideoToPlaylist, useFetchUserPlaylists, useRemoveVideoFromPlaylist } from '../lib/queries/playlistQueries'
 import { useAuth } from '../context/authContext'
 import CreatePlaylistDialog from './CreatePlaylistDialog'
 import toast from 'react-hot-toast'
@@ -14,6 +14,7 @@ function SaveToPlaylistButton({ videoData }) {
   const { data: playlist, isLoading: loading } = useFetchUserPlaylists(user?._id)
   const [checkedPlaylists, setCheckedPlaylists] = useState([])
   const { mutate: addVideoToPlaylist } = useAddVideoToPlaylist(videoData, user?._id)
+  const { mutate: removeVideoFromPlaylist } = useRemoveVideoFromPlaylist(videoData, user?._id)
   const { _id: videoId } = videoData
 
   const handleClick = () => {
@@ -38,6 +39,7 @@ function SaveToPlaylistButton({ videoData }) {
       ? [...checkedPlaylists, playlistId]
       : checkedPlaylists.filter(id => id !== playlistId)
     setCheckedPlaylists(updatedCheckedPlaylists)
+    console.log(updatedCheckedPlaylists)
 
     if (isChecked) {
       // Add the video to the playlist
@@ -47,24 +49,28 @@ function SaveToPlaylistButton({ videoData }) {
           console.log(`Added to ${playlistName}`)
         }
       })
+    } 
+    else {
+      // Remove the video from the playlist
+      removeVideoFromPlaylist({ playlistId, videoId }, {
+        onSuccess: () => {
+          toast(`Removed from ${playlistName}`)
+          console.log(`Removed from ${playlistName}`)
+        }
+      })
     }
-    // } else {
-    //   // Remove the video from the playlist
-    //   addVideoToPlaylist({ playlistId, videoId, remove: true })
-    // }
   }
 
 
 
   return (
-    <div className='flex items-center' >
+    <div className='z-10 flex items-center' >
       {/* dropdown menu - save to playlist button */}
       <DropdownMenu.Root>
         <DropdownMenu.Trigger hidden={!isAuthenticated}>
           <IconButton
             aria-label="More options"
-            variant='ghost'
-            highContrast
+            className='bg-transparent hover:bg-[#ddeaf814] active:bg-[#d3edf81d] '
             color='gray'
             radius='full'
           >
