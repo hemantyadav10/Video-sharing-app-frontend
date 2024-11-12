@@ -7,7 +7,7 @@ import { useDeletePlaylist, useFetchPlaylistById, useUpdatePlaylist } from '../l
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useAuth } from '../context/authContext'
-import noThumbnail from '../assets/noThumbnail.webp'
+import { timeAgo } from '../utils/formatTimeAgo'
 
 function PlaylistVideos() {
   const { playlistId } = useParams();
@@ -28,7 +28,7 @@ function PlaylistVideos() {
   const description = watch('description')
 
   useEffect(() => {
-    if (playlist) {
+    if (playlist?.data) {
       reset({
         name: playlist.data.name,
         description: playlist.data.description
@@ -67,8 +67,8 @@ function PlaylistVideos() {
   const handleDeletePlaylist = async () => {
     deletePlaylist(playlistId, {
       onSuccess: () => {
-        toast('Playlist deleted')
         navigate('/playlists')
+        toast('Playlist deleted')
       }
     })
   }
@@ -79,7 +79,7 @@ function PlaylistVideos() {
         className={`relative p-4 bg-cover bg-center sm:p-6  lg:rounded-t-2xl lg:h-[calc(100vh-122px)] lg:sticky lg:top-[88px] sm:px-24 md:px-6 overflow-hidden bg-fixed`}
         style={{ backgroundImage: `url(${playlist?.data?.videos[0]?.thumbnail})` }}
       >
-        <div hidden={!playlist?.data.videos.length} className="absolute inset-0 z-0 bg-gradient-to-b from-white/20 to-[#111113] backdrop-blur-xl"></div>
+        <div hidden={!playlist?.data?.videos.length} className="absolute inset-0 z-0 bg-gradient-to-b from-white/20 to-[#111113] backdrop-blur-xl"></div>
         <div className="relative z-10 flex flex-col w-full gap-6 text-xs md:flex-row md:items-center lg:flex-col lg:w-80">
           {playlist?.data?.videos.length > 0 && <div className='w-full'>
             <img
@@ -92,8 +92,8 @@ function PlaylistVideos() {
             <p className='text-xl font-bold sm:text-2xl line-clamp-2'>
               {playlist?.data?.name}
             </p>
-            <div className='space-y-2'>
-              <Link to={`/channel/${playlist?.data?.owner._id}/videos`} className='flex items-center gap-2 hover:opacity-90'>
+            <div>
+              <Link to={`/channel/${playlist?.data?.owner._id}/videos`} className='flex items-center gap-2 my-2 hover:opacity-90'>
                 <Avatar
                   radius='full'
                   size={'1'}
@@ -102,12 +102,12 @@ function PlaylistVideos() {
                   fallback="A"
                 />
                 <p className='font-medium '>
-                  by {playlist?.data?.owner.username}
+                  by {playlist?.data?.owner.fullName}
                 </p>
               </Link>
-              <p className=''>
-                Playlist • {playlist?.data?.totalVideos} videos
-              </p>
+              <Text as='p'>
+                Playlist • {playlist?.data?.totalVideos} videos • {`Updated ${timeAgo(playlist?.data?.updatedAt)}`}
+              </Text>
             </div>
             <Dialog.Root >
               <Dialog.Trigger className='cursor-pointer'>
@@ -137,7 +137,7 @@ function PlaylistVideos() {
                   </Dialog.Close>
                 </Dialog.Title>
                 <Dialog.Description size={'2'} className='break-words whitespace-pre-wrap'>
-                  {playlist?.data.description}
+                  {playlist?.data?.description}
                 </Dialog.Description>
               </Dialog.Content>
             </Dialog.Root>
@@ -146,7 +146,18 @@ function PlaylistVideos() {
               <div className='flex justify-end gap-2 '>
                 {/* Add videos to playlist */}
                 <Link to={`/channel/${user?._id}/videos`}>
-                  <Tooltip content='Add videos'><IconButton radius='full' variant='soft' highContrast><PlusIcon width={'20'} height={'20'} /></IconButton></Tooltip>
+                  <Tooltip content='Add videos'>
+                    <IconButton
+                      radius='full'
+                      highContrast
+                      variant='soft'
+                      color='gray'
+                      className='shadow-lg'
+                      size={'3'}
+                    >
+                      <PlusIcon width={'24'} height={'24'} />
+                    </IconButton>
+                  </Tooltip>
                 </Link>
                 {/* Edit playlist button and edit dialog */}
                 <Dialog.Root
@@ -155,7 +166,16 @@ function PlaylistVideos() {
                 >
                   <Tooltip content='Edit playlist'>
                     <Dialog.Trigger >
-                      <IconButton radius='full' variant='soft' highContrast><Pencil1Icon width={'20'} height={'20'} /></IconButton>
+                      <IconButton
+                        radius='full'
+                        highContrast
+                        variant='soft'
+                        color='gray'
+                        className='shadow-lg'
+                        size={'3'}
+                      >
+                        <Pencil1Icon width={'22'} height={'22'} />
+                      </IconButton>
                     </Dialog.Trigger>
                   </Tooltip>
                   <Dialog.Content maxWidth="450px">
@@ -204,11 +224,17 @@ function PlaylistVideos() {
                       </label>
                     </Flex>
 
-                    <Flex gap="3" mt="4" justify="end">
+                    <Flex gap="3" mt="4">
                       <Dialog.Close>
                         <Button
                           disabled={updatingPlaylist}
-                          type='button' variant="soft" color="gray" highContrast>
+                          type='button'
+                          variant="soft"
+                          color="gray"
+                          highContrast
+                          radius='full'
+                          className='flex-1'
+                        >
                           Cancel
                         </Button>
                       </Dialog.Close>
@@ -218,8 +244,9 @@ function PlaylistVideos() {
                         loading={updatingPlaylist}
                         onClick={handleSubmit(handleEditPlaylist)}
                         disabled={name.trim() === playlist?.data.name && description.trim() === playlist?.data.description}
-                        variant='soft'
                         highContrast
+                        radius='full'
+                        className='flex-1'
                       >
                         Save
                       </Button>
@@ -231,7 +258,16 @@ function PlaylistVideos() {
                 <AlertDialog.Root>
                   <Tooltip content='Delete playlist'>
                     <AlertDialog.Trigger>
-                      <IconButton radius='full' variant='soft' highContrast><TrashIcon width={'20'} height={'20'} /></IconButton>
+                      <IconButton
+                        radius='full'
+                        highContrast
+                        variant='soft'
+                        color='gray'
+                        className='shadow-lg'
+                        size={'3'}
+                      >
+                        <TrashIcon width={'22'} height={'22'} />
+                      </IconButton>
                     </AlertDialog.Trigger>
                   </Tooltip>
                   <AlertDialog.Content maxWidth="450px">
@@ -242,12 +278,22 @@ function PlaylistVideos() {
 
                     <Flex gap="3" mt="4" justify="end">
                       <AlertDialog.Cancel>
-                        <Button variant="soft" color="gray" highContrast>
+                        <Button
+                          variant="soft"
+                          color="gray"
+                          highContrast
+                          radius='full'
+                        >
                           Cancel
                         </Button>
                       </AlertDialog.Cancel>
                       <AlertDialog.Action>
-                        <Button onClick={handleDeletePlaylist} variant="soft" highContrast>
+                        <Button
+                          onClick={handleDeletePlaylist}
+                          variant="soft"
+                          highContrast
+                          radius='full'
+                        >
                           Delete
                         </Button>
                       </AlertDialog.Action>
@@ -260,19 +306,21 @@ function PlaylistVideos() {
         </div>
       </div>
       <div className='flex flex-col flex-1 py-4 sm:px-2 lg:py-0'>
-        {playlist?.data.videos.length === 0 &&
-          <p className='text-sm font-medium text-center'>No videos in this playlist</p>
+        {playlist?.data?.videos.length === 0 &&
+          <p className='mt-6 text-sm font-medium text-center'>No videos in this playlist</p>
         }
 
-        {playlist?.data.videos.map((video, i) => (
+        {playlist?.data?.videos.map((video, i) => (
           <VideoCard2
             key={i}
             videoNumber={i + 1}
             video={video}
             playlistOwnerId={playlist?.data?.owner._id}
+            removeType={'playlist'}
+            playlistId = {playlist?.data._id}
           />
         ))}
-        <hr hidden={!playlist?.data.videos.length} className="border-t border-[#484848]" />
+        <hr hidden={!playlist?.data?.videos.length} className="border-t border-[#484848]" />
 
       </div>
     </div>

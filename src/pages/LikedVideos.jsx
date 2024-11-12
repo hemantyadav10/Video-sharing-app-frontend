@@ -55,6 +55,8 @@ function LikedVideos() {
               videoNumber={i + 1}
               video={likedVideo.video}
               playlistOwnerId={user?._id}
+              removeType={'like'}
+              removeContent='Remove from Liked videos'
             />
           ))}
           <hr hidden={isLoading} className="border-t border-[#484848]" />

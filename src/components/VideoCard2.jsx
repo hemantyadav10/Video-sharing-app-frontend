@@ -6,28 +6,48 @@ import { timeAgo } from '../utils/formatTimeAgo'
 import { useToggleVideoLike } from '../lib/queries/likeQueries'
 import { queryClient } from '../main'
 import { useAuth } from '../context/authContext'
+import { useRemoveVideoFromPlaylist } from '../lib/queries/playlistQueries'
+import toast from 'react-hot-toast'
 
 function VideoCard2({
   videoNumber = 0,
   video,
-  playlistOwnerId
+  playlistOwnerId,
+  removeType,
+  removeContent = 'Remove from playlist',
+  playlistId
 }) {
   const { user } = useAuth()
   const navigate = useNavigate()
   const { mutate: unlikeVideo } = useToggleVideoLike(video?._id)
+  const { mutate: removeVideoFromPlaylist } = useRemoveVideoFromPlaylist(video, user?._id)
+  const { _id: videoId } = video
+
 
   const handleRemoveVideo = async (e) => {
     e.stopPropagation();
-    unlikeVideo(video?._id, {
-      onSuccess: () => {
-        queryClient.setQueryData(['liked_videos', user?._id], (prev) => {
-          return {
-            ...prev,
-            data: prev.data.filter((item) => item.video._id !== video?._id)
-          }
-        })
-      }
-    })
+
+    if (removeType === 'like') {
+      unlikeVideo(video?._id, {
+        onSuccess: () => {
+          queryClient.setQueryData(['liked_videos', user?._id], (prev) => {
+            return {
+              ...prev,
+              data: prev.data.filter((item) => item.video._id !== video?._id)
+            }
+          })
+        }
+      })
+    } else if (removeType === 'playlist') {
+      console.log(playlistId, videoId)
+      removeVideoFromPlaylist({ playlistId, videoId }, {
+        onSuccess: () => {
+          toast(`Removed from ${playlistName}`)
+          console.log(`Removed from ${playlistName}`)
+        }
+      })
+    }
+
   }
 
   return (
@@ -54,12 +74,17 @@ function VideoCard2({
         {user?._id === playlistOwnerId && <div className='flex items-center justify-center'>
           <DropdownMenu.Root>
             <DropdownMenu.Trigger>
-              <IconButton radius='full' color='gray' variant='ghost' highContrast >
-                <DotsVerticalIcon />
+              <IconButton
+                aria-label="More options"
+                className='bg-transparent hover:bg-[#ddeaf814] active:bg-[#d3edf81d] '
+                color='gray'
+                radius='full'
+              >
+                <DotsVerticalIcon width="18" height="18" />
               </IconButton>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content variant='soft'>
-              <DropdownMenu.Item onClick={handleRemoveVideo}><TrashIcon /> Remove from playlist</DropdownMenu.Item>
+              <DropdownMenu.Item onClick={(e) => handleRemoveVideo(e)}><TrashIcon />{removeContent}</DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
         </div>}
