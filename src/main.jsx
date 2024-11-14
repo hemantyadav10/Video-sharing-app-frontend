@@ -26,6 +26,9 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import VideoPage from './pages/VideoPage.jsx';
 import AuthProvider from './context/authContext.jsx';
 import PublicRoute from './components/PublicRoute.jsx';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
+import { Toaster } from 'react-hot-toast';
+import Dashboard from './pages/Dashboard.jsx';
 
 
 export const queryClient = new QueryClient({
@@ -43,29 +46,36 @@ const router = createBrowserRouter(
     <Route>
       <Route path='/' element={<App />}>
         <Route index element={<Home />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path='/dashboard' element={<Dashboard />} />
+        </Route>
         <Route path='channel/:userId' element={<Channel />}>
           <Route index element={<ChannelVideos />} />
           <Route path='videos' element={<ChannelVideos />} />
           <Route path='playlists' element={<ChannelPlaylists />} />
           <Route path='tweets' element={<ChannelTweets />} />
         </Route>
-        <Route path='settings' element={<Settings />}>
-          <Route index element={<PersonalInfo />} />
-          <Route path='change-password' element={<ChangePassword />} />
-          <Route path='personalInfo' element={<PersonalInfo />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path='settings' element={<Settings />}>
+            <Route index element={<PersonalInfo />} />
+            <Route path='change-password' element={<ChangePassword />} />
+            <Route path='personalInfo' element={<PersonalInfo />} />
+          </Route>
         </Route>
         <Route path='playlist/:playlistId' element={<Playlist />} />
         <Route path='liked-videos' element={<LikedVideos />} />
         <Route path='playlists' element={<AllPlaylists />} />
         <Route path='subscriptions' element={<SubscriptionVideos />} />
-        <Route path='subscriptions/channels' element={<SubscribedChannels />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path='subscriptions/channels' element={<SubscribedChannels />} />
+        </Route>
         <Route path='results' element={<SearchResults />} />
         <Route path='history' element={<History />} />
         <Route path='/watch/:videoId' element={<VideoPage />} />
       </Route>
       <Route element={<PublicRoute />}>
         <Route path='/login' element={<Login />} />
-          <Route path='/signup' element={<Signup />} />
+        <Route path='/signup' element={<Signup />} />
       </Route>
     </Route>
   )
@@ -77,6 +87,11 @@ createRoot(document.getElementById('root')).render(
     <AuthProvider>
       <Theme appearance='dark' accentColor='blue'>
         <RouterProvider router={router} />
+        <Toaster position='bottom-left'
+          toastOptions={{
+            className: 'text-sm text-black p-2 min-w-52 ',
+          }}
+        />
         <ReactQueryDevtools initialIsOpen={false} />
       </Theme>
     </AuthProvider>
