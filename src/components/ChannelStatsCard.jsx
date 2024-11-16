@@ -20,7 +20,7 @@ function ChannelStatsCard({
       >
         {statType}
       </Text>
-      <Skeleton loading={loading} width={'50px'}>
+      <Skeleton loading={loading} width={'80px'}>
         <Text as='span' size={'7'}>
           {statNumbers}
         </Text>
