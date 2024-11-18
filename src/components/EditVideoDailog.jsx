@@ -54,7 +54,7 @@ function EditVideoDailog({ children, video }) {
   return (
     <Dialog.Root open={open} onOpenChange={(o) => {
       setOpen(o)
-      // setThumbnail('')
+      resetField('videoThumbnail')
     }}>
       <Tooltip content='Edit video' side='bottom' >
         <Dialog.Trigger>
@@ -74,9 +74,12 @@ function EditVideoDailog({ children, video }) {
         </Dialog.Description>
 
         <Flex direction="column" gap="3">
-          <label>
-            <Text as="div" size="2" mb="1" >
+          <div>
+            <Text as="p" size="2" weight={'medium'} mb={'1'}>
               Thumbnail
+            </Text>
+            <Text as="p" size="1" mb="2" color='gray'>
+              Set a thumbnail that stands out and draws viewers' attention.
             </Text>
             {thumbnail &&
               <div className='w-full min-h-40 border-2 border-dashed rounded-xl border-[#484848]  space-y-2 p-2'>
@@ -110,7 +113,7 @@ function EditVideoDailog({ children, video }) {
                         <UploadIcon width='24px' height='24px' className='text-[#c2e6ff]' fill='#c2e6ff' />
                       </div>
                     </div>
-                    <Text align={'center'} as='p' size={'2'} weight={'medium'} highContrast color='blue'>
+                    <Text align={'center'} as='p' size={'2'}  highContrast color='blue'>
                       Click to upload image
                     </Text>
                     <Text align={'center'} as='p' size={'1'} color='gray'>
@@ -126,23 +129,24 @@ function EditVideoDailog({ children, video }) {
                 </label>
               </>
             }
-          </label>
+          </div>
           <label>
-            <Text as="div" size="2" mb="1" >
+            <Text as="div" size="2" mb="1" weight={'medium'}>
               Title
             </Text>
             <TextField.Root
+              placeholder='Add a title that describes your video...'
               {...register('title')}
             />
           </label>
           <label>
-            <Text as="div" size="2" mb="1" >
+            <Text as="div" size="2" mb="1" weight={'medium'}>
               Description
             </Text>
             <TextArea
               {...register('description')}
               className='h-28'
-              placeholder="Enter your email"
+              placeholder="Tell viewers about your video..."
             />
           </label>
         </Flex>
@@ -155,6 +159,7 @@ function EditVideoDailog({ children, video }) {
               variant="soft"
               color="gray"
               highContrast
+              className='px-4'
             >
               Cancel
             </Button>
@@ -166,6 +171,7 @@ function EditVideoDailog({ children, video }) {
               radius='full'
               loading={updatingVideo}
               disabled={!data[0]?.trim() && !data[1]?.trim() && !data[2]}
+              className='px-4'
             >
               Save
             </Button>
