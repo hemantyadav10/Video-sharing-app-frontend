@@ -22,7 +22,7 @@ function Dashboard() {
     return null;
   })
 
-  const { mutate: toggleStatus } = useTogglePublishStatus(user?._id)
+  const { mutateAsync: toggleStatus, isPending } = useTogglePublishStatus(user?._id)
   const statsData = [
     {
       statType: "Videos",
@@ -63,14 +63,16 @@ function Dashboard() {
 
     setPublishedVideos(updatedList)
 
-    toggleStatus(videoId, {
-      onSuccess: () => {
-        toast(checked ? 'Video published' : 'Video unpublished')
-      },
-      onError: () => {
-        toast('')
-      }
-    })
+    toast.promise(
+      toggleStatus(videoId),
+      {
+        loading: checked ? 'Publishing...' : 'Unpublishing...',
+        success: checked ? 'Video published' : 'Video unpublished',
+        error: 'Something went wrong, please try again.',
+      }, {
+      icon: false
+    }
+    );
   }
 
 
@@ -124,6 +126,7 @@ function Dashboard() {
           publishedVideos={publishedVideos}
           onTogglePublish={handleTogglePublish}
           loadingVideos={loadingVideos}
+          togglePublishingLoading={isPending}
         />
       </section>
     </div >

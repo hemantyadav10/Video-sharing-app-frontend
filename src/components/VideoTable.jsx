@@ -3,60 +3,46 @@ import { toIndianDateFormat } from '../utils/utils'
 import { AlertDialog, Badge, Button, Flex, IconButton, Skeleton, Switch, Table, Text, Tooltip } from '@radix-ui/themes'
 import { Link } from 'react-router-dom'
 import { Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
+import EditVideoDailog from './EditVideoDailog'
 
 function VideoTable({
   videos,
   publishedVideos,
   onTogglePublish,
-  loadingVideos
+  loadingVideos,
 }) {
+
+  const tableHeaders = [
+    { key: 'toggleStatus', label: 'Toggle status', minWidth: '100px' },
+    { key: 'status', label: 'Status' },
+    { key: 'video', label: 'Video' },
+    { key: 'views', label: 'Views' },
+    { key: 'likes', label: 'Likes' },
+    { key: 'date', label: 'Date' },
+    { key: 'actions', label: 'Edit/Delete' },
+  ];
+
+
   return (
     <Table.Root variant="surface">
       <Table.Header>
         <Skeleton loading={loadingVideos}>
           <Table.Row >
-            <Table.Cell minWidth={'100px'}>
-              <Text color='gray' size={'1'}>
-                Toggle status
-              </Text>
-            </Table.Cell>
-            <Table.Cell>
-              <Text color='gray' size={'1'}>
-                Status
-              </Text>
-            </Table.Cell>
-            <Table.Cell>
-              <Text color='gray' size={'1'}>
-                Video
-              </Text>
-            </Table.Cell>
-            <Table.Cell>
-              <Text color='gray' size={'1'}>
-                Views
-              </Text>
-            </Table.Cell>
-            <Table.Cell>
-              <Text color='gray' size={'1'}>
-                Likes
-              </Text>
-            </Table.Cell>
-            <Table.Cell >
-              <Text color='gray' size={'1'}>
-                Date
-              </Text>
-            </Table.Cell>
-            <Table.Cell>
-              <Text color='gray' size={'1'}>
-                Edit/Delete
-              </Text>
-            </Table.Cell>
+            {tableHeaders.map(header => (
+              <Table.Cell key={header.key} minWidth={header.minWidth || undefined}>
+                <Text color='gray' size={'1'}>
+                  {header.label}
+                </Text>
+              </Table.Cell>
+            ))}
           </Table.Row>
         </Skeleton>
       </Table.Header>
       <Table.Body >
+        {/* Skeleton loader for video table  */}
         {loadingVideos || !publishedVideos ?
-          Array.from({ length: 3 }).map(() =>
-            <Table.Row className='h-12 bg-[#111113]'>
+          Array.from({ length: 3 }).map((_, i) =>
+            <Table.Row key={i} className='h-12 bg-[#111113]'>
               <Table.Cell >
                 <Skeleton>
                   <Switch />
@@ -107,15 +93,21 @@ function VideoTable({
                   onCheckedChange={(checked) => onTogglePublish(video._id, checked)}
                 />
               </Table.Cell>
-              <Table.Cell minWidth={'110px'}>
+              <Table.Cell minWidth={'122px'}>
                 <Badge
-                  color={publishedVideos?.includes(video._id) ? 'green' : 'orange'}
+                  color={
+                    video.isPublished
+                      ? 'green'
+                      : 'orange'
+                  }
                   size={'2'}
                   radius='full'
                   variant='surface'
                   className='font-normal'
                 >
-                  {publishedVideos?.includes(video._id) ? 'Published' : 'Unpublished'}
+                  {video.isPublished
+                    ? 'Published'
+                    : 'Unpublished'}
                 </Badge>
               </Table.Cell>
               <Table.Cell
@@ -130,9 +122,6 @@ function VideoTable({
                   <Text as='p'>
                     {video.title}
                   </Text>
-                  {/* <Text as='p' size={'1'} className='line-clamp-1' color='gray'>
-                        {video.description}
-                      </Text> */}
                 </Link>
               </Table.Cell>
               <Table.Cell>
@@ -145,10 +134,11 @@ function VideoTable({
                 {toIndianDateFormat(video.createdAt)}
               </Table.Cell>
               <Table.Cell >
+                {/* Delete video button that opens a delete confirmation modal */}
                 <AlertDialog.Root>
                   <Tooltip content='Delete video' side='bottom'>
                     <AlertDialog.Trigger>
-                      <IconButton variant='ghost' color='gray' highContrast radius='full' mr={'2'}>
+                      <IconButton variant='ghost' color='gray' highContrast radius='full' mr={'4'}>
                         <TrashIcon height={'20px'} width={'20'} />
                       </IconButton>
                     </AlertDialog.Trigger>
@@ -173,17 +163,18 @@ function VideoTable({
                     </Flex>
                   </AlertDialog.Content>
                 </AlertDialog.Root>
-                <Tooltip content='Edit video' side='bottom'>
+                {/* Edit video button that triggers a dialog open to edit video details */}
+                <EditVideoDailog video={video}>
                   <IconButton variant='ghost' color='gray' highContrast radius='full'>
                     <Pencil1Icon height={'20px'} width={'20'} />
                   </IconButton>
-                </Tooltip>
+                </EditVideoDailog>
               </Table.Cell>
             </Table.Row>
           )))
         }
       </Table.Body>
-    </Table.Root>
+    </Table.Root >
   )
 }
 

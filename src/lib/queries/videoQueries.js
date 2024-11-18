@@ -1,5 +1,11 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { fetchAllVideos, fetchRandomVideos, fetchVideoById, togglePublishStatus } from "../../api/videoApi"
+import {
+  fetchAllVideos,
+  fetchRandomVideos,
+  fetchVideoById,
+  togglePublishStatus,
+  updateVideo,
+} from "../../api/videoApi"
 import { queryClient } from "../../main"
 
 const useFetchVideos = () => {
@@ -42,9 +48,33 @@ const useTogglePublishStatus = (userId) => {
   })
 }
 
+const useUpdateVideo = (userId) => {
+  return useMutation({
+    mutationFn: ({ videoId, formData }) => updateVideo(videoId, formData),
+    onSuccess: (res) => {
+      queryClient.setQueryData(['channel_videos', userId], prev => {
+        if (!prev) return;
+
+        return {
+          ...prev,
+          data: prev.data.map(video => {
+            return video._id === res.data._id
+              ? { ...video, ...res.data }
+              : video
+          })
+        }
+      })
+
+      queryClient.invalidateQueries({ queryKey: ['video', userId] })
+    }
+  })
+}
+
+
 export {
   useFetchVideos,
   useFetchVideoById,
   useFetchRandomVideos,
-  useTogglePublishStatus
+  useTogglePublishStatus,
+  useUpdateVideo
 }
