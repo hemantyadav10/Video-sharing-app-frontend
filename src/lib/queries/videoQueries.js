@@ -3,6 +3,7 @@ import {
   fetchAllVideos,
   fetchRandomVideos,
   fetchVideoById,
+  publishVideo,
   togglePublishStatus,
   updateVideo,
 } from "../../api/videoApi"
@@ -70,11 +71,26 @@ const useUpdateVideo = (userId) => {
   })
 }
 
+const usePublishVideo = (userId) => {
+  return useMutation({
+    mutationFn: (formData) => publishVideo(formData),
+    onSuccess: (res) => {
+      queryClient.setQueryData(['channel_videos', userId], prev => {
+        return {
+          ...prev,
+          data: [{ ...res.data, likes: 0 }, ...prev.data]
+        }
+      })
+    }
+  })
+}
+
 
 export {
   useFetchVideos,
   useFetchVideoById,
   useFetchRandomVideos,
   useTogglePublishStatus,
-  useUpdateVideo
+  useUpdateVideo,
+  usePublishVideo
 }

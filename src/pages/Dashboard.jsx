@@ -2,18 +2,23 @@ import { Button, Heading, Separator, Text } from '@radix-ui/themes'
 import React, { useEffect, useState } from 'react'
 import { useAuth } from '../context/authContext'
 import { EyeOpenIcon, HeartIcon, PersonIcon } from '@radix-ui/react-icons'
-import UploadVideoIcon from '../assets/UploadVideoIcon'
 import ChannelStatsCard from '../components/ChannelStatsCard'
 import VideoIcon from '../assets/VideoIcon'
 import { useGetChannelStats, useGetChannleVideos } from '../lib/queries/dashboardQueries'
 import { useTogglePublishStatus } from '../lib/queries/videoQueries'
 import toast from 'react-hot-toast'
 import VideoTable from '../components/VideoTable'
+import UploadVideoDialog from '../components/UploadVideoDailog'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 function Dashboard() {
   const { user } = useAuth()
   const { data: videoData, isLoading: loadingVideos } = useGetChannleVideos(user?._id)
   const { data: stats, isLoading: loadingStats } = useGetChannelStats(user?._id)
+  const location = useLocation();
+  const navigate = useNavigate()
+  console.log(location)
+  const [isDialogOpen, setDialogOpen] = useState(false);
 
   const [publishedVideos, setPublishedVideos] = useState(() => {
     if (!loadingVideos && videoData) {
@@ -55,6 +60,16 @@ function Dashboard() {
     }
   }, [loadingVideos, videoData])
 
+  useEffect(() => {
+    if (location.state?.openDialog) {
+      setDialogOpen(true); // Set dialog open first
+    }
+  
+    if (location.state) {
+      navigate(location.pathname, { replace: true }); // Clear state from history after using it
+    }
+  }, [location.state, navigate]);
+
 
   const handleTogglePublish = async (videoId, checked) => {
     const updatedList = checked
@@ -94,13 +109,21 @@ function Dashboard() {
             Seamless Video Management, Elevated Results
           </Text>
         </div>
-        <Button
-          highContrast
-          radius='full'
-          className='w-max'
+
+        {/* Upload video button that opens a dialog */}
+        <UploadVideoDialog
+          isDialogOpen={isDialogOpen}
+          setDialogOpen={setDialogOpen}
         >
-          <UploadVideoIcon width='20px' height='20px' fill='#111113' /> Upload video
-        </Button>
+          <Button
+            highContrast
+            radius='full'
+            className='w-max'
+          >
+            Upload video
+          </Button>
+        </UploadVideoDialog>
+
       </section>
 
       {/*Section Separator */}

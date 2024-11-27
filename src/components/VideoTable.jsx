@@ -4,6 +4,7 @@ import { AlertDialog, Badge, Button, Flex, IconButton, Skeleton, Switch, Table, 
 import { Link } from 'react-router-dom'
 import { Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
 import EditVideoDailog from './EditVideoDailog'
+import { formatVideoDuration } from '../utils/formatVideoDuration'
 
 function VideoTable({
   videos,
@@ -26,7 +27,7 @@ function VideoTable({
   return (
     <Table.Root variant="surface">
       <Table.Header>
-        <Skeleton loading={loadingVideos}>
+        <Skeleton loading={loadingVideos || !publishedVideos}>
           <Table.Row >
             {tableHeaders.map(header => (
               <Table.Cell key={header.key} minWidth={header.minWidth || undefined}>
@@ -57,8 +58,8 @@ function VideoTable({
                   </Badge>
                 </Skeleton>
               </Table.Cell>
-              <Table.Cell>
-                <Skeleton maxWidth={'460px'} width={'460px'} minWidth={'200px'} height={'16px'}>
+              <Table.Cell >
+                <Skeleton maxWidth={'500px'} width={'500px'} minWidth={'300px'} height={'16px'}>
                 </Skeleton>
               </Table.Cell>
               <Table.Cell>
@@ -84,11 +85,11 @@ function VideoTable({
             </Table.Row>) :
           (videos?.data.map((video) => (
 
-            <Table.Row key={video._id} className='bg-[#111113] hover:bg-[#0c0c0d] transition-all'>
+            <Table.Row key={video._id} className='bg-[#111113] hover:bg-[#d8f4f601] transition-all'>
               <Table.Cell>
                 <Switch
                   variant='surface'
-                  color='sky'
+                  color='blue'
                   checked={publishedVideos?.includes(video._id)}
                   onCheckedChange={(checked) => onTogglePublish(video._id, checked)}
                 />
@@ -112,23 +113,49 @@ function VideoTable({
               </Table.Cell>
               <Table.Cell
                 title={video.title}
-                minWidth={'268px'}
+                minWidth={'440px'}
                 maxWidth={'620px'}
                 width={'620px'}
               >
                 <Link
-                  to={`/watch/${video._id}`}
-                  className='hover:underline hover:text-[#4493f8]'>
-                  <Text as='p'>
-                    {video.title}
-                  </Text>
+                  to={video.isPublished ? `/watch/${video._id}` : null}
+                  className={`flex items-start gap-4 group ${!video.isPublished && 'cursor-default'}`}
+                >
+                  <div className='relative w-32 aspect-video'>
+                    <img src={video.thumbnail} alt="" className='object-cover object-center w-full h-full rounded-lg' />
+                    <Text
+                      className='absolute bottom-1 right-1 p-[2px] px-1 text-xs bg-black/70 font-medium rounded-md text-white'
+                      as='span'
+                    >
+                      {formatVideoDuration(video?.duration)}
+                    </Text>
+                  </div>
+                  <div className='flex-1'>
+                    <Text
+                      as='p'
+                      mb={'1'}
+                      color='blue'
+                      className='group-hover:underline'
+                      size={'2'}
+                    >
+                      {video.title}
+                    </Text>
+                    <Text
+                      as='p'
+                      color='gray'
+                      size={'1'}
+                      className=' line-clamp-2'
+                    >
+                      {video.description}
+                    </Text>
+                  </div>
                 </Link>
               </Table.Cell>
               <Table.Cell>
-                {video.views}
+                {video.views || 0}
               </Table.Cell>
               <Table.Cell>
-                {video.likes}
+                {video.likes || 0}
               </Table.Cell>
               <Table.Cell minWidth={'108px'}>
                 {toIndianDateFormat(video.createdAt)}

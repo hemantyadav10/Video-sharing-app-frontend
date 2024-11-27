@@ -29,11 +29,19 @@ const updateVideo = async (videoId, formData) => {
   return res.data
 }
 
+const publishVideo = async (formData) => {
+  const res = await apiClient.post(VIDEO_BASE_URL, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  })
+  return res.data;
+}
+
 
 export {
   fetchAllVideos,
   fetchVideoById,
   fetchRandomVideos,
   togglePublishStatus,
-  updateVideo
+  updateVideo,
+  publishVideo
 }
