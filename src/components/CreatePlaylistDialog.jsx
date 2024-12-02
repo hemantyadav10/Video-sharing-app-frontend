@@ -10,7 +10,12 @@ function CreatePlaylistDialog({
   open,
   toggleOpen
 }) {
-  const { register, handleSubmit, formState: { errors } } = useForm()
+  const { register, handleSubmit, formState: { errors }, reset } = useForm({
+    defaultValues: {
+      name: '',
+      description: ''
+    }
+  })
   const { user } = useAuth()
   const { mutate: createPlaylist, isPending: creatingPlaylist } = useCreatePlaylist(user?._id)
 
@@ -20,6 +25,7 @@ function CreatePlaylistDialog({
         open = false
         toggleOpen(open)
         toast('Playlist created')
+        reset()
       }
     })
   }
@@ -31,6 +37,7 @@ function CreatePlaylistDialog({
       open={open}
       onOpenChange={(open) => {
         toggleOpen(open)
+        reset()
       }}
     >
       <Dialog.Content aria-describedby={undefined} width={'360px'}>
@@ -52,6 +59,7 @@ function CreatePlaylistDialog({
 
               })}
               placeholder="Enter title of playlist"
+              className={`${errors.name && 'shadow-inset-custom'}`}
             />
             {errors.name &&
               <Text as='p' size={'1'} mt={'2'} color='red' className='flex items-center gap-1 '>
@@ -71,6 +79,7 @@ function CreatePlaylistDialog({
                 validate: value => value.trim() !== "" || "Please enter some text",
               })}
               placeholder="Add description…"
+              className={`${errors.name && 'shadow-inset-textarea'}`}
             />
             {errors.description &&
               <Text as='p' size={'1'} mt={'2'} color='red' className='flex items-center gap-1 '>
@@ -91,6 +100,9 @@ function CreatePlaylistDialog({
               color='gray'
               className='flex-1'
               disabled={creatingPlaylist}
+              onClick={() => {
+                reset()
+              }}
             >
               Cancel
             </Button>

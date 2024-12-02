@@ -1,5 +1,5 @@
 import { BookmarkIcon, DotsVerticalIcon, PlusIcon } from '@radix-ui/react-icons'
-import { Button, Checkbox, CheckboxGroup, Dialog, DropdownMenu, Flex, IconButton, Spinner, Text } from '@radix-ui/themes'
+import { Button, Checkbox, Dialog, DropdownMenu, Flex, IconButton, Spinner, Text } from '@radix-ui/themes'
 import React, { useEffect, useState } from 'react'
 import CloseButton from './CloseButton'
 import { useAddVideoToPlaylist, useFetchUserPlaylists, useRemoveVideoFromPlaylist } from '../lib/queries/playlistQueries'
@@ -13,8 +13,8 @@ function SaveToPlaylistButton({ videoData }) {
   const { user, isAuthenticated } = useAuth()
   const { data: playlist, isLoading: loading } = useFetchUserPlaylists(user?._id)
   const [checkedPlaylists, setCheckedPlaylists] = useState([])
-  const { mutate: addVideoToPlaylist } = useAddVideoToPlaylist(videoData, user?._id)
-  const { mutate: removeVideoFromPlaylist } = useRemoveVideoFromPlaylist(videoData, user?._id)
+  const { mutate: addVideoToPlaylist, isPending: addingVideo } = useAddVideoToPlaylist(videoData, user?._id)
+  const { mutate: removeVideoFromPlaylist, isPending: removingVideo } = useRemoveVideoFromPlaylist(videoData, user?._id)
   const { _id: videoId } = videoData
 
   const handleClick = () => {
@@ -49,7 +49,7 @@ function SaveToPlaylistButton({ videoData }) {
           console.log(`Added to ${playlistName}`)
         }
       })
-    } 
+    }
     else {
       // Remove the video from the playlist
       removeVideoFromPlaylist({ playlistId, videoId }, {
@@ -104,19 +104,22 @@ function SaveToPlaylistButton({ videoData }) {
             </Text>
             <CloseButton />
           </Dialog.Title>
-          {loading && <Spinner className='mx-auto' size={'3'} />}
-          {!loading && playlist?.data.map((data) => (
-            <Text as="label" size="2" className='cursor-pointer'>
-              <Flex gap="2">
-                <Checkbox
-                  highContrast
-                  size={'3'}
-                  checked={checkedPlaylists.includes(data._id)}
-                  onCheckedChange={(checked) => handleCheckboxChange(data._id, checked, data.name)}
-                />
-                <p className='line-clamp-1'>
-                  {data.name}
-                </p>
+          {(loading || addingVideo || removingVideo) && <Spinner className='mx-auto' size={'3'} />}
+          {!(loading || addingVideo || removingVideo) && playlist?.data.map((data) => (
+            <Text as="label" size="2" className={`cursor-pointer  ${(addingVideo || removingVideo) && 'cursor-default pointer-events-none'}`}>
+              <Flex gap="2" align={'center'} justify={'between'}>
+                <Flex gap="2" align={'center'}>
+                  <Checkbox
+                    highContrast
+                    size={'3'}
+                    checked={checkedPlaylists?.includes(data._id)}
+                    onCheckedChange={(checked) => handleCheckboxChange(data._id, checked, data.name)}
+                  // disabled={addingVideo || removingVideo}
+                  />
+                  <p className='line-clamp-1'>
+                    {data.name}
+                  </p>
+                </Flex>
               </Flex>
             </Text>
           ))}
