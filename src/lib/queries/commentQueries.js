@@ -1,95 +1,107 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useInfiniteQuery, useMutation } from "@tanstack/react-query"
 import { addComment, deleteComment, fetchVideoComments, updateComment } from "../../api/commentApi"
 import { queryClient } from "../../main"
 
-const useGetVideoComments = (videoId, userId) => {
-  return useQuery({
-    queryKey: ['comments', videoId, userId],
-    queryFn: () => fetchVideoComments(videoId)
+const useGetVideoComments = (videoId, sortBy = 'newest', limit = 5) => {
+  return useInfiniteQuery({
+    queryKey: ['comments', { videoId, sortBy }],
+    queryFn: ({ pageParam = 1 }) => fetchVideoComments(videoId, pageParam, limit, sortBy),
+    getNextPageParam: (lastPage) => lastPage?.data?.nextPage || null,
+    keepPreviousData: true,
   })
 }
 
-const useAddComment = (videoId, user) => {
+const useAddComment = (videoId, sortBy = 'newest', user) => {
   return useMutation({
     mutationFn: (content) => addComment(content, videoId),
     onSuccess: (newComment) => {
-      queryClient.setQueryData(['comments', videoId, user._id], (prev) => {
+      queryClient.setQueryData(['comments', { videoId, sortBy }], (prev) => {
         return {
           ...prev,
-          data: {
-            ...prev.data,
-            docs: [
-              {
-                _id: Date.now(),
-                content: newComment.data.content,
-                owner: {
-                  _id: user._id,
-                  username: user.username,
-                  fullName: user.fullName,
-                  avatar: user.avatar
+          pages: prev.pages.map((page, index) => {
+            if (index === 0) {
+              return {
+                ...page,
+                data: {
+                  ...page.data,
+                  docs: [
+                    {
+                      ...newComment.data,
+                      owner: user,
+                      likesCount: 0,
+                      isLiked: false,
+                    },
+                    ...page.data.docs,
+                  ],
+                  totalDocs: page.data.totalDocs + 1,
                 },
-                createdAt: Date.now(),
-                updatedAt: Date.now(),
-                likesCount: 0,
-                isliked: false
-              },
-              ...prev.data.docs
-            ],
-            totalDocs: prev.data.totalDocs + 1
-          }
-        }
-      })
-      queryClient.invalidateQueries({ queryKey: ['comments', videoId] });
-    }
-  })
-}
+              };
+            }
+            return page;
+          }),
+        };
+      });
 
-const useUpdateComment = (videoId, user, commentId) => {
+      // Optionally, invalidate the query to refetch the latest data
+      // queryClient.invalidateQueries({ queryKey: ['comments', { videoId, sortBy, limit }] });
+    },
+  });
+};
+
+const useUpdateComment = (videoId, sortBy = 'newest', user) => {
   return useMutation({
-    mutationFn: (newComment) => updateComment(commentId, newComment),
-    onSuccess: (newComment) => {
-      queryClient.setQueryData(['comments', videoId, user._id], (prev) => {
+    mutationFn: ({ commentId, content }) => updateComment(commentId, content),
+    onSuccess: ({ data: updatedComment }) => {
+      queryClient.setQueryData(['comments', { videoId, sortBy }], (prev) => {
         return {
           ...prev,
-          data: {
-            ...prev.data,
-            docs: prev.data.docs.map((comment) => {
-              if (comment._id === commentId) {
-                comment.content = newComment.data.content
-                comment.updatedAt = new Date()
-                return comment
-              }
-              return comment
-            }),
-          }
-        }
-      })
-    }
-  })
-}
+          pages: prev.pages.map((page) => ({
+            ...page,
+            data: {
+              ...page.data,
+              docs: page.data.docs.map((comment) => {
+                return comment._id === updatedComment._id
+                  ? { ...updatedComment, owner: user } : comment
+              }),
+            },
+          })),
+        };
+      });
+    },
+  });
+};
 
-const useDeleteComment = (videoId, user, commentId) => {
+
+const useDeleteComment = (videoId, sortBy = 'newest', commentId) => {
   return useMutation({
-    mutationFn: (commentId) => deleteComment(commentId),
+    mutationFn: deleteComment,
     onSuccess: () => {
-      queryClient.setQueryData(['comments', videoId, user._id], (prev) => {
+      queryClient.setQueryData(['comments', { videoId, sortBy }], (prev) => {
         return {
           ...prev,
-          data: {
-            ...prev.data,
-            docs: prev.data.docs.filter((comment) => comment._id !== commentId),
-            totalDocs: prev.data.totalDocs - 1
-          }
-        }
-      })
-      queryClient.invalidateQueries({ queryKey: ['comments', videoId] });
-    }
-  })
-}
+          pages: prev.pages.map((page, index) => {
+            if (index === 0) {
+              return {
+                ...page,
+                data: {
+                  ...page.data,
+                  docs: page.data.docs.filter((comment) => comment._id !== commentId),
+                  totalDocs: page.data.totalDocs - 1,
+                },
+              };
+            }
+            return page;
+          }),
+        };
+      });
+
+      // Optionally, invalidate queries for refetching latest data
+      // queryClient.invalidateQueries({ queryKey: ['comments', { videoId, sortBy }] });
+    },
+  });
+};
 
 export {
-  useGetVideoComments,
   useAddComment,
-  useDeleteComment,
-  useUpdateComment
+  useDeleteComment, useGetVideoComments, useUpdateComment
 }

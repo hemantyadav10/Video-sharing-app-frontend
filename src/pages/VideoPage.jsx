@@ -11,6 +11,8 @@ import ThumbsUp from '../assets/ThumbsUpIcon'
 import ThumbsUpSolidIcon from '../assets/ThumbsUpSolidIcon'
 import { useToggleVideoLike } from '../lib/queries/likeQueries'
 import toast from 'react-hot-toast'
+import SaveToPlaylistButton from '../components/SaveToPlaylistButton'
+import { useInView } from 'react-intersection-observer'
 
 function VideoPage() {
   const { videoId } = useParams()
@@ -19,12 +21,20 @@ function VideoPage() {
   const [isExpanded, setIsExpanded] = useState(false);
   const descriptionRef = useRef(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
-  console.log(video)
   const { mutate: toggleLike } = useToggleVideoLike(videoId)
   const [isVideoLiked, setIsVideoLiked] = useState(video?.data.isLiked || false)
   const [videoLikesCount, setVideoLikesCount] = useState(video?.data.likesCount || 0)
+  const [loadCommentSection, setLoadCommentSection] = useState(false)
+  const { inView, ref } = useInView({
+    rootMargin: '100px',
+    triggerOnce: true
+  })
 
-  console.log(videoLikesCount)
+  useEffect(() => {
+    if (inView) {
+      setLoadCommentSection(true)
+    }
+  }, [inView])
 
   useEffect(() => {
     if (descriptionRef.current) {
@@ -63,7 +73,7 @@ function VideoPage() {
   }
 
   return (
-    <div className='w-full mb-32 sm:p-6'>
+    <div className='w-full mb-32 sm:p-6 '>
       <div className='max-w-4xl'>
         <Skeleton loading={isLoading}>
           <div className='w-full sm:rounded-xl aspect-video'>
@@ -72,9 +82,9 @@ function VideoPage() {
             </video>
           </div>
         </Skeleton>
-        <div className='w-full p-3 space-y-3 '>
+        <div className='w-full p-3 sm:p-6 sm:mt-4 space-y-3 sm:border rounded-xl border-[#484848]'>
           <Skeleton loading={isLoading} height={'28px'} className='w-3/4'>
-            <p className='font-medium sm:text-lg'>
+            <p className='font-semibold sm:text-xl'>
               {video?.data.title}
             </p>
           </Skeleton>
@@ -152,7 +162,7 @@ function VideoPage() {
               }
 
             </div>
-            <div className='flex items-center gap-3 rounded-full'>
+            <div className='flex items-center gap-3 rounded-full '>
               <Skeleton loading={isLoading}>
                 <Button
                   onClick={handleToggleLike}
@@ -164,27 +174,12 @@ function VideoPage() {
                   {isVideoLiked ? <ThumbsUpSolidIcon height='20' width='20' /> : <ThumbsUp height='20' width='20' />} {videoLikesCount}
                 </Button>
               </Skeleton>
-
-              <DropdownMenu.Root >
-                <Skeleton loading={isLoading}>
-                  <DropdownMenu.Trigger >
-                    <IconButton
-                      aria-label="More options"
-                      variant='soft'
-                      radius='full'
-                      highContrast
-                      color='gray'
-                    >
-                      <DotsVerticalIcon width="18" height="18" />
-                    </IconButton>
-                  </DropdownMenu.Trigger>
-                </Skeleton>
-                <DropdownMenu.Content variant='soft'>
-                  <DropdownMenu.Item>
-                    <BookmarkIcon /> Save to Playlist
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
+              {/* menu button - save to playlist */}
+              <div className='ml-auto sm:ml-0'>
+                {!isLoading && <SaveToPlaylistButton
+                  videoData={video?.data}
+                />}
+              </div>
             </div>
           </div>
           <Skeleton loading={isLoading}>
@@ -217,8 +212,8 @@ function VideoPage() {
         </div>
 
       </div >
-      <div hidden={isLoading}>
-        <CommentSection hidden videoId={videoId} />
+      <div hidden={isLoading} ref={ref}>
+        {loadCommentSection && < CommentSection hidden videoId={videoId} />}
       </div>
     </div >
   )

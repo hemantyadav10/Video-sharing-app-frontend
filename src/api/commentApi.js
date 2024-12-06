@@ -1,7 +1,7 @@
 import apiClient from "./apiClient"
 
-const fetchVideoComments = async (videoId) => {
-  const res = await apiClient.get(`/comments/${videoId}`)
+const fetchVideoComments = async (videoId, page = 1, limit = 6, sortBy = 'newest') => {
+  const res = await apiClient.get(`/comments/${videoId}?page=${page}&limit=${limit}&sortBy=${sortBy}`)
   return res.data;
 }
 
@@ -16,7 +16,7 @@ const deleteComment = async (commentId) => {
 }
 
 const updateComment = async (commentId, newComment) => {
-  const res = await apiClient.patch(`/comments/c/${commentId}`, {newComment: newComment})
+  const res = await apiClient.patch(`/comments/c/${commentId}`, { newComment: newComment })
   return res.data;
 }
 
