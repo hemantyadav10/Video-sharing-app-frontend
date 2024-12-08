@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useAuth } from '../context/authContext'
 import { timeAgo } from '../utils/formatTimeAgo'
+import NoContent from '../components/NoContent'
 
 function PlaylistVideos() {
   const { playlistId } = useParams();
@@ -81,7 +82,7 @@ function PlaylistVideos() {
           className={`relative p-4 bg-cover bg-center sm:p-6  lg:rounded-t-2xl lg:h-[calc(100vh-122px)] lg:sticky lg:top-[88px] sm:px-24 md:px-6 overflow-hidden bg-fixed`}
           style={{ backgroundImage: `url(${playlist?.data?.videos[0]?.thumbnail})` }}
         >
-          <div hidden={!playlist?.data?.videos.length} className="absolute inset-0 z-0 bg-gradient-to-b from-white/20 to-[#111113] backdrop-blur-xl"></div>
+          <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/20 to-[#111113] backdrop-blur-xl"></div>
           <div className="relative z-10 flex flex-col w-full gap-6 text-xs md:flex-row md:items-center lg:flex-col lg:w-80">
             {playlist?.data?.videos.length > 0 && <div className='w-full'>
               <img
@@ -309,9 +310,7 @@ function PlaylistVideos() {
         </div>
       </Skeleton>
       <div className='flex flex-col flex-1 py-4 sm:px-2 lg:py-0'>
-        {playlist?.data?.videos.length === 0 &&
-          <p className='mt-6 text-sm font-medium text-center'>No videos in this playlist</p>
-        }
+        {playlist?.data?.videos.length === 0 && <NoContent />}
         <Spinner loading={loadingPlaylistData} className='h-6 mx-auto' />
         {playlist?.data?.videos.map((video, i) => (
           <VideoCard2

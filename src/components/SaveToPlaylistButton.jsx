@@ -1,5 +1,5 @@
 import { BookmarkIcon, DotsVerticalIcon, PlusIcon } from '@radix-ui/react-icons'
-import { Button, Checkbox, Dialog, DropdownMenu, Flex, IconButton, Spinner, Text } from '@radix-ui/themes'
+import { Button, Checkbox, Dialog, DropdownMenu, Flex, IconButton, Separator, Spinner, Text } from '@radix-ui/themes'
 import React, { useEffect, useState } from 'react'
 import CloseButton from './CloseButton'
 import { useAddVideoToPlaylist, useFetchUserPlaylists, useRemoveVideoFromPlaylist } from '../lib/queries/playlistQueries'
@@ -27,7 +27,7 @@ function SaveToPlaylistButton({ videoData }) {
       const videoInPlaylists = playlist?.data.filter(playlistData =>
         playlistData.videos.includes(videoId)
       ).map(playlistData => playlistData._id)
-      console.log(videoInPlaylists)
+      // console.log(videoInPlaylists)
 
       setCheckedPlaylists(videoInPlaylists)
     }
@@ -93,76 +93,71 @@ function SaveToPlaylistButton({ videoData }) {
           setOpenDialog(open)
         }}
       >
-        <Dialog.Content aria-describedby={undefined} width={'360px'} className='flex flex-col gap-8' >
+        <Dialog.Content
+          aria-describedby={undefined}
+          maxWidth={'450px'}
+          className='flex flex-col p-0'
+        >
           <Dialog.Title
             size={'3'}
             weight={'medium'}
-            className='flex items-center justify-between mb-0'
+            mb={'0'}
+            className='flex items-center justify-between px-6 py-4'
           >
             <Text className='w-full'>
               Save video to..
             </Text>
             <CloseButton />
           </Dialog.Title>
-          {(loading || addingVideo || removingVideo) && <Spinner className='mx-auto' size={'3'} />}
-          {!(loading || addingVideo || removingVideo) && playlist?.data.map((data) => (
-            <Text as="label" size="2" className={`cursor-pointer  ${(addingVideo || removingVideo) && 'cursor-default pointer-events-none'}`}>
-              <Flex gap="2" align={'center'} justify={'between'}>
-                <Flex gap="2" align={'center'}>
+          <div className={`relative py-2 ${(loading || addingVideo || removingVideo) && 'opacity-50'}`}>
+            {
+              (loading || addingVideo || removingVideo) &&
+              <div className='absolute inset-0 flex items-center justify-center'>
+                <Spinner className='mx-auto' size={'3'} />
+              </div>
+            }
+            {playlist?.data.map((data) => (
+              <Text
+                as="label"
+                size="2"
+                className={`cursor-pointer ${(loading || addingVideo || removingVideo) && 'pointer-events-none'} `}
+                title={data.name}
+              >
+                <Flex
+                  gap="2"
+                  py={'2'}
+                  px={'5'}
+                  align={'center'}
+                  className='hover:bg-[#0c0c0dcc] transition-all'
+                >
                   <Checkbox
                     highContrast
                     size={'3'}
+                    variant='classic'
                     checked={checkedPlaylists?.includes(data._id)}
                     onCheckedChange={(checked) => handleCheckboxChange(data._id, checked, data.name)}
-                  // disabled={addingVideo || removingVideo}
                   />
                   <p className='line-clamp-1'>
                     {data.name}
                   </p>
                 </Flex>
-              </Flex>
-            </Text>
-          ))}
-          {/* <CheckboxGroup.Root
-            highContrast
-            size={'3'}
-            className='space-y-4'
-          >
-            {!loading && playlist?.data.map((playlistData) => (
-              <CheckboxGroup.Item
-                key={playlistData._id}
-                value={playlistData.name}
-                className='flex items-center w-full gap-4 cursor-pointer'
-                checked={checkedPlaylists.includes(playlistData._id)}
-                // onChange={(checked) => {
-                //   handleCheckboxChange(playlistData._id, checked)
-                //   console.log('hello')
-                // }}
-                onche={() => {
-                  console.log('hello')
-                }}
-            //     onClick={(checkedPlaylists.includes(playlistData._id)) => {
-            //   console.log('hello')
-            // }}
-              >
-            <Text size={'2'} className=' line-clamp-1'>
-              {playlistData.name}
-            </Text>
-          </CheckboxGroup.Item>
+              </Text>
             ))}
-        </CheckboxGroup.Root> */}
-          <Button
-            onClick={() => {
-              setOpenCreatePlaylist(true)
-            }}
-            variant='soft'
-            highContrast
-            className='w-full'
-            radius='full'
-            size={'2'}
-          >
-            <PlusIcon width={'20'} height={'20'} /> New playlist
-          </Button>
+
+          </div>
+          <div className='px-6 py-4'>
+            <Button
+              onClick={() => {
+                setOpenCreatePlaylist(true)
+              }}
+              highContrast
+              radius='full'
+              size={'2'}
+              className='w-full'
+            >
+              <PlusIcon width={'20'} height={'20'} /> New playlist
+            </Button>
+          </div>
         </Dialog.Content>
       </Dialog.Root>
 

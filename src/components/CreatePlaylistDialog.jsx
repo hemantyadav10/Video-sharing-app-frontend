@@ -40,7 +40,10 @@ function CreatePlaylistDialog({
         reset()
       }}
     >
-      <Dialog.Content aria-describedby={undefined} width={'360px'}>
+      <Dialog.Content
+        aria-describedby={undefined}
+        maxWidth={'450px'}
+      >
         <Dialog.Title weight={'medium'}>
           New playlist
         </Dialog.Title>
