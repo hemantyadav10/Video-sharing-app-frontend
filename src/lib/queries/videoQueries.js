@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
 import {
+  deleteVideo,
   fetchAllVideos,
   fetchRandomVideos,
   fetchVideoById,
@@ -45,6 +46,8 @@ const useTogglePublishStatus = (userId) => {
           ))
         }
       })
+      queryClient.invalidateQueries({ queryKey: ['videos'] })
+      queryClient.invalidateQueries({ queryKey: ['video'] })
     }
   })
 }
@@ -81,6 +84,32 @@ const usePublishVideo = (userId) => {
           data: [{ ...res.data, likes: 0 }, ...prev.data]
         }
       })
+      queryClient.setQueryData(['stats', userId], prev => {
+        if (!prev) return;
+        return {
+          ...prev,
+          data: {
+            ...prev.data, totalVideos: prev.data.totalVideos + 1
+          }
+        }
+      })
+    }
+  })
+}
+
+const useDeleteVideo = (userId) => {
+  return useMutation({
+    mutationFn: deleteVideo,
+    onSuccess: ({ data }) => {
+      const videoId = data.videoId
+      console.log(data)
+      queryClient.setQueryData(['channel_videos', userId], prev => {
+        return {
+          ...prev,
+          data: prev.data.filter(video => video._id !== videoId)
+        }
+      })
+      queryClient.invalidateQueries()
     }
   })
 }
@@ -92,5 +121,6 @@ export {
   useFetchRandomVideos,
   useTogglePublishStatus,
   useUpdateVideo,
-  usePublishVideo
+  usePublishVideo,
+  useDeleteVideo
 }

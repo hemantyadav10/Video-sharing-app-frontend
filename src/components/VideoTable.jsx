@@ -1,10 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { toIndianDateFormat } from '../utils/utils'
 import { AlertDialog, Badge, Button, Flex, IconButton, Skeleton, Switch, Table, Text, Tooltip } from '@radix-ui/themes'
 import { Link } from 'react-router-dom'
 import { Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
 import EditVideoDailog from './EditVideoDailog'
 import { formatVideoDuration } from '../utils/formatVideoDuration'
+import { useDeleteVideo } from '../lib/queries/videoQueries'
+import toast from 'react-hot-toast'
+import { BarLoader } from 'react-spinners'
+import { useAuth } from '../context/authContext'
 
 function VideoTable({
   videos,
@@ -23,9 +27,23 @@ function VideoTable({
     { key: 'actions', label: 'Edit/Delete' },
   ];
 
+  const { user } = useAuth()
+  const { _id: userId } = user
+  const [open, setOpen] = useState(false)
+
+  const { mutate: deleteVideo, isPending: deletingVideo } = useDeleteVideo(userId);
+
+  const handleDeleteVideo = async (videoId) => {
+    deleteVideo(videoId, {
+      onSuccess: () => {
+        toast('Video successfully deleted')
+      }
+    })
+  }
+
 
   return (
-    <Table.Root variant="surface">
+    <Table.Root variant="surface" className='shadow-lg'>
       <Table.Header>
         <Skeleton loading={loadingVideos || !publishedVideos}>
           <Table.Row >
@@ -122,7 +140,7 @@ function VideoTable({
                   className={`flex items-start gap-4 group ${!video.isPublished && 'cursor-default'}`}
                 >
                   <div className='relative w-32 aspect-video'>
-                    <img src={video.thumbnail} alt="" className='object-cover object-center w-full h-full rounded-lg' />
+                    <img src={video.thumbnail} alt="thumbnail" className='object-cover object-center w-full h-full rounded-lg' />
                     <Text
                       className='absolute bottom-1 right-1 p-[2px] px-1 text-xs bg-black/70 font-medium rounded-md text-white'
                       as='span'
@@ -161,8 +179,12 @@ function VideoTable({
                 {toIndianDateFormat(video.createdAt)}
               </Table.Cell>
               <Table.Cell >
+
                 {/* Delete video button that opens a delete confirmation modal */}
-                <AlertDialog.Root>
+                <AlertDialog.Root
+                // open={open}
+                // onOpenChange={(o) => setOpen(o)}
+                >
                   <Tooltip content='Delete video' side='bottom'>
                     <AlertDialog.Trigger>
                       <IconButton variant='ghost' color='gray' highContrast radius='full' mr={'4'}>
@@ -170,21 +192,65 @@ function VideoTable({
                       </IconButton>
                     </AlertDialog.Trigger>
                   </Tooltip>
-                  <AlertDialog.Content maxWidth="450px">
-                    <AlertDialog.Title>Delete video</AlertDialog.Title>
+                  <AlertDialog.Content maxWidth="550px">
+                    <AlertDialog.Title weight={'medium'}>Permanently delete this video?</AlertDialog.Title>
                     <AlertDialog.Description size="2">
+                      <div className='flex items-start gap-4 p-4 my-4 bg-[#0c0c0d] relative'>
+                        <div className='absolute left-0 right-0 -top-0 '>
+                          <BarLoader
+                            color='#70b8ff'
+                            width={'100%'}
+                            height={'2px'}
+                            loading={deletingVideo}
+                          />
+                        </div>
+                        <div className='relative w-28 aspect-video'>
+                          <img src={video.thumbnail} alt="thumbnail" className='object-cover object-center w-full h-full rounded-lg' />
+                          <Text
+                            className='absolute bottom-1 right-1 p-[2px] px-1 text-xs bg-black/70 font-medium rounded-md text-white '
+                            as='span'
+                          >
+                            {formatVideoDuration(video?.duration)}
+                          </Text>
+                        </div>
+                        <div className='flex-1'>
+                          <Text as='p' size={'1'} weight={'medium'}>
+                            {video.title}
+                          </Text>
+                          <Text weight={'light'} color='gray' as='p' size={'1'}>
+                            Uploaded on {toIndianDateFormat(video.createdAt)}
+                          </Text>
+                          <Text weight={'light'} color='gray' as='p' size={'1'}>
+                            {video.views} views
+                          </Text>
+                        </div>
+                      </div>
                       Are you sure you want to delete this video ?
                       Once its deleted, you will not be able to recover it.
                     </AlertDialog.Description>
                     <Flex gap="3" mt="4" justify="end">
-                      <AlertDialog.Cancel>
+                      <AlertDialog.Cancel disabled={deletingVideo}>
                         <Button variant="soft" highContrast color="gray" radius='full'>
                           Cancel
                         </Button>
                       </AlertDialog.Cancel>
-                      <AlertDialog.Action>
-                        <Button highContrast radius='full'>
-                          Delete
+                      <AlertDialog.Action
+                        onClick={e => {
+                          e.preventDefault()
+                          if (deletingVideo) {
+
+                          }
+                        }}
+                        disabled={deletingVideo}
+                      >
+                        <Button
+                          loading={deletingVideo}
+                          onClick={() => handleDeleteVideo(video._id)}
+                          // onClick={(video._id) => handleDeleteVideo(videoId)}
+                          highContrast
+                          radius='full'
+                        >
+                          Delete forever
                         </Button>
                       </AlertDialog.Action>
                     </Flex>

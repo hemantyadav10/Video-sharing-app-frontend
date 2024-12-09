@@ -14,7 +14,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 function Dashboard() {
   const { user } = useAuth()
   const { data: videoData, isLoading: loadingVideos } = useGetChannleVideos(user?._id)
-  const { data: stats, isLoading: loadingStats } = useGetChannelStats(user?._id)
+  const { data: stats, isFetching: loadingStats } = useGetChannelStats(user?._id)
   const location = useLocation();
   const navigate = useNavigate()
   console.log(location)
@@ -64,7 +64,7 @@ function Dashboard() {
     if (location.state?.openDialog) {
       setDialogOpen(true); // Set dialog open first
     }
-  
+
     if (location.state) {
       navigate(location.pathname, { replace: true }); // Clear state from history after using it
     }

@@ -36,6 +36,11 @@ const publishVideo = async (formData) => {
   return res.data;
 }
 
+const deleteVideo = async (videoId) => {
+  const res = await apiClient.delete(`${VIDEO_BASE_URL}/${videoId}`)
+  return res.data
+}
+
 
 export {
   fetchAllVideos,
@@ -43,5 +48,6 @@ export {
   fetchRandomVideos,
   togglePublishStatus,
   updateVideo,
-  publishVideo
+  publishVideo,
+  deleteVideo
 }

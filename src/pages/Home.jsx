@@ -2,25 +2,24 @@ import React from 'react'
 import VideoCard from '../components/VideoCard'
 import Container from '../components/Container'
 import { useOutletContext } from 'react-router-dom'
-import { useFetchVideos } from '../lib/queries/videoQueries'
+import { useFetchRandomVideos } from '../lib/queries/videoQueries'
 
 function Home() {
   const [showMenu] = useOutletContext()
-  const { data, isLoading, error } = useFetchVideos()
-  console.log(data?.data?.docs)
+  const { data, isFetching, error } = useFetchRandomVideos()
 
   return (
     <Container showMenu={showMenu}>
-      {isLoading &&
+      {isFetching &&
         Array.from({ length: 8 }).fill(1).map((_, i) => (
-          <VideoCard key={i} loading={isLoading} />
+          <VideoCard key={i} loading={isFetching} />
         ))
       }
       {data?.data?.docs.map((video) => (
         <VideoCard
           key={video._id}
           videoData={video}
-          loading={isLoading}
+          loading={isFetching}
         />
       ))}
     </Container>
