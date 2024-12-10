@@ -10,6 +10,20 @@ export default {
         'inset-custom': 'inset 0 0 0 var(--text-field-border-width) #b54548',
         'inset-textarea': 'inset 0 0 0 var(--text-area-border-width) #b54548',
       },
+      keyframes: {
+        slideDown: {
+          from: { height: "0px" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        slideUp: {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0px" },
+        },
+      },
+      animation: {
+        slideDown: "slideDown 300ms cubic-bezier(0.87, 0, 0.13, 1)",
+        slideUp: "slideUp 300ms cubic-bezier(0.87, 0, 0.13, 1)",
+      },
     },
   },
   plugins: [],
