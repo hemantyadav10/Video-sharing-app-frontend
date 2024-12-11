@@ -1,10 +1,12 @@
-import { HomeIcon, CounterClockwiseClockIcon, ListBulletIcon, HeartIcon, AvatarIcon, HamburgerMenuIcon, BookmarkFilledIcon, ChevronLeftIcon } from '@radix-ui/react-icons'
-import { IconButton, Text } from '@radix-ui/themes'
-import React from 'react'
-import { NavLink } from 'react-router-dom'
+import { HomeIcon, CounterClockwiseClockIcon, ListBulletIcon, HeartIcon, AvatarIcon, HamburgerMenuIcon, BookmarkFilledIcon, ChevronLeftIcon, MagicWandIcon, ExitIcon, GearIcon, QuestionMarkCircledIcon, LockClosedIcon } from '@radix-ui/react-icons'
+import { Button, IconButton, Separator, Text } from '@radix-ui/themes'
+import React, { useEffect } from 'react'
+import { Link, NavLink } from 'react-router-dom'
 import ThumbsUp from '../assets/ThumbsUpIcon'
+import { useAuth } from '../context/authContext'
 
 function Sidebar({ showMenu, toggleMenu }) {
+  const { logout, isAuthenticated } = useAuth()
   const sidebarItems = [
     {
       name: 'Home',
@@ -28,18 +30,71 @@ function Sidebar({ showMenu, toggleMenu }) {
       icon: ListBulletIcon
     },
     {
+      name: 'Creator Studio',
+      slug: isAuthenticated ? '/dashboard' : '/login',
+      icon: MagicWandIcon,
+      hidden: true
+    },
+    {
       name: 'Liked Videos',
       slug: '/liked-videos',
       icon: ThumbsUp,
       separator: true
     },
-
+    {
+      name: 'Privacy',
+      slug: '/privacy',
+      icon: LockClosedIcon,
+      hidden: true
+    },
+    {
+      name: 'Help',
+      slug: '/help',
+      icon: QuestionMarkCircledIcon,
+      hidden: true
+    },
+    {
+      name: 'Terms of Service',
+      slug: '/terms-of-services',
+      icon: MagicWandIcon,
+      hidden: true
+    },
+    {
+      name: 'Settings',
+      slug: '/settings',
+      icon: GearIcon,
+      hidden: true,
+      separator: true
+    }
   ]
+
+
+  const handleLogout = async () => {
+    await logout();
+  }
+
+  useEffect(() => {
+    if (!showMenu) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && window.innerWidth < 768) {
+        toggleMenu();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showMenu, toggleMenu]); // Dependencies
+
+
 
   return (
     <>
-      <div className={`bg-[#0c0c0d] top-0 h-screen fixed border-[#484848] md:h-[calc(100vh-64px)] md:sticky md:top-16 ${showMenu ? 'md:w-56 ' : '-translate-x-full md:translate-x-0 md:w-auto '} transition ease-in  z-[100] border-r w-56 $`} >
-        <div className='flex flex-col gap-5 '>
+      <div className={`bg-[#0c0c0d] top-0 h-screen fixed border-[#484848] md:h-[calc(100vh-64px)] md:sticky md:top-16 ${showMenu ? 'md:w-56 ' : '-translate-x-full md:translate-x-0 md:w-auto '} transition ease-in  z-[100] border-r w-56  flex-col flex rounded-r-2xl md:rounded-none`} >
+        <div className='flex flex-col flex-1 gap-5 '>
           <span className='flex items-center h-16 col-span-1 gap-4 px-6 border-b border-transparent md:hidden'>
             <IconButton
               onClick={toggleMenu}
@@ -59,27 +114,55 @@ function Sidebar({ showMenu, toggleMenu }) {
                 <NavLink
                   key={item.name}
                   to={item.slug}
-                  className={({ isActive }) => `${isActive ? "bg-[#0077ff3a] f text-[#c2e6ff]" : ""} flex flex-col items-center gap-2 justify-center p-2 py-3 rounded-lg hover:bg-[#0077ff3a] transition-all focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b]`}
+                  className={({ isActive }) => `${isActive ? "bg-[#0077ff3a]  text-[#c2e6ff]" : ""} flex flex-col items-center gap-2 justify-center p-2 py-3 rounded-lg hover:bg-[#0077ff3a] transition-all focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b] ${item.hidden && 'hidden'}`}
                 >
-                  {<item.icon height={'20'} width={'20'} />} <Text className='text-[10px]' >{item.name}</Text>
+                  {<item.icon height={'20'} width={'20'} />} <Text className='text-[10px]' align={'center'} >{item.name}</Text>
                 </NavLink>
               ))
             }
+
           </div>
-          <div className={`flex flex-col gap-1 px-3 md:py-6 ${showMenu ? "" : "md:hidden"} `}>
+          <div className={`flex flex-col gap-1 px-3 md:py-6 ${showMenu ? "" : "md:hidden"}  flex-1`}>
             {sidebarItems.map((item) => (
               <div key={item.name}>
                 <NavLink
                   to={item.slug}
-                  className={({ isActive }) => `${isActive ? "bg-[#0077ff3a]  text-[#c2e6ff]" : ""} flex hover:bg-[#0077ff3a]  transition-all p-3 gap-2 items-center rounded-lg text-sm focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b]`}
+                  className={({ isActive }) => `${isActive ? "bg-[#0077ff3a]  text-[#c2e6ff]" : ""} flex hover:bg-[#0077ff3a]  transition-all p-3 gap-2 items-center rounded-lg text-sm focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b] `}
                 >
                   {item.icon && <item.icon className="mr-2" height={'20'} width={"20"} />}{item.name}
                 </NavLink>
                 {item.separator &&
-                  <hr className='border-[#484848] my-2' />
+                  <Separator my={'2'} className={`w-full `} />
                 }
               </div>
             ))}
+            <div className='block mt-auto mb-5'>
+              {
+                isAuthenticated
+                  ? <button
+                    onClick={handleLogout}
+                    className='flex hover:bg-[#0077ff3a]  transition-all p-3 gap-2 items-center rounded-lg text-sm focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b] w-full'
+                  >
+                    <ExitIcon className="mr-2" height={'20'} width={"20"} />Logout
+                  </button>
+
+                  : <Link
+                    to={'/login'}
+                    className='flex w-full outline-none focus:ring-2'
+                  >
+                    <Button
+                      variant='outline'
+                      radius={'full'}
+                      tabIndex={-1}
+                      aria-hidden='true'
+                      className='w-full'
+                    >
+                      <AvatarIcon height={'20'} width={'20'} />
+                      Sign in
+                    </Button>
+                  </Link>
+              }
+            </div>
           </div>
         </div>
       </div>

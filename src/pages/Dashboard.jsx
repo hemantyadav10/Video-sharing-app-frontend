@@ -92,7 +92,7 @@ function Dashboard() {
 
 
   return (
-    <div className='flex flex-col w-full gap-6 p-6 py-12 mb-16 md:px-24'>
+    <div className='flex flex-col w-full gap-6 p-6 py-12 md:px-24'>
 
       {/* Top section */}
       <section className='flex flex-col gap-6 sm:flex-row sm:justify-between'>
