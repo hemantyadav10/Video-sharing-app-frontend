@@ -73,7 +73,7 @@ const SearchResults = () => {
 				)}
 				{!loadingResults && result?.pages.length > 0 && (
 					result.pages.map((page, pageIndex) => (
-						<div key={pageIndex} className="w-full">
+						<div key={pageIndex} className="flex flex-col items-center w-full">
 							{page.data.totalDocs > 0 ? (
 								page.data.docs.map((video) => (
 									<VideoCard key={video._id} list videoData={video} loading={loadingResults} />
