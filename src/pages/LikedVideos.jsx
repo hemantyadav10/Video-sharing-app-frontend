@@ -1,22 +1,18 @@
-import { Avatar, Skeleton, Spinner, Text } from '@radix-ui/themes'
+import { Skeleton } from '@radix-ui/themes'
 import React from 'react'
-import VideoCard2 from '../components/VideoCard2'
-import { useGetUserLikedVideos, useToggleVideoLike } from '../lib/queries/likeQueries'
-import { timeAgo } from '../utils/formatTimeAgo'
-import { useAuth } from '../context/authContext'
-import { PlayIcon } from '@radix-ui/react-icons'
-import VideoIcon from '../assets/VideoIcon'
 import NoContent from '../components/NoContent'
+import SignInPrompt from '../components/SignInPrompt '
+import VideoCard2 from '../components/VideoCard2'
+import { useAuth } from '../context/authContext'
+import { useGetUserLikedVideos } from '../lib/queries/likeQueries'
+import { timeAgo } from '../utils/formatTimeAgo'
 
 function LikedVideos() {
   const { user, isAuthenticated } = useAuth()
   const { data, isLoading } = useGetUserLikedVideos(user?._id)
-  console.log(data)
-
-  // if (!data?.data.length) return <>No videos</>
 
   return (
-    <div className="flex flex-col w-full mb-16 lg:flex-row lg:p-6">
+    <div className="flex flex-col w-full mb-16 sm:mb-0 lg:flex-row lg:p-6">
       {isAuthenticated && <>
         <Skeleton loading={isLoading}>
           <div className="relative  p-6 overflow-hidden lg:rounded-t-2xl lg:h-[calc(100vh-122px)] lg:sticky lg:top-[88px] md:px-6"
@@ -56,7 +52,12 @@ function LikedVideos() {
         </Skeleton>
         <div className='flex flex-col flex-1 py-4 sm:px-2 lg:py-0'>
           {data?.data.length === 0 && <NoContent />}
-          <Spinner loading={isLoading} className='h-6 mx-auto' />
+          {isLoading && Array.from({ length: 3 }).fill(1).map((item, i) => (
+            <VideoCard2
+              key={i}
+              loading={isLoading}
+            />
+          ))}
           {data?.data.map((likedVideo, i) => (
             <VideoCard2
               key={i}
@@ -65,6 +66,7 @@ function LikedVideos() {
               playlistOwnerId={user?._id}
               removeType={'like'}
               removeContent='Remove from Liked videos'
+              loading={isLoading}
             />
           ))}
           <hr hidden={data?.data.length === 0 || isLoading} className="border-t border-[#484848]" />
@@ -72,6 +74,9 @@ function LikedVideos() {
         </div>
       </>
       }
+      {!isAuthenticated && <>
+        <SignInPrompt />
+      </>}
     </div>
   )
 

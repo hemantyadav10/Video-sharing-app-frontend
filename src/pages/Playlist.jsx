@@ -15,7 +15,7 @@ function PlaylistVideos() {
   const { user } = useAuth()
   const { data: playlist, isLoading: loadingPlaylistData } = useFetchPlaylistById(playlistId)
   const { mutate: updatePlaylist, isPending: updatingPlaylist } = useUpdatePlaylist(playlistId)
-  const { mutate: deletePlaylist } = useDeletePlaylist(playlistId, user?._id)
+  const { mutate: deletePlaylist, isPending: isDeletingPlaylist } = useDeletePlaylist(playlistId, user?._id)
   const navigate = useNavigate();
   const { register, reset, watch, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
@@ -149,13 +149,13 @@ function PlaylistVideos() {
                 <div className='flex justify-end gap-2 '>
                   {/* Add videos to playlist */}
                   <Link to={`/channel/${user?._id}/videos`}>
-                    <Tooltip content='Add videos'>
+                    <Tooltip content='Add videos' side='bottom'>
                       <IconButton
                         radius='full'
                         highContrast
                         variant='soft'
                         color='gray'
-                        className='shadow-lg'
+                        className='shadow-lg hover:shadow-black/30'
                         size={'3'}
                       >
                         <PlusIcon width={'24'} height={'24'} />
@@ -167,14 +167,14 @@ function PlaylistVideos() {
                     open={isDialogOpen}
                     onOpenChange={handleDialogOpenChange}
                   >
-                    <Tooltip content='Edit playlist'>
+                    <Tooltip content='Edit playlist' side='bottom'>
                       <Dialog.Trigger >
                         <IconButton
                           radius='full'
                           highContrast
                           variant='soft'
                           color='gray'
-                          className='shadow-lg'
+                          className='shadow-lg hover:shadow-black/30'
                           size={'3'}
                         >
                           <Pencil1Icon width={'22'} height={'22'} />
@@ -259,14 +259,14 @@ function PlaylistVideos() {
                   </Dialog.Root>
                   {/* Delete playlist button and alert dialog */}
                   <AlertDialog.Root>
-                    <Tooltip content='Delete playlist'>
+                    <Tooltip content='Delete playlist' side='bottom'>
                       <AlertDialog.Trigger>
                         <IconButton
                           radius='full'
                           highContrast
                           variant='soft'
                           color='gray'
-                          className='shadow-lg'
+                          className='shadow-lg hover:shadow-black/30'
                           size={'3'}
                         >
                           <TrashIcon width={'22'} height={'22'} />
@@ -276,11 +276,13 @@ function PlaylistVideos() {
                     <AlertDialog.Content maxWidth="450px">
                       <AlertDialog.Title>Delete playlist</AlertDialog.Title>
                       <AlertDialog.Description size="2">
-                        Are you sure? Deleting playlists is a permanent action and cannot be undone.
+                        Are you sure ? Deleting playlists is a permanent action and cannot be undone.
                       </AlertDialog.Description>
 
                       <Flex gap="3" mt="4" justify="end">
-                        <AlertDialog.Cancel>
+                        <AlertDialog.Cancel
+                          disabled={isDeletingPlaylist}
+                        >
                           <Button
                             variant="soft"
                             color="gray"
@@ -290,10 +292,15 @@ function PlaylistVideos() {
                             Cancel
                           </Button>
                         </AlertDialog.Cancel>
-                        <AlertDialog.Action>
+                        <AlertDialog.Action
+                          onClick={e => {
+                            e.preventDefault()
+                          }}
+                          disabled={isDeletingPlaylist}
+                        >
                           <Button
+                            loading={isDeletingPlaylist}
                             onClick={handleDeletePlaylist}
-                            variant="soft"
                             highContrast
                             radius='full'
                           >
@@ -311,7 +318,12 @@ function PlaylistVideos() {
       </Skeleton>
       <div className='flex flex-col flex-1 py-4 sm:px-2 lg:py-0'>
         {playlist?.data?.videos.length === 0 && <NoContent />}
-        <Spinner loading={loadingPlaylistData} className='h-6 mx-auto' />
+        {loadingPlaylistData && Array.from({ length: 3 }).fill(1).map((item, i) => (
+          <VideoCard2
+            key={i}
+            loading={loadingPlaylistData}
+          />
+        ))}
         {playlist?.data?.videos.map((video, i) => (
           <VideoCard2
             key={i}
@@ -320,6 +332,7 @@ function PlaylistVideos() {
             playlistOwnerId={playlist?.data?.owner._id}
             removeType={'playlist'}
             playlistId={playlist?.data._id}
+            loading={loadingPlaylistData}
           />
         ))}
         <hr hidden={!playlist?.data?.videos.length} className="border-t border-[#484848]" />

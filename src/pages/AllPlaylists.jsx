@@ -2,6 +2,7 @@ import React from 'react'
 import PlaylistCard from '../components/PlaylistCard'
 import { useFetchUserPlaylists } from '../lib/queries/playlistQueries'
 import { useAuth } from '../context/authContext'
+import NoContent from '../components/NoContent'
 
 function AllPlaylists() {
   const { user } = useAuth()
@@ -20,6 +21,11 @@ function AllPlaylists() {
           <PlaylistCard key={playlist._id} playlistData={playlist} loading={isLoading} />
         ))}
       </div>
+      {playlists?.data.length === 0 &&
+        <NoContent
+          description='Start creating your playlists to save your favorite videos in one place.'
+          title='No Playlists Yet'
+        />}
     </div>
   )
 }
