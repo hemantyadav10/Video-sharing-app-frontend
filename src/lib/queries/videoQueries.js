@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query"
 import {
   deleteVideo,
   fetchAllVideos,
@@ -10,12 +10,19 @@ import {
 } from "../../api/videoApi"
 import { queryClient } from "../../main"
 
-const useFetchVideos = () => {
-  return useQuery({
-    queryKey: ['vidoes'],
-    queryFn: fetchAllVideos
-  })
-}
+const useFetchVideos = (searchParams, limit = 10) => {
+  const clonedParams = new URLSearchParams(searchParams);
+  clonedParams.set("limit", limit);
+  const queryString = clonedParams.toString();
+
+  return useInfiniteQuery({
+    queryKey: ['videos', queryString],
+    queryFn: ({ pageParam = 1 }) => fetchAllVideos(`${queryString}&page=${pageParam}`),
+    getNextPageParam: (lastPage) => lastPage?.data?.nextPage || null,
+    enabled: !!searchParams.get('query')
+  });
+};
+
 
 const useFetchRandomVideos = () => {
   return useQuery({

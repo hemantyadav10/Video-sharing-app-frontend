@@ -1,5 +1,5 @@
-import { BookmarkIcon, CropIcon, Cross1Icon, DotsVerticalIcon } from '@radix-ui/react-icons'
-import { Avatar, DropdownMenu, Flex, IconButton, Skeleton, Text, Tooltip } from '@radix-ui/themes'
+import { Cross1Icon } from '@radix-ui/react-icons'
+import { Avatar, Flex, IconButton, Skeleton, Text, Tooltip } from '@radix-ui/themes'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { timeAgo } from '../utils/formatTimeAgo'
@@ -15,7 +15,6 @@ function VideoCard({
   videoData,
   loading,
   hideUsername = false,
-  error
 }) {
   const { isAuthenticated } = useAuth()
 
@@ -25,12 +24,12 @@ function VideoCard({
         <Link
           to={`/watch/${videoData?._id}`}
           state={{ thumbnail: videoData?.thumbnail }}
-          className={`relative sm:rounded-xl aspect-video  ${list ? "sm:col-span-5" : ""} `}
+          className={`relative sm:rounded-xl aspect-video  ${list ? "sm:col-span-5" : ""} overflow-hidden`}
         >
           <img
             src={videoData?.thumbnail || 'https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop'}
             alt={videoData?.title || "Video thumbnail"}
-            className={`object-cover object-center w-full sm:rounded-xl aspect-video `}
+            className={`object-cover object-center w-full sm:rounded-xl aspect-video hover:scale-105 transition-transform duration-300`}
           />
           <Text
             className='absolute bottom-2 right-2 p-[2px] px-1 text-xs bg-black/70 font-medium rounded-md'
@@ -79,7 +78,7 @@ function VideoCard({
           gapY={'2'}
           className='flex-1'
         >
-          <Skeleton loading={loading} height={'20px'} >
+          <Skeleton loading={loading} height={'20px'} className='w-[90%]' >
             <Link
               title={videoData?.title}
               to={`/watch/${videoData?._id}`}
@@ -88,7 +87,7 @@ function VideoCard({
               {videoData?.title}
             </Link>
           </Skeleton>
-          {!hideUsername && <Skeleton loading={loading}>
+          {!hideUsername &&
             <Link to={`/channel/${videoData?.owner?._id}`}
               className=''
             >
@@ -108,28 +107,33 @@ function VideoCard({
                     />
                   </Skeleton>
                 }
-                {videoData?.owner?.fullName}
+                <Skeleton loading={loading} className='w-1/4 h-4'>
+                  <Text as='span' size={'1'}>
+                    {videoData?.owner?.fullName}
+                  </Text>
+                </Skeleton>
               </Text>
             </Link>
-          </Skeleton>}
-          <Skeleton loading={loading}>
-            <Flex gap={'1'} align={'center'} className={`${list && "sm:order-1"}`}>
+          }
+          <Flex gap={'1'} align={'center'} className={`${list && "sm:order-1"}`}>
+            <Skeleton loading={loading} >
               <Text as='span' color='gray' size={'1'} >{videoData?.views} views</Text>
               <Text as='span' color='gray' size={'1'} >•</Text>
               <Text as='span' color='gray' size={'1'} >
                 {timeAgo(videoData?.createdAt)}</Text>
-            </Flex>
-          </Skeleton>
+            </Skeleton>
+          </Flex>
           {list && <div className={`${list && "hidden sm:block sm:order-3"}`}>
-            <Text
-              as='p'
-              size={'1'}
-              color='gray'
-              className='line-clamp-1'
-            >
-              {videoData?.description}
-            </Text>
-
+            <Skeleton loading={loading} className='w-3/4 h-4'>
+              <Text
+                as='p'
+                size={'1'}
+                color='gray'
+                className='line-clamp-1'
+              >
+                {videoData?.description}
+              </Text>
+            </Skeleton>
           </div>}
         </Flex>
         {

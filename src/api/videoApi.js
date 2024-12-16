@@ -2,8 +2,11 @@ import apiClient from "./apiClient";
 
 const VIDEO_BASE_URL = '/videos'
 
-const fetchAllVideos = async () => {
-  const response = await apiClient.get(VIDEO_BASE_URL);
+const fetchAllVideos = async (queryString = '') => {
+  const url = `${VIDEO_BASE_URL}?${queryString}`;
+
+  const response = await apiClient.get(url);
+
   return response.data;
 };
 
