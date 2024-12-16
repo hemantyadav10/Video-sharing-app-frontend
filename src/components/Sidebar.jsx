@@ -27,13 +27,15 @@ function Sidebar({ showMenu, toggleMenu }) {
     {
       name: 'Playlists',
       slug: '/playlists',
-      icon: ListBulletIcon
+      icon: ListBulletIcon,
+      showWhenLoggedIn: true
     },
     {
       name: 'Creator Studio',
       slug: isAuthenticated ? '/dashboard' : '/login',
       icon: MagicWandIcon,
-      hidden: true
+      hidden: true,
+      showWhenLoggedIn: true
     },
     {
       name: 'Liked Videos',
@@ -64,7 +66,8 @@ function Sidebar({ showMenu, toggleMenu }) {
       slug: '/settings',
       icon: GearIcon,
       hidden: true,
-      separator: true
+      separator: true,
+      showWhenLoggedIn: true
     }
   ]
 
@@ -114,7 +117,7 @@ function Sidebar({ showMenu, toggleMenu }) {
                 <NavLink
                   key={item.name}
                   to={item.slug}
-                  className={({ isActive }) => `${isActive ? "bg-[#0077ff3a]  text-[#c2e6ff]" : ""} flex flex-col items-center gap-2 justify-center p-2 py-3 rounded-lg hover:bg-[#0077ff3a] transition-all focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b] ${item.hidden && 'hidden'}`}
+                  className={({ isActive }) => `${isActive ? "bg-[#0077ff3a]  text-[#c2e6ff]" : ""} flex flex-col items-center gap-2 justify-center p-2 py-3 rounded-lg hover:bg-[#0077ff3a] transition-all focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b] ${item.hidden && 'hidden'} ${!isAuthenticated && item.showWhenLoggedIn && 'hidden'}`}
                 >
                   {<item.icon height={'20'} width={'20'} />} <Text className='text-[10px]' align={'center'} >{item.name}</Text>
                 </NavLink>
@@ -127,7 +130,7 @@ function Sidebar({ showMenu, toggleMenu }) {
               <div key={item.name}>
                 <NavLink
                   to={item.slug}
-                  className={({ isActive }) => `${isActive ? "bg-[#0077ff3a]  text-[#c2e6ff]" : ""} flex hover:bg-[#0077ff3a]  transition-all p-3 gap-2 items-center rounded-lg text-sm focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b] `}
+                  className={({ isActive }) => `${isActive ? "bg-[#0077ff3a]  text-[#c2e6ff]" : ""} flex hover:bg-[#0077ff3a]  transition-all p-3 gap-2 items-center rounded-lg text-sm focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b] ${!isAuthenticated && item.showWhenLoggedIn && 'hidden'}`}
                 >
                   {item.icon && <item.icon className="mr-2" height={'20'} width={"20"} />}{item.name}
                 </NavLink>

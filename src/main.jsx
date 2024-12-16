@@ -67,10 +67,10 @@ const router = createBrowserRouter(
         </Route>
         <Route path='playlist/:playlistId' element={<Playlist />} />
         <Route path='liked-videos' element={<LikedVideos />} />
-        <Route path='playlists' element={<AllPlaylists />} />
         <Route path='subscriptions' element={<SubscriptionVideos />} />
         <Route element={<ProtectedRoute />}>
           <Route path='subscriptions/channels' element={<SubscribedChannels />} />
+          <Route path='playlists' element={<AllPlaylists />} />
         </Route>
         <Route path='results' element={<SearchResults />} />
         <Route path='history' element={<History />} />
