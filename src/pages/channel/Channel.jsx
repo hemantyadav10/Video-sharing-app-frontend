@@ -12,10 +12,9 @@ function Channel() {
   const { user, isAuthenticated } = useAuth()
 
   const isVideosActive = location.pathname === `/channel/${userId}` || location.pathname === `/channel/${userId}/videos`;
-
   const { data, isLoading: loadingProfileInfo } = useFetchUserChannelInfo(userId, user?._id)
-  const { data: videoData, isLoading: loadingVideos } = useFetchUserVideos(userId)
-
+  const { data: videoData, isFetching: loadingVideos } = useFetchUserVideos(userId)
+  console.log(videoData)
 
   return (
     <div className='relative flex flex-col flex-1'>
@@ -24,7 +23,7 @@ function Channel() {
       <Skeleton loading={loadingProfileInfo}>
         <div className='relative w-full h-32 sm:h-40 md:h-48 lg:h-52'>
           <img
-            src={data?.data?.coverImage || 'https://static.vecteezy.com/system/resources/previews/036/226/143/non_2x/ai-generated-nature-landscapes-background-free-photo.jpg'}
+            src={data?.data?.coverImage || 'https://storage.googleapis.com/support-kms-prod/Ch5HG5RGzGnfHhvVSD93gdoEvWm5IPGUkOnS'}
             alt="A house in a forest"
             className='object-cover object-center w-full h-full'
           />
@@ -43,15 +42,15 @@ function Channel() {
         }
       </div>
       {/* user info */}
-      <div className='justify-between px-4 pt-16 md:py-8 md:ml-40 md:flex xl:px-20 lg:px-10'>
+      <div className='flex flex-wrap justify-between px-4 pt-16 pb-8 md:py-8 md:ml-40 xl:px-20 lg:px-10'>
         <div>
           <Heading as='h3' className='capitalize'>
             <Skeleton height={'30px'} loading={loadingProfileInfo}>
               {data?.data?.fullName}
             </Skeleton>
           </Heading>
-          <Text size={'2'} color='gray'>
-            <Skeleton loading={loadingProfileInfo}>
+          <Text as='p' size={'2'} color='gray'>
+            <Skeleton loading={loadingProfileInfo} className='w-16'>
               @{data?.data?.username}
             </Skeleton>
           </Text>
@@ -66,7 +65,7 @@ function Channel() {
             </Text>
             <Text size={'2'} color='gray'>
               <Skeleton loading={loadingVideos}>
-                {videoData?.data.totalDocs} videos
+                {videoData?.pages[0]?.data.totalDocs} videos
               </Skeleton>
             </Text>
           </Flex>
@@ -82,8 +81,8 @@ function Channel() {
             />
           ) :
             <Popover.Root >
-              <Popover.Trigger>
-                <Skeleton loading={loadingProfileInfo}>
+              <Skeleton loading={loadingProfileInfo}>
+                <Popover.Trigger>
                   <Button
                     color='blur'
                     highContrast
@@ -91,8 +90,8 @@ function Channel() {
                   >
                     Subscribe
                   </Button>
-                </Skeleton>
-              </Popover.Trigger>
+                </Popover.Trigger>
+              </Skeleton>
               <Popover.Content className='z-10' width="360px">
                 <Flex p={'2'} direction={'column'} gapY={'3'}>
                   <Text as='p'>
@@ -111,8 +110,8 @@ function Channel() {
             </Popover.Root>
           }
           {user?._id === userId && <Skeleton loading={loadingProfileInfo}>
-            <Link to='/settings' className='flex items-center gap-2'>
-              <Button variant='soft' highContrast >
+            <Link to='/settings' className='flex items-center gap-2 rounded-full'>
+              <Button variant='soft' highContrast radius='full'>
                 <Pencil1Icon />
                 Edit
               </Button>
@@ -121,37 +120,30 @@ function Channel() {
         </div>
       </div>
 
-      <div className=' grid grid-cols-3 sm:flex px-4 text-sm border-b border-[#484848] font-medium mt-2 border-t border-t-[#111113] xl:px-20 sticky top-[63px] z-30 bg-[#111113] lg:px-10'>
+      <div className=' grid grid-cols-3 sm:flex px-4 text-sm border-b border-[#484848] mt-2 border-t border-t-[#111113] xl:px-20 sticky top-[63px] z-30 bg-[#111113] lg:px-10 gap-x-1'>
         <NavLink
           to={`/channel/${userId}/videos`}
-          className={() => `tabNav ${isVideosActive ? "tabNav_active" : "tabNav_inactive"} px-6`}
+          className={() => `tabNav ${isVideosActive ? "tabNav_active" : "tabNav_inactive"}`}
         >
           Videos
         </NavLink>
         <NavLink
           to={`/channel/${userId}/playlists`}
-          className={({ isActive }) => `tabNav ${isActive ? "tabNav_active" : "tabNav_inactive"} px-6`}
+          className={({ isActive }) => `tabNav ${isActive ? "tabNav_active" : "tabNav_inactive"} `}
         >
           Playlist
         </NavLink>
         <NavLink
           to={`/channel/${userId}/tweets`}
-          className={({ isActive }) => `tabNav ${isActive ? "tabNav_active" : "tabNav_inactive"} px-6 `}
+          className={({ isActive }) => `tabNav ${isActive ? "tabNav_active" : "tabNav_inactive"} `}
         >
           Tweets
         </NavLink>
       </div>
-      <div className='flex-1 px-4 py-6 mb-16 lg:px-10 xl:px-20'>
-        {loadingVideos ? <Spinner className='h-6 mx-auto' /> :
-          <Outlet
-            context={
-              {
-                videos: videoData?.data,
-                loading: loadingVideos,
-                userId
-              }}
-          />
-        }
+      <div className='flex-1 py-4 mb-16 sm:mb-0 sm:px-4 lg:px-10 xl:px-20'>
+        <Outlet
+          context={{ userId }}
+        />
       </div>
     </div>
   )

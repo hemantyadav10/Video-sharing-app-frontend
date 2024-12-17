@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query"
 import {
   changePassword,
   getCurrentUser,
@@ -9,6 +9,7 @@ import {
   logoutUser,
   updateAccountDetails
 } from "../../api/userApi"
+import { queryClient } from "../../main"
 
 const useFetchUserChannelInfo = (channelId, userId) => {
   return useQuery({
@@ -17,10 +18,13 @@ const useFetchUserChannelInfo = (channelId, userId) => {
   })
 }
 
-const useFetchUserVideos = (userId) => {
-  return useQuery({
-    queryKey: ['video', userId],
-    queryFn: () => getUserVideos(userId),
+const useFetchUserVideos = (userId, filters = '', limit = 12) => {
+  return useInfiniteQuery({
+    queryKey: ['video', userId, filters || ''],
+    queryFn: ({ pageParam = 1 }) => getUserVideos(userId, `${filters}&page=${pageParam}&limit=${limit}`),
+    getNextPageParam: (lastPage) => lastPage?.data?.nextPage || null,
+    keepPreviousData: true,
+    placeholderData: (prevData) => prevData,
   })
 }
 
@@ -32,7 +36,10 @@ const useLoginUser = () => {
 
 const userLogoutUser = () => {
   return useMutation({
-    mutationFn: logoutUser
+    mutationFn: logoutUser,
+    onSuccess: () => {
+      queryClient.clear()
+    }
   })
 }
 

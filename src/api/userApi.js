@@ -5,8 +5,8 @@ const getUserChannelInfo = async (userId) => {
   return response.data;
 }
 
-const getUserVideos = async (userId) => {
-  const res = await apiClient.get(`videos?userId=${userId}`)
+const getUserVideos = async (userId, filters) => {
+  const res = await apiClient.get(`videos?userId=${userId}&${filters}`)
   return res.data
 }
 

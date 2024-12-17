@@ -55,7 +55,7 @@ function VideoCard2({
       tabIndex={loading ? -1 : 0}
       aria-disabled={loading}
       to={`/watch/${video?._id}`}
-      className={`flex flex-col w-full gap-2 p-4  rounded-2xl sm:flex-row sm:py-2 ${loading ? 'cursor-default pointer-events-none' : "hover:bg-[#ddeaf814] active:bg-[#ddeaf81a]"}`}
+      className={`flex flex-col w-full gap-2 p-4  rounded-2xl sm:flex-row sm:py-2 ${loading ? 'cursor-default pointer-events-none' : "hover:bg-[#ddeaf814] active:bg-[#ddeaf81a]"} `}
     >
       <Skeleton loading={loading} className='my-auto h-max'>
         <div className='items-center justify-center hidden text-sm transition-all sm:flex'>
