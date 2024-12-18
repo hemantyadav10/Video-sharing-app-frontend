@@ -40,6 +40,11 @@ const updateAccountDetails = async (details) => {
   return res.data
 }
 
+const clearWatchHistory = async () => {
+  const res = await apiClient.delete('/users/watch-history');
+  return res.data
+}
+
 export {
   getUserChannelInfo,
   getUserVideos,
@@ -48,5 +53,6 @@ export {
   getCurrentUser,
   getUserWatchHistory,
   changePassword,
-  updateAccountDetails
+  updateAccountDetails,
+  clearWatchHistory
 }

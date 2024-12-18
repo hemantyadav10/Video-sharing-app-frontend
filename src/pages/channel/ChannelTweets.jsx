@@ -78,7 +78,7 @@ function ChannelTweets() {
         </div>
       }
       {/* tweet cards */}
-      <div className='flex flex-col max-w-4xl gap-6 mt-6'>
+      <div className='flex flex-col w-full max-w-4xl gap-6 mt-6'>
         {userTweets?.data.map((tweet) => (
           <TweetCard
             key={tweet._id}

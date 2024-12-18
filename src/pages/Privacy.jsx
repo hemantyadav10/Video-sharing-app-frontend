@@ -22,7 +22,7 @@ function Privacy() {
             <Text as="p" weight="medium" size="6" className="mb-4">
               Information We Collect
             </Text>
-            <ul className="space-y-2 list-disc list-inside">
+            <ul className="ml-4 space-y-2 list-disc list-outside">
               <li>
                 <span className="font-medium">Information You Provide to Us:</span> Account information
                 (name, email, username, profile details), videos, comments, and messages uploaded to our
@@ -45,7 +45,7 @@ function Privacy() {
             <Text as="p" weight="medium" size="6" className="mb-4">
               How We Use Your Information
             </Text>
-            <ul className="space-y-2 list-disc list-inside">
+            <ul className="ml-4 space-y-2 list-disc list-outside">
               <li>Manage your account, display content, and provide personalized recommendations.</li>
               <li>Analyze trends and enhance user experience.</li>
               <li>Send service updates, account notifications, and promotional materials (if consented).</li>
@@ -59,7 +59,7 @@ function Privacy() {
             <Text as="p" weight="medium" size="6" className="mb-4">
               Sharing Your Information
             </Text>
-            <ul className="space-y-2 list-disc list-inside">
+            <ul className="ml-4 space-y-2 list-disc list-outside">
               <li>
                 <span className="font-medium">Service Providers:</span> Trusted third parties for hosting,
                 analytics, customer support, and payment processing.
@@ -96,7 +96,7 @@ function Privacy() {
             <Text as="p" weight="medium" size="6" className="mb-4">
               Your Privacy Choices
             </Text>
-            <ul className="space-y-2 list-disc list-inside">
+            <ul className="ml-4 space-y-2 list-disc list-outside">
               <li>
                 <span className="font-medium">Access:</span> Request a copy of the data we hold about you.
               </li>

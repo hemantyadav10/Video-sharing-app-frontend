@@ -1,6 +1,7 @@
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query"
 import {
   changePassword,
+  clearWatchHistory,
   getCurrentUser,
   getUserChannelInfo,
   getUserVideos,
@@ -54,7 +55,7 @@ const useGetCurrentUser = (token, userId) => {
 
 const useFetchUserWatchHistory = (user) => {
   return useQuery({
-    queryKey: ['watch_history', user],
+    queryKey: ['watch_history'],
     queryFn: getUserWatchHistory,
     enabled: !!user
   })
@@ -72,6 +73,21 @@ const useUpdateAccountDetails = () => {
   })
 }
 
+const useClearWatchHistory = () => {
+  return useMutation({
+    mutationFn: clearWatchHistory,
+    onSuccess: () => {
+      queryClient.setQueryData(['watch_history'], prev => {
+        if (!prev) return;
+        return {
+          ...prev,
+          data: []
+        }
+      })
+    }
+  })
+}
+
 export {
   useFetchUserChannelInfo,
   useFetchUserVideos,
@@ -80,5 +96,6 @@ export {
   useGetCurrentUser,
   useFetchUserWatchHistory,
   useChangePassword,
-  useUpdateAccountDetails
+  useUpdateAccountDetails,
+  useClearWatchHistory
 }

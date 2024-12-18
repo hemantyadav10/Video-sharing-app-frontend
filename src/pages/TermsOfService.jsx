@@ -45,7 +45,7 @@ function TermsOfService() {
             <Text as="p" weight="medium" size="6" className="mb-4">
               User Responsibilities
             </Text>
-            <ul className="space-y-2 list-disc list-inside">
+            <ul className="ml-4 space-y-2 list-disc ">
               <li>You must provide accurate and complete information when creating an account.</li>
               <li>Maintain the confidentiality of your account credentials.</li>
               <li>Refrain from using our platform for unlawful or prohibited activities.</li>
@@ -61,7 +61,7 @@ function TermsOfService() {
             <Text as="p" weight="medium" size="6" className="mb-4">
               Prohibited Activities
             </Text>
-            <ul className="space-y-2 list-disc list-inside">
+            <ul className="ml-4 space-y-2 list-disc ">
               <li>Spamming, phishing, or attempting to defraud other users.</li>
               <li>Uploading malicious software, viruses, or harmful content.</li>
               <li>Engaging in unauthorized data scraping or harvesting.</li>
