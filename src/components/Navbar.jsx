@@ -6,6 +6,8 @@ import { useAuth } from '../context/authContext'
 import VideoIcon from '../assets/VideoIcon'
 import { BarLoader } from 'react-spinners'
 import { useFetchVideos } from '../lib/queries/videoQueries'
+import PlaylistIcon from '../assets/PlaylistIcon'
+import CreatePlaylistDialog from './CreatePlaylistDialog'
 
 function Navbar({ toggleMenu }) {
   const [searchParams, setSearchParams] = useSearchParams('')
@@ -16,6 +18,8 @@ function Navbar({ toggleMenu }) {
   const { pathname } = useLocation()
   const dashboardRoute = pathname === '/dashboard'
   const { isFetching } = useFetchVideos(searchParams)
+  const [openCreatePlaylist, setOpenCreatePlaylist] = useState(false)
+
 
 
   const handleSearch = (e) => {
@@ -130,6 +134,13 @@ function Navbar({ toggleMenu }) {
                   <Pencil2Icon />Create tweet
                 </DropdownMenu.Item>
               </Link>
+              <DropdownMenu.Item
+                onClick={() => {
+                  setOpenCreatePlaylist(true)
+                }}
+              >
+                <PlaylistIcon /> New playlist
+              </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
           {/* Profile dropdown menu */}
@@ -276,6 +287,11 @@ function Navbar({ toggleMenu }) {
           </form>
         </div>
       }
+      {/* Create new playlist */}
+      <CreatePlaylistDialog
+        open={openCreatePlaylist}
+        toggleOpen={setOpenCreatePlaylist}
+      />
     </div >
   )
 }

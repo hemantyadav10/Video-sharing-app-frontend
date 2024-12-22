@@ -67,13 +67,13 @@ const SearchResults = () => {
 					loading={loadingResults}
 				/>
 			</div>
-			<div className='flex flex-col items-center gap-6 sm:gap-0'>
+			<div className='flex flex-col items-center gap-0 sm:gap-2'>
 				{loadingResults && (
-					Array.from({ length: 2 }).map((_, i) => <VideoCard key={i} list loading={loadingResults} />)
+					Array.from({ length: 4 }).map((_, i) => <VideoCard key={i} list loading={loadingResults} />)
 				)}
 				{!loadingResults && result?.pages.length > 0 && (
 					result.pages.map((page, pageIndex) => (
-						<div key={pageIndex} className="flex flex-col items-center w-full">
+						<div key={pageIndex} className="flex flex-col items-center w-full gap-0 sm:gap-2">
 							{page.data.totalDocs > 0 ? (
 								page.data.docs.map((video) => (
 									<VideoCard key={video._id} list videoData={video} loading={loadingResults} />

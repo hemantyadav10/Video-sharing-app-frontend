@@ -37,7 +37,7 @@ function PlaylistCard({
             <img
               src={playlistData?.thumbnail || noThumbnail}
               alt="A house in a forest"
-              className='object-cover object-center w-full h-full border-t border-[#111113] rounded-xl brightness-50 '
+              className='object-cover object-center w-full h-full border-t border-[#111113] rounded-xl'
             />
             {/* Background overlay with opacity transition */}
             <div className="absolute inset-0 transition-opacity opacity-0 bg-black/70 rounded-xl group-hover:opacity-100"></div>
