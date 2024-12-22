@@ -53,10 +53,15 @@ const useGetCurrentUser = (token, userId) => {
   })
 }
 
-const useFetchUserWatchHistory = (user) => {
-  return useQuery({
+const useFetchUserWatchHistory = (user, limit = 3) => {
+  return useInfiniteQuery({
     queryKey: ['watch_history'],
-    queryFn: getUserWatchHistory,
+    queryFn: ({ pageParam = 1 }) => getUserWatchHistory(limit, pageParam),
+    getNextPageParam: (lastPage) => {
+      console.log(lastPage, "hello")
+      return lastPage?.data?.nextPage || null
+    },
+    keepPreviousData: true,
     enabled: !!user
   })
 }
@@ -78,10 +83,22 @@ const useClearWatchHistory = () => {
     mutationFn: clearWatchHistory,
     onSuccess: () => {
       queryClient.setQueryData(['watch_history'], prev => {
-        if (!prev) return;
+        if (!prev || !prev.pages || !prev.pages[0] || !prev.pages[0].data) return prev;
         return {
           ...prev,
-          data: []
+          pages: [
+            {
+              ...prev.pages[0],
+              data: {
+                ...prev.pages[0].data,
+                docs: [],
+                totalDocs: 0,
+                hasPrevPage: false,
+                hasNextPage: false,
+                nextPage: null
+              }
+            }
+          ]
         }
       })
     }

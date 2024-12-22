@@ -11,7 +11,6 @@ function VideoCard({
   hideAvatar = false,
   list = false,
   moreOptionsButton = true,
-  removeFromHistoryButton = false,
   videoData,
   loading,
   hideUsername = false,
@@ -19,7 +18,7 @@ function VideoCard({
   const { isAuthenticated } = useAuth()
 
   return (
-    <div className={`flex gap-4 mb-4 sm:rounded-xl ${list ? 'sm:grid sm:grid-cols-12 w-full flex-col max-w-6xl ' : 'flex-col '}  line-clamp-1 sm:p-1`}>
+    <div className={`flex gap-4 mb-4 sm:rounded-xl ${list ? 'sm:grid sm:grid-cols-12 w-full sm:mb-0 flex-col max-w-6xl ' : 'flex-col '}  line-clamp-1 sm:p-1`}>
       <Skeleton loading={loading}>
         <Link
           to={`/watch/${videoData?._id}`}
@@ -42,22 +41,6 @@ function VideoCard({
       <Flex
         className={`relative ${list ? "sm:col-span-7" : ""} p-1 sm:p-0`}
       >
-        {removeFromHistoryButton && !loading &&
-          <Tooltip
-            width={'100px'}
-            content='Remove from watch history'
-          >
-            <IconButton
-              aria-label="Remove from watch history"
-              variant='ghost'
-              className='absolute rounded-full sm:right-[6px] top-2 right-2'
-              highContrast
-              color='gray'
-            >
-              <Cross1Icon height={'20'} width={'20'} />
-            </IconButton>
-          </Tooltip>
-        }
         {/* hidden={loading || !isAuthenticated} */}
 
         {!hideAvatar &&

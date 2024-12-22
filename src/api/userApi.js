@@ -25,8 +25,8 @@ const getCurrentUser = async () => {
   return res.data;
 }
 
-const getUserWatchHistory = async () => {
-  const res = await apiClient.get('/users/watch-history')
+const getUserWatchHistory = async (limit = 3, page = 1) => {
+  const res = await apiClient.get(`/users/watch-history?limit=${limit}&page=${page}`)
   return res.data
 }
 
