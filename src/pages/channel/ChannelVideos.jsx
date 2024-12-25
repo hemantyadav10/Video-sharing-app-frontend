@@ -1,7 +1,8 @@
-import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { ChevronDownIcon, PlayIcon } from '@radix-ui/react-icons';
 import { Button, SegmentedControl, Separator, Spinner } from '@radix-ui/themes';
 import React, { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
+import EmptyLibrary from '../../components/EmptyLibrary';
 import VideoCard from '../../components/VideoCard';
 import { useFetchUserVideos } from '../../lib/queries/userQueries';
 
@@ -11,13 +12,11 @@ function ChannelVideos() {
 
   const { userId } = useOutletContext()
   const { data: videoData, isLoading: loadingVideos, isFetchingNextPage, hasNextPage, fetchNextPage, isFetching } = useFetchUserVideos(userId, filters, 6)
-
   const filterOptions = [
     { label: 'Latest', value: 'Latest', query: 'sortBy=createdAt&sortType=desc' },
     { label: 'Popular', value: 'Popular', query: 'sortBy=views&sortType=desc' },
     { label: 'Oldest', value: 'Oldest', query: 'sortBy=createdAt&sortType=asc' },
   ];
-  console.log(`isLoading:${loadingVideos}, isFetching:${isFetching}, isFetchingNextPage:${isFetchingNextPage}`)
 
   const handleFilterChange = (value) => {
     const selectedFilter = filterOptions.find((filter) => filter.value === value);
@@ -30,31 +29,40 @@ function ChannelVideos() {
   return (
     <div
       tabIndex={isFetching ? -1 : 0}
-      className={`${(isFetching && !loadingVideos && !isFetchingNextPage) ? 'pointer-events-none opacity-30' : ''}`}
+      className={`${(isFetching && !loadingVideos && !isFetchingNextPage) ? 'pointer-events-none opacity-30 ' : ''}`}
     >
 
       {/* Filter Section */}
-      <SegmentedControl.Root
-        variant='surface'
-        mx={'4'}
-        className='sm:mx-0'
-        value={currentFilter}
-        onValueChange={handleFilterChange}
-        radius="full"
-      >
-        {filterOptions.map((filter) => (
-          <SegmentedControl.Item key={filter.value} value={filter.value}>
-            {filter.label}
-          </SegmentedControl.Item>
-        ))}
-      </SegmentedControl.Root>
+      {videoData?.pages[0]?.data.totalDocs > 0 && <>
+        <SegmentedControl.Root
+          variant='surface'
+          mx={'4'}
+          className='sm:mx-0'
+          value={currentFilter}
+          onValueChange={handleFilterChange}
+          radius="full"
+        >
+          {filterOptions.map((filter) => (
+            <SegmentedControl.Item key={filter.value} value={filter.value}>
+              {filter.label}
+            </SegmentedControl.Item>
+          ))}
+        </SegmentedControl.Root>
+      </>}
 
       {loadingVideos && <Spinner className='mx-auto my-4 size-6' />}
+      {!loadingVideos && videoData?.pages[0]?.data.totalDocs === 0 &&
+        <EmptyLibrary
+          Icon={PlayIcon}
+          title='No videos uploaded'
+          description='This page is yet to upload a video. Search another page in order to find more videos,'
+        />
+      }
       <div className='flex flex-col pt-4 gap-y-6 gap-x-2 sm:grid sm:grid-cols-2 lg:grid-cols-3'>
         {videoData?.pages?.length > 0 && (
           videoData?.pages.map((page, pageIndex) => (
             <React.Fragment key={pageIndex}>
-              {page.data.totalDocs > 0 ? (
+              {page.data.totalDocs > 0 && (
                 page.data.docs.map((video) => (
                   <VideoCard
                     key={video._id}
@@ -64,11 +72,6 @@ function ChannelVideos() {
                     hideUsername
                   />
                 ))
-              ) : (
-                <NoContent
-                  title='No results found'
-                  description='Try different keywords or remove search filters'
-                />
               )}
             </React.Fragment>
           ))

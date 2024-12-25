@@ -1,10 +1,12 @@
+import { Pencil2Icon } from '@radix-ui/react-icons'
 import { Button, Spinner, TextArea } from '@radix-ui/themes'
-import React, { useEffect, useRef, useState } from 'react'
-import TweetCard from '../../components/TweetCard'
-import { useCreateTweet, useFetchUserTweets } from '../../lib/queries/tweetQueries'
-import { useOutletContext } from 'react-router-dom'
-import { useAuth } from '../../context/authContext'
+import React, { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
+import { useOutletContext } from 'react-router-dom'
+import EmptyLibrary from '../../components/EmptyLibrary'
+import TweetCard from '../../components/TweetCard'
+import { useAuth } from '../../context/authContext'
+import { useCreateTweet, useFetchUserTweets } from '../../lib/queries/tweetQueries'
 
 function ChannelTweets() {
   const { userId } = useOutletContext()
@@ -35,7 +37,7 @@ function ChannelTweets() {
     <div>
       {/* Text area to write a tweet */}
       {(isAuthenticated && user?._id === userId) &&
-        <div className='flex-1 max-w-4xl'>
+        <div className='flex-1 max-w-4xl px-6 mb-6'>
           <TextArea
             ref={textareaRef}
             placeholder='Add a tweet...'
@@ -78,7 +80,7 @@ function ChannelTweets() {
         </div>
       }
       {/* tweet cards */}
-      <div className='flex flex-col w-full max-w-4xl gap-6 mt-6'>
+      <div className='flex flex-col w-full max-w-4xl gap-6 p-6 py-4 mb-16'>
         {userTweets?.data.map((tweet) => (
           <TweetCard
             key={tweet._id}
@@ -87,6 +89,13 @@ function ChannelTweets() {
             channelId={userId}
           />
         ))}
+        {userTweets?.data.length === 0 &&
+          <EmptyLibrary
+            Icon={Pencil2Icon}
+            title='Publish Tweet'
+            description='Tweets appear here after you publish'
+          />
+        }
       </div>
     </div>
   )
