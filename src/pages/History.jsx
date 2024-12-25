@@ -63,7 +63,7 @@ function History() {
 
           <AlertDialog.Root >
             <AlertDialog.Trigger
-              disabled={deletingHistory || isLoading}
+              disabled={deletingHistory || isLoading || watchHistory?.pages[0].data.totalDocs === 0}
             >
               <Button
                 className='ml-auto'
@@ -138,7 +138,7 @@ function History() {
         }
         {watchHistory?.pages.map(page => (
           page?.data.docs.map((list) => (
-            <div key={list._id} className='w-full pb-0 mb-6'>
+            <div key={list._id} className='w-full pb-0 sm:mb-6'>
               <div className='flex items-center gap-2 mb-4 ml-1'>
                 <Text
                   as='span'

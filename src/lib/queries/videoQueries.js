@@ -2,7 +2,6 @@ import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query"
 import {
   deleteVideo,
   fetchAllVideos,
-  fetchRandomVideos,
   fetchVideoById,
   publishVideo,
   togglePublishStatus,
@@ -19,15 +18,17 @@ const useFetchVideos = (searchParams, limit = 10) => {
     queryKey: ['videos', queryString],
     queryFn: ({ pageParam = 1 }) => fetchAllVideos(`${queryString}&page=${pageParam}`),
     getNextPageParam: (lastPage) => lastPage?.data?.nextPage || null,
-    enabled: !!searchParams.get('query')
+    keepPreviousData: true,
+    enabled: !!searchParams.get('query'),
   });
 };
 
 
-const useFetchRandomVideos = () => {
-  return useQuery({
+const useFetchAllVideos = (limit = 2) => {
+  return useInfiniteQuery({
     queryKey: ['videos'],
-    queryFn: fetchRandomVideos
+    queryFn: ({ pageParam = 1 }) => fetchAllVideos(`limit=${limit}&page=${pageParam}`),
+    getNextPageParam: (lastPage) => lastPage?.data?.nextPage || null,
   })
 }
 
@@ -35,6 +36,12 @@ const useFetchVideoById = (videoId, userId) => {
   return useQuery({
     queryKey: ['video', videoId, userId],
     queryFn: () => fetchVideoById(videoId),
+    queryFn: async () => {
+      const data = await fetchVideoById(videoId);
+      // Invalidate the user history query
+      queryClient.invalidateQueries({ queryKey: ['watch_history'] });
+      return data;
+    },
   })
 }
 
@@ -125,7 +132,7 @@ const useDeleteVideo = (userId) => {
 export {
   useFetchVideos,
   useFetchVideoById,
-  useFetchRandomVideos,
+  useFetchAllVideos,
   useTogglePublishStatus,
   useUpdateVideo,
   usePublishVideo,

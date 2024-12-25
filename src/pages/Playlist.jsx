@@ -75,7 +75,7 @@ function PlaylistVideos() {
   }
 
   return (
-    <div className="flex flex-col w-full mb-16 lg:flex-row lg:p-6">
+    <div className="flex flex-col w-full mb:16 sm:mb-0 lg:flex-row lg:p-6">
       <Skeleton loading={loadingPlaylistData}>
 
         <div
@@ -181,7 +181,7 @@ function PlaylistVideos() {
                         </IconButton>
                       </Dialog.Trigger>
                     </Tooltip>
-                    <Dialog.Content maxWidth="450px">
+                    <Dialog.Content maxWidth="400px">
                       <Dialog.Title>Edit playlist</Dialog.Title>
                       <Dialog.Description size="2" mb="4">
                         Make changes to your playlist.
@@ -189,7 +189,7 @@ function PlaylistVideos() {
 
                       <Flex direction="column" gap="3">
                         <label>
-                          <Text as="div" size="2" mb="1" color='gray'>
+                          <Text as="div" size="2" mb="1" weight={'medium'}>
                             Title
                           </Text>
                           <TextField.Root
@@ -200,6 +200,7 @@ function PlaylistVideos() {
 
                             })}
                             placeholder="Enter title of playlist"
+                            className={`${errors.name && 'shadow-inset-custom'} `}
                           />
                           {errors.name &&
                             <Text as='p' size={'1'} mt={'2'} color='red' className='flex items-center gap-1 '>
@@ -208,16 +209,18 @@ function PlaylistVideos() {
                           }
                         </label>
                         <label>
-                          <Text as="div" size="2" mb="1" color='gray'>
+                          <Text as="div" size="2" mb="1" weight={'medium'}>
                             Description
                           </Text>
                           <TextArea
+                            resize={'vertical'}
                             color={errors.description ? 'red' : 'blue'}
                             {...register('description', {
                               required: 'Description is required',
                               validate: value => value.trim() !== "" || "Please enter some text",
                             })}
                             placeholder="Add description…"
+                            className={`${errors.description && 'shadow-inset-textarea'}`}
                           />
                           {errors.description &&
                             <Text as='p' size={'1'} mt={'2'} color='red' className='flex items-center gap-1 '>

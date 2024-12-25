@@ -41,18 +41,19 @@ function CreatePlaylistDialog({
       }}
     >
       <Dialog.Content
-        aria-describedby={undefined}
-        maxWidth={'450px'}
+        maxWidth={'400px'}
       >
-        <Dialog.Title weight={'medium'}>
+        <Dialog.Title>
           New playlist
         </Dialog.Title>
-
+        <Dialog.Description size="2" mb="4">
+          Create a new playlist.
+        </Dialog.Description>
         {/* input fields for name and description */}
         <Flex direction="column" gap="3">
           <label>
-            <Text as="div" size="2" mb="1" color='gray'>
-              Title
+            <Text as="div" size="2" mb="1" weight={'medium'}>
+              Title <Text as='span' color='red' weight={'medium'}>*</Text>
             </Text>
             <TextField.Root
               color={errors.name ? 'red' : 'blue'}
@@ -62,7 +63,7 @@ function CreatePlaylistDialog({
 
               })}
               placeholder="Enter title of playlist"
-              className={`${errors.name && 'shadow-inset-custom'}`}
+              className={`${errors.name && 'shadow-inset-custom'} `}
             />
             {errors.name &&
               <Text as='p' size={'1'} mt={'2'} color='red' className='flex items-center gap-1 '>
@@ -72,17 +73,18 @@ function CreatePlaylistDialog({
             }
           </label>
           <label>
-            <Text as="div" size="2" mb="1" color='gray'>
-              Description
+            <Text as="div" size="2" mb="1" weight={'medium'}>
+              Description <Text as='span' color='red' weight={'medium'}>*</Text>
             </Text>
             <TextArea
+              resize={'vertical'}
               color={errors.description ? 'red' : 'blue'}
               {...register('description', {
                 required: 'Description is required',
                 validate: value => value.trim() !== "" || "Please enter some text",
               })}
               placeholder="Add description…"
-              className={`${errors.name && 'shadow-inset-textarea'}`}
+              className={`${errors.description && 'shadow-inset-textarea'}`}
             />
             {errors.description &&
               <Text as='p' size={'1'} mt={'2'} color='red' className='flex items-center gap-1 '>
@@ -97,7 +99,7 @@ function CreatePlaylistDialog({
         <div className='flex w-full gap-4 mt-4 '>
           <Dialog.Close>
             <Button
-              variant='soft'
+              variant='surface'
               highContrast
               radius='full'
               color='gray'
@@ -114,7 +116,7 @@ function CreatePlaylistDialog({
             loading={creatingPlaylist}
             highContrast
             radius='full'
-            className='flex-1'
+            className='flex-1 '
             onClick={handleSubmit(handleCreatePlaylist)}
           >
             Create

@@ -10,11 +10,6 @@ const fetchAllVideos = async (queryString = '') => {
   return response.data;
 };
 
-const fetchRandomVideos = async () => {
-  const res = await apiClient(`${VIDEO_BASE_URL}/random-videos`)
-  return res.data;
-}
-
 const fetchVideoById = async (videoId) => {
   const res = await apiClient.get(`${VIDEO_BASE_URL}/${videoId}`)
   return res.data;
@@ -48,7 +43,6 @@ const deleteVideo = async (videoId) => {
 export {
   fetchAllVideos,
   fetchVideoById,
-  fetchRandomVideos,
   togglePublishStatus,
   updateVideo,
   publishVideo,
