@@ -8,6 +8,7 @@ import {
   getUserWatchHistory,
   loginUser,
   logoutUser,
+  registerUser,
   updateAccountDetails
 } from "../../api/userApi"
 import { queryClient } from "../../main"
@@ -32,6 +33,11 @@ const useFetchUserVideos = (userId, filters = '', limit = 12) => {
 const useLoginUser = () => {
   return useMutation({
     mutationFn: (data) => loginUser(data)
+  })
+}
+const useRegisterUser = () => {
+  return useMutation({
+    mutationFn: registerUser
   })
 }
 
@@ -114,5 +120,6 @@ export {
   useFetchUserWatchHistory,
   useChangePassword,
   useUpdateAccountDetails,
-  useClearWatchHistory
+  useClearWatchHistory,
+  useRegisterUser
 }

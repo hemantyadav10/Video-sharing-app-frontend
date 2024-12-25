@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useGetCurrentUser, useLoginUser, userLogoutUser } from "../lib/queries/userQueries";
+import { useGetCurrentUser, useLoginUser, useRegisterUser, userLogoutUser } from "../lib/queries/userQueries";
 import toast from "react-hot-toast";
 
 const AuthContext = createContext({
@@ -20,6 +20,7 @@ const AuthProvider = ({ children }) => {
 
 
   const { mutateAsync: loginMutation, isPending: loggingIn } = useLoginUser()
+  const { mutateAsync: registerMutation, isPending: registeringUser } = useRegisterUser()
   const { mutateAsync: logoutMutation, isPending: loggingOut } = userLogoutUser()
 
   const login = async (data) => {
@@ -38,10 +39,18 @@ const AuthProvider = ({ children }) => {
     }
   }
 
+  const register = async (formData) => {
+    try {
+      await registerMutation(formData)
+    } catch (error) {
+      throw error
+    }
+  }
+
   const logout = async () => {
     try {
       await logoutMutation()
-      toast.success('Logged out successfully!')
+      toast('Logged out successfully')
       setToken(null)
       setUser(null)
 
@@ -66,10 +75,12 @@ const AuthProvider = ({ children }) => {
     user: user || currentUser?.data.user,
     token,
     login,
+    register,
     logout,
     isAuthenticated,
-    isLoading: loadingUserData || loggingIn || loggingOut, 
-    setUser, 
+    isLoading: loadingUserData || loggingIn || loggingOut || registeringUser,
+    setUser,
+    logoutLoading: loggingOut
   }
 
   return (

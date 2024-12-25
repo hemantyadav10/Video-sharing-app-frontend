@@ -15,6 +15,14 @@ const loginUser = async (data) => {
   return res.data
 }
 
+const registerUser = async (formData) => {
+  console.log(formData)
+  const res = await apiClient.post('/users/register', formData, {
+    headers: { "Content-Type": 'multipart/form-data' }
+  })
+  return res.data
+}
+
 const logoutUser = async () => {
   const res = await apiClient.post('users/logout')
   return res.data
@@ -54,5 +62,6 @@ export {
   getUserWatchHistory,
   changePassword,
   updateAccountDetails,
-  clearWatchHistory
+  clearWatchHistory,
+  registerUser
 }
