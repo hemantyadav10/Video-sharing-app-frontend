@@ -1,11 +1,10 @@
+import { EnvelopeClosedIcon, InfoCircledIcon, PersonIcon } from '@radix-ui/react-icons'
 import { Button, Callout, Flex, Text, TextField } from '@radix-ui/themes'
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useAuth } from '../../context/authContext'
-import { EnvelopeClosedIcon, InfoCircledIcon, PersonIcon } from '@radix-ui/react-icons'
-import { useUpdateAccountDetails } from '../../lib/queries/userQueries'
-import { extractMarginProps } from '@radix-ui/themes/helpers'
 import toast from 'react-hot-toast'
+import { useAuth } from '../../context/authContext'
+import { useUpdateAccountDetails } from '../../lib/queries/userQueries'
 
 function PersonalInfo() {
   const { user, isAuthenticated, setUser } = useAuth()
@@ -72,8 +71,11 @@ function PersonalInfo() {
           </Callout.Text>
         </Callout.Root>}
         <label>
-          <Text as="div" size="2" mb="2">
-            Full name
+          <Text as="div" size="3" mb="2">
+            Name
+          </Text>
+          <Text as='p' size={'1'} color='gray' mb="2">
+            Choose a channel name that represents you and your content.
           </Text>
           <TextField.Root
             color={errors.fullName ? 'red' : 'blue'}
@@ -82,6 +84,7 @@ function PersonalInfo() {
             })}
             size={'3'}
             placeholder="Enter your full name"
+            className={`${errors.fullName && 'shadow-inset-custom'} `}
           >
             <TextField.Slot>
               <PersonIcon height="16" width="16" />
@@ -101,7 +104,7 @@ function PersonalInfo() {
           }
         </label>
         <label>
-          <Text as="div" size="2" mb="2">
+          <Text as="div" size="3" mb="2">
             Email address
           </Text>
           <TextField.Root
@@ -112,6 +115,7 @@ function PersonalInfo() {
               validate: value => emailPattern.test(value) || 'Invalid email id'
             })}
             placeholder="Enter your email"
+            className={`${errors.email && 'shadow-inset-custom'} `}
           >
             <TextField.Slot>
               <EnvelopeClosedIcon height="16" width="16" />
@@ -133,22 +137,24 @@ function PersonalInfo() {
         <Flex gap="3" justify="end">
           <Button
             type='button'
-            highContrast
             onClick={() => {
               setError('')
               reset()
             }}
-            variant="soft"
-            color="gray"
+            variant='surface'
+            highContrast
+            radius='full'
+            color='gray'
+            hidden={fullName.trim() === user?.fullName && email.trim() === user?.email}
             disabled={updatingDetails}
           >
             Cancel
           </Button>
           <Button
             type='submit'
-            variant='soft'
+            radius='full'
             highContrast
-            disabled={fullName.trim() === user?.fullName && email.trim() === user?.email}
+            disabled={(fullName.trim() === user?.fullName && email.trim() === user?.email) || updatingDetails}
             loading={updatingDetails}
           >
             Save changes

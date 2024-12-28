@@ -9,7 +9,9 @@ import {
   loginUser,
   logoutUser,
   registerUser,
-  updateAccountDetails
+  updateAccountDetails,
+  updateAvatar,
+  updateCoverImage
 } from "../../api/userApi"
 import { queryClient } from "../../main"
 
@@ -111,6 +113,24 @@ const useClearWatchHistory = () => {
   })
 }
 
+const useUpdateAvatar = () => {
+  return useMutation({
+    mutationFn: updateAvatar,
+    onSuccess: () => {
+      queryClient.clear()
+    }
+  })
+}
+
+const useUpdateCoverImage = () => {
+  return useMutation({
+    mutationFn: updateCoverImage,
+    onSuccess: () => {
+      queryClient.clear()
+    }
+  })
+}
+
 export {
   useFetchUserChannelInfo,
   useFetchUserVideos,
@@ -121,5 +141,7 @@ export {
   useChangePassword,
   useUpdateAccountDetails,
   useClearWatchHistory,
-  useRegisterUser
+  useRegisterUser,
+  useUpdateAvatar,
+  useUpdateCoverImage
 }

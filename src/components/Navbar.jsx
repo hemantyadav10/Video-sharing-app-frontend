@@ -37,7 +37,7 @@ function Navbar({ toggleMenu }) {
 
 
   return (
-    <div className='sticky top-0 right-0 z-40 grid w-full grid-cols-2 sm:grid-cols-3 px-6 py-3 backdrop-blur-md bg-[#0c0c0d]/80  border-b border-[#484848]  h-16'>
+    <div className='sticky top-0 right-0 z-40 grid w-full grid-cols-2 sm:grid-cols-3 px-6 py-3 border-[#484848] border-b bg-[#111113]/80 backdrop-blur-md  h-16'>
       <div className='absolute top-0 left-0 right-0'>
         <BarLoader
           color='#70b8ff'
@@ -219,7 +219,7 @@ function Navbar({ toggleMenu }) {
         !isAuthenticated &&
         <Link
           to={'/login'}
-          className='items-center justify-end hidden ml-auto text-right outline-none w-max focus:ring-2 sm:flex'
+          className='items-center justify-end hidden ml-auto text-right rounded-md outline-none w-max focus:ring-2 sm:flex'
         >
           <Button
             variant='outline'

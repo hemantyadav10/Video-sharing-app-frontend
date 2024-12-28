@@ -1,14 +1,16 @@
-import { ChevronDownIcon, PlayIcon } from '@radix-ui/react-icons';
+import { ChevronDownIcon, PlayIcon, PlusIcon } from '@radix-ui/react-icons';
 import { Button, SegmentedControl, Separator, Spinner } from '@radix-ui/themes';
 import React, { useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 import EmptyLibrary from '../../components/EmptyLibrary';
 import VideoCard from '../../components/VideoCard';
 import { useFetchUserVideos } from '../../lib/queries/userQueries';
+import { useAuth } from '../../context/authContext';
 
 function ChannelVideos() {
   const [filters, setFilters] = useState('sortBy=createdAt&sortType=desc'); // Initial filter query
   const [currentFilter, setCurrentFilter] = useState('Latest'); // Current filter state   
+  const { user } = useAuth()
 
   const { userId } = useOutletContext()
   const { data: videoData, isLoading: loadingVideos, isFetchingNextPage, hasNextPage, fetchNextPage, isFetching } = useFetchUserVideos(userId, filters, 6)
@@ -52,11 +54,29 @@ function ChannelVideos() {
 
       {loadingVideos && <Spinner className='mx-auto my-4 size-6' />}
       {!loadingVideos && videoData?.pages[0]?.data.totalDocs === 0 &&
-        <EmptyLibrary
-          Icon={PlayIcon}
-          title='No videos uploaded'
-          description='This page is yet to upload a video. Search another page in order to find more videos,'
-        />
+        <div className='flex flex-col items-center justify-center gap-6'>
+          <EmptyLibrary
+            Icon={PlayIcon}
+            title='No videos uploaded'
+            description={user?._id === userId ? "You haven't uploaded any videos yet. Click here to upload your first video!" : 'This page is yet to upload a video. Search another page in order to find more videos.'}
+          />
+          {user?._id === userId && <Link
+            to={'/dashboard'}
+            state={{ openDialog: true }}
+            replace:true
+            className='mx-auto'
+          >
+            <Button
+              variant='soft'
+              highContrast
+              radius='full'
+              tabIndex={-1}
+              aria-hidden='true'
+            >
+              <PlusIcon />New Video
+            </Button>
+          </Link>}
+        </div>
       }
       <div className='flex flex-col pt-4 gap-y-6 gap-x-2 sm:grid sm:grid-cols-2 lg:grid-cols-3'>
         {videoData?.pages?.length > 0 && (

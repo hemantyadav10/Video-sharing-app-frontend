@@ -53,6 +53,20 @@ const clearWatchHistory = async () => {
   return res.data
 }
 
+const updateAvatar = async (avatar) => {
+  const res = await apiClient.patch('/users/avatar', avatar,
+    { headers: { "Content-Type": 'multipart/form-data' } }
+  )
+  return res.data
+}
+
+const updateCoverImage = async (coverImage) => {
+  const res = await apiClient.patch('/users/cover-image', coverImage,
+    { headers: { "Content-Type": 'multipart/form-data' } }
+  )
+  return res.data
+}
+
 export {
   getUserChannelInfo,
   getUserVideos,
@@ -63,5 +77,7 @@ export {
   changePassword,
   updateAccountDetails,
   clearWatchHistory,
-  registerUser
+  registerUser,
+  updateAvatar,
+  updateCoverImage
 }

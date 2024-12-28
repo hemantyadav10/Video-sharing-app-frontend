@@ -40,7 +40,7 @@ function Sidebar({ showMenu, toggleMenu }) {
     {
       name: 'Liked Videos',
       slug: '/liked-videos',
-      icon: ThumbsUp,
+      icon: HeartIcon,
       separator: true
     },
     {
@@ -96,7 +96,8 @@ function Sidebar({ showMenu, toggleMenu }) {
 
   return (
     <>
-      <div className={`bg-[#0c0c0d] top-0 h-screen fixed border-[#484848] md:h-[calc(100vh-64px)] md:sticky md:top-16 ${showMenu ? 'md:w-56 ' : '-translate-x-full md:translate-x-0 md:w-auto '} transition ease-in  z-[100] border-r w-56  flex-col flex rounded-r-2xl md:rounded-none`} >
+      <div className={`border-r top-0 h-screen fixed border-[#484848] md:h-[calc(100vh-64px)] md:sticky md:top-16 ${showMenu ? 'md:w-56' : '-translate-x-full md:translate-x-0 md:w-24  md:transition-all'} transition ease-in z-[100]  w-56  flex-col flex rounded-r-2xl md:rounded-none bg-[#111113]`}
+      >
         <div className='flex flex-col flex-1 gap-5 '>
           <span className='flex items-center h-16 col-span-1 gap-4 px-6 border-b border-transparent md:hidden'>
             <IconButton
@@ -132,7 +133,7 @@ function Sidebar({ showMenu, toggleMenu }) {
                   to={item.slug}
                   className={({ isActive }) => `${isActive ? "bg-[#0077ff3a]  text-[#c2e6ff]" : ""} flex hover:bg-[#0077ff3a]  transition-all p-3 gap-2 items-center rounded-lg text-sm focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b] ${!isAuthenticated && item.showWhenLoggedIn && 'hidden'}`}
                 >
-                  {item.icon && <item.icon className="mr-2" height={'20'} width={"20"} />}{item.name}
+                  {item.icon && <item.icon className={`mr-2`} height={'20'} width={"20"} />}{item.name}
                 </NavLink>
                 {item.separator &&
                   <Separator my={'2'} className={`w-full `} />

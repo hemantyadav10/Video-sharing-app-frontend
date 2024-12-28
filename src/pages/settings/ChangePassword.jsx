@@ -61,7 +61,7 @@ function ChangePassword() {
             })}
             size={'3'}
             placeholder="Enter current password"
-            className='border-red-500'
+            className={`${errors.oldPassword && 'shadow-inset-custom'} `}
           />
           {errors.oldPassword &&
             <Text as='p' size={'1'} mt={'2'} color='red' className='flex items-center gap-1 '>
@@ -87,6 +87,7 @@ function ChangePassword() {
             })}
             size={'3'}
             placeholder="Enter new password"
+            className={`${errors.newPassword && 'shadow-inset-custom'} `}
           />
           {errors.newPassword &&
             <Text as='p' size={'1'} mt={'2'} color='red' className='flex items-center gap-1 '>
@@ -108,6 +109,7 @@ function ChangePassword() {
             })}
             size={'3'}
             placeholder="Re-enter new password"
+            className={`${errors.confirmPassword && 'shadow-inset-custom'} `}
           />
           {errors.confirmPassword &&
             <Text as='p' size={'1'} mt={'2'} color='red' className='flex items-center gap-1 '>
@@ -118,19 +120,23 @@ function ChangePassword() {
         <Flex gap="3" justify="end">
           <Button
             disabled={loading}
-            highContrast
-            onClick={() => reset()}
+            onClick={() => {
+              setError('')
+              reset()
+            }}
             type='button'
-            variant="soft"
+            variant="surface"
             color="gray"
+            radius='full'
+            highContrast
           >
             Cancel
           </Button>
           <Button
             loading={loading}
             type='submit'
-            variant='soft'
             highContrast
+            radius='full'
           >
             Update password
           </Button>
