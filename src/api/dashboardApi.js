@@ -5,12 +5,12 @@ const getChannelVideos = async () => {
   return res.data
 }
 
-const getChannelStats = async () => {
-  const res = await apiClient.get('/dashboard/stats')
+const getChannelStats = async (channelId, allVideos = true) => {
+  const res = await apiClient.get(`/dashboard/stats/${channelId}?allVideos=${allVideos}`)
   return res.data
 }
 
 export {
-  getChannelVideos, 
+  getChannelVideos,
   getChannelStats
 }

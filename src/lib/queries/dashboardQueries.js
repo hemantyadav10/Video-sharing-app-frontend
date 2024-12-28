@@ -11,10 +11,10 @@ const useGetChannleVideos = (userId) => {
   })
 }
 
-const useGetChannelStats = (userId) => {
+const useGetChannelStats = (channelId, allVideos = true) => {
   return useQuery({
-    queryKey: ['stats', userId],
-    queryFn: getChannelStats,
+    queryKey: ['stats', { channelId, allVideos }],
+    queryFn: () => getChannelStats(channelId, allVideos),
   })
 }
 

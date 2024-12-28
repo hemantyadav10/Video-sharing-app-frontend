@@ -130,7 +130,7 @@ function Dashboard() {
       <Separator size={'4'} />
 
       {/* Stats cards section */}
-      <section className='flex flex-col flex-wrap gap-4 sm:grid-cols-2 sm:grid md:grid-cols-3 lg:grid-cols-4'>
+      <section className='flex flex-col flex-wrap gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-4'>
         {statsData.map((stat, index) => (
           <ChannelStatsCard
             key={index}
