@@ -1,7 +1,7 @@
 import { HomeIcon, CounterClockwiseClockIcon, ListBulletIcon, HeartIcon, AvatarIcon, HamburgerMenuIcon, BookmarkFilledIcon, ChevronLeftIcon, MagicWandIcon, ExitIcon, GearIcon, QuestionMarkCircledIcon, LockClosedIcon } from '@radix-ui/react-icons'
 import { Button, IconButton, Separator, Text } from '@radix-ui/themes'
 import React, { useEffect } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import ThumbsUp from '../assets/ThumbsUpIcon'
 import { useAuth } from '../context/authContext'
 
@@ -70,7 +70,7 @@ function Sidebar({ showMenu, toggleMenu }) {
       showWhenLoggedIn: true
     }
   ]
-
+  const { pathname } = useLocation()
 
   const handleLogout = async () => {
     await logout();
@@ -112,7 +112,7 @@ function Sidebar({ showMenu, toggleMenu }) {
             </IconButton>
             Logo
           </span>
-          <div className={`flex-col hidden px-1 py-7 gap-1 ${showMenu ? "" : "md:flex"} `}>
+          <div className={`flex-col hidden px-1 py-7 gap-1 ${showMenu ? "" : "md:flex"}`}>
             {
               sidebarItems.map((item) => (
                 <NavLink
@@ -131,7 +131,7 @@ function Sidebar({ showMenu, toggleMenu }) {
               <div key={item.name}>
                 <NavLink
                   to={item.slug}
-                  className={({ isActive }) => `${isActive ? "bg-[#0077ff3a]  text-[#c2e6ff]" : ""} flex hover:bg-[#0077ff3a]  transition-all p-3 gap-2 items-center rounded-lg text-sm focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b] ${!isAuthenticated && item.showWhenLoggedIn && 'hidden'}`}
+                  className={({ isActive }) => `${isActive ? "bg-[#0077ff3a]  text-[#c2e6ff]" : ""} flex hover:bg-[#0077ff3a]  transition-all p-3 gap-2 items-center rounded-lg text-sm focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b] ${!isAuthenticated && item.showWhenLoggedIn && 'hidden'}  `}
                 >
                   {item.icon && <item.icon className={`mr-2`} height={'20'} width={"20"} />}{item.name}
                 </NavLink>

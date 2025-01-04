@@ -118,7 +118,7 @@ function TweetCard({
           </Button>
           <Button
             onClick={handleUpdateTweet}
-            disabled={!content?.trim() || content?.trim() === tweetData?.content}
+            disabled={!content?.trim() || content?.trim() === tweetData?.content || updatingTweet}
             loading={updatingTweet}
             highContrast
             className='px-4'

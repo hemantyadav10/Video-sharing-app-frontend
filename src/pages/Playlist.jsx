@@ -75,7 +75,7 @@ function PlaylistVideos() {
   }
 
   return (
-    <div className="flex flex-col w-full mb:16 sm:mb-0 lg:flex-row lg:p-6">
+    <div className="flex flex-col w-full mb-16 sm:mb-0 lg:flex-row lg:p-6">
       <Skeleton loading={loadingPlaylistData}>
 
         <div

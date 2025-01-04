@@ -8,13 +8,14 @@ function App() {
   const [showMenu, setShowMenu] = useState(false)
   const { pathname } = useLocation()
   const isDashboardRoute = pathname === '/dashboard'
+  const isVideoRoute = pathname.startsWith('/watch')
   const toggleMenu = () => setShowMenu(!showMenu)
 
   return (
     <div className='flex flex-col min-h-screen '>
       <Navbar toggleMenu={toggleMenu} />
       <div className='flex'>
-        {!isDashboardRoute && <Sidebar showMenu={showMenu} toggleMenu={toggleMenu} />}
+        {(!isDashboardRoute && !isVideoRoute) && <Sidebar showMenu={showMenu} toggleMenu={toggleMenu} />}
         <Outlet context={[showMenu]} />
       </div>
       {!isDashboardRoute && <BottomBar />}

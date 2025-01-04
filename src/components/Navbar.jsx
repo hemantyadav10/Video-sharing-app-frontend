@@ -19,6 +19,7 @@ function Navbar({ toggleMenu }) {
   const dashboardRoute = pathname === '/dashboard'
   const { isFetching } = useFetchVideos(searchParams)
   const [openCreatePlaylist, setOpenCreatePlaylist] = useState(false)
+  const isVideoRoute = pathname.startsWith('/watch')
 
 
 
@@ -54,7 +55,7 @@ function Navbar({ toggleMenu }) {
           color='gray'
           radius='full'
           size={'3'}
-          className={`${dashboardRoute ? 'hidden' : ''}`}
+          className={`${(dashboardRoute || isVideoRoute) ? 'hidden' : ''}`}
         >
           <HamburgerMenuIcon height='20' width='20' />
         </IconButton>

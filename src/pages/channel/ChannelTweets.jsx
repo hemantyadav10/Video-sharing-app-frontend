@@ -68,7 +68,7 @@ function ChannelTweets() {
             </Button>
             <Button
               onClick={handleCreateTweet}
-              disabled={!content?.trim()}
+              disabled={!content?.trim() || creatingTweet}
               loading={creatingTweet}
               highContrast
               className='px-4'

@@ -28,7 +28,11 @@ const useFetchUserVideos = (userId, filters = '', limit = 12) => {
     queryFn: ({ pageParam = 1 }) => getUserVideos(userId, `${filters}&page=${pageParam}&limit=${limit}`),
     getNextPageParam: (lastPage) => lastPage?.data?.nextPage || null,
     keepPreviousData: true,
-    placeholderData: (prevData) => prevData,
+    placeholderData: (prevData) => {
+      if (!prevData?.pages?.[0]?.data?.docs?.length) return undefined;
+      return prevData.pages[0].data.docs[0].owner._id === userId ? prevData : undefined;
+    },
+    enabled: !!userId
   })
 }
 

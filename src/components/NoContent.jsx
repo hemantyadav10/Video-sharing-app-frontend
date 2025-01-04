@@ -10,7 +10,7 @@ function NoContent({
     <div className='flex flex-col items-center justify-center gap-3 mt-6 text-sm'>
       <img
         src={NoResult}
-        className='size-80'
+        className='size-64'
         alt="no content image"
       />
       <Text size={'6'}>

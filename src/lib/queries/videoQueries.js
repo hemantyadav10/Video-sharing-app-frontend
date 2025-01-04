@@ -62,6 +62,7 @@ const useTogglePublishStatus = (userId) => {
       })
       queryClient.invalidateQueries({ queryKey: ['videos'] })
       queryClient.invalidateQueries({ queryKey: ['video'] })
+      queryClient.invalidateQueries({ queryKey: ['stats', { "allVideos": false }] })
     }
   })
 }

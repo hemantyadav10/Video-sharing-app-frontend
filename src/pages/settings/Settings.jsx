@@ -5,6 +5,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import CameraIcon from '../../assets/CameraIcon';
 import UpdatePictureDialog from '../../components/UpdatePictureDialog';
 import { useAuth } from '../../context/authContext';
+import placeholder from '../../assets/bannerPlaceholder.webp'
 
 function Settings() {
   const location = useLocation();
@@ -56,7 +57,7 @@ function Settings() {
           accept=".jpg, .jpeg, .png, .webp"
         />
         <img
-          src={user?.coverImage}
+          src={user?.coverImage || placeholder}
           // src="https://storage.googleapis.com/support-kms-prod/Ch5HG5RGzGnfHhvVSD93gdoEvWm5IPGUkOnS"
           alt="A house in a forest"
           className='object-cover object-center w-full h-32 cursor-pointer sm:h-40 md:h-48 lg:h-52'
@@ -66,7 +67,7 @@ function Settings() {
         {/* profile image */}
         <label
           htmlFor='profile_picture'
-          className='absolute bottom-0 translate-y-1/2 rounded-full shadow-md cursor-pointer size-24 left-4 shadow-black/50 md:size-36 md:translate-y-3/4 xl:left-20 lg:left-10 group'>
+          className='absolute bottom-0 translate-y-1/2 rounded-full shadow-md cursor-pointer size-24 left-4 shadow-black/50 md:size-36 md:translate-y-3/4 xl:left-20 lg:left-10 group/avatar'>
           <input
             type="file"
             hidden
@@ -87,7 +88,7 @@ function Settings() {
             alt="Profile"
             className='object-cover w-full rounded-full aspect-square object-square '
           />
-          <span className='absolute inset-0 flex items-center justify-center transition-opacity duration-200 rounded-full opacity-0 group-hover:opacity-100 bg-black/40'>
+          <span className='absolute inset-0 flex items-center justify-center transition-opacity duration-200 rounded-full opacity-0 group-hover/avatar:opacity-100 bg-black/40'>
             <CameraIcon />
           </span>
           <IconButton

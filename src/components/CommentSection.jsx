@@ -59,13 +59,13 @@ function CommentSection({ videoId }) {
   }
 
   if (loadingComments) return (
-    <div className='max-w-4xl p-3'>
+    <div className='p-3'>
       <Spinner className='h-6 mx-auto' size={'3'} />
     </div>
   )
 
   return (
-    <div className='flex flex-col max-w-4xl gap-6 p-3 sm:border rounded-xl border-[#484848] sm:p-6 sm:mt-4 '>
+    <div className='flex flex-col gap-6 p-3 sm:border rounded-xl border-[#484848] sm:p-6 sm:mt-4 '>
       <div className='flex items-center font-medium '>
         <span>
           <Skeleton loading={isFetching}>

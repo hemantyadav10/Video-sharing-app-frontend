@@ -74,7 +74,6 @@ function AboutChannelDialog({ isOpen, setOpenDialog, joiningDate, channelId }) {
                 <Link2Icon height={24} width={24} />
                 <input id="copy-text" type="text" readOnly value={window.location.href} className='flex-1 bg-transparent focus:outline-none focus:ring-1 focus:ring-[#2870bd] rounded-sm' />
                 <IconButton
-                  radius='full'
                   variant="ghost"
                   color={isCopied ? 'green' : 'gray'}
                   onClick={handleCopy}
