@@ -64,14 +64,12 @@ const router = createBrowserRouter(
             <Route path='change-password' element={<ChangePassword />} />
             <Route path='personalInfo' element={<PersonalInfo />} />
           </Route>
+          <Route path='subscriptions/channels' element={<SubscribedChannels />} />
+          <Route path='playlists' element={<AllPlaylists />} />
         </Route>
         <Route path='playlist/:playlistId' element={<Playlist />} />
         <Route path='liked-videos' element={<LikedVideos />} />
         <Route path='subscriptions' element={<SubscriptionVideos />} />
-        <Route element={<ProtectedRoute />}>
-          <Route path='subscriptions/channels' element={<SubscribedChannels />} />
-          <Route path='playlists' element={<AllPlaylists />} />
-        </Route>
         <Route path='results' element={<SearchResults />} />
         <Route path='history' element={<History />} />
         <Route path='/watch/:videoId' element={<VideoPage />} />

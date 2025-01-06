@@ -17,8 +17,8 @@ function RelatedVideoSection({ channelName, videoData, isFetchingNextPage, hasNe
 
   return (
     <div>
-      <section className='border-y sm:border lg:w-full lg:max-w-sm xl:max-w-[408px] sm:rounded-xl border-[#484848] overflow-hidden'>
-        <div className='bg-[#ddeaf814] p-4 sm:rounded-t-xl'>
+      <section className='border-y sm:border lg:w-[384px] xl:w-[408px] sm:rounded-xl border-[#484848] overflow-hidden'>
+        <div className='bg-[#ddeaf814] p-4 sm:rounded-t-xl border-b border-[#484848]'>
           <Text size={'5'} weight={'medium'} className='line-clamp-1'>
             More from {channelName}
           </Text>

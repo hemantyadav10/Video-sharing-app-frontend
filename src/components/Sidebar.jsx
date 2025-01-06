@@ -1,76 +1,132 @@
-import { HomeIcon, CounterClockwiseClockIcon, ListBulletIcon, HeartIcon, AvatarIcon, HamburgerMenuIcon, BookmarkFilledIcon, ChevronLeftIcon, MagicWandIcon, ExitIcon, GearIcon, QuestionMarkCircledIcon, LockClosedIcon } from '@radix-ui/react-icons'
-import { Button, IconButton, Separator, Text } from '@radix-ui/themes'
-import React, { useEffect } from 'react'
+import { AvatarIcon, ChevronDownIcon, ExitIcon } from '@radix-ui/react-icons'
+import { Box, Button, IconButton, ScrollArea, Separator, Spinner, Text } from '@radix-ui/themes'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import ThumbsUp from '../assets/ThumbsUpIcon'
+import { CircleHelp, Clapperboard, Flame, Gamepad2, GraduationCap, History, Home, ListVideo, LockKeyhole, Music, Newspaper, PanelLeftClose, Podcast, ReceiptText, Settings, Shirt, ShoppingBag, ThumbsUp, Trophy, TvMinimalPlay, WandSparkles } from 'lucide-react'
 import { useAuth } from '../context/authContext'
 
+const SidebarContext = createContext();
+
+
 function Sidebar({ showMenu, toggleMenu }) {
-  const { logout, isAuthenticated } = useAuth()
+  const { logout, isAuthenticated, isLoading } = useAuth()
+  const [showCategories, setShowCategories] = useState(false)
   const sidebarItems = [
     {
       name: 'Home',
       slug: '/',
-      icon: HomeIcon,
+      icon: Home,
     },
     {
       name: 'Subscriptions',
       slug: '/subscriptions',
-      icon: AvatarIcon,
+      icon: TvMinimalPlay,
       separator: true
     },
     {
       name: 'History',
       slug: '/history',
-      icon: CounterClockwiseClockIcon
+      icon: History
     },
     {
       name: 'Playlists',
       slug: '/playlists',
-      icon: ListBulletIcon,
-      showWhenLoggedIn: true
-    },
-    {
-      name: 'Creator Studio',
-      slug: isAuthenticated ? '/dashboard' : '/login',
-      icon: MagicWandIcon,
-      hidden: true,
+      icon: ListVideo,
       showWhenLoggedIn: true
     },
     {
       name: 'Liked Videos',
       slug: '/liked-videos',
-      icon: HeartIcon,
+      icon: ThumbsUp,
       separator: true
+    },
+    {
+      name: 'Creator Studio',
+      slug: isAuthenticated ? '/dashboard' : '/login',
+      icon: WandSparkles,
+      hidden: true,
+      showWhenLoggedIn: true
     },
     {
       name: 'Privacy',
       slug: '/privacy',
-      icon: LockClosedIcon,
+      icon: LockKeyhole,
       hidden: true
     },
     {
       name: 'Help',
       slug: '/help',
-      icon: QuestionMarkCircledIcon,
+      icon: CircleHelp,
       hidden: true
     },
     {
       name: 'Terms of Service',
       slug: '/terms-of-services',
-      icon: MagicWandIcon,
+      icon: ReceiptText,
       hidden: true
     },
     {
       name: 'Settings',
       slug: '/settings',
-      icon: GearIcon,
+      icon: Settings,
       hidden: true,
       separator: true,
       showWhenLoggedIn: true
     }
   ]
-  const { pathname } = useLocation()
+
+  const categories = [
+    {
+      name: 'Trending',
+      icon: Flame,
+      slug: '/category/trending',
+    },
+    {
+      name: 'Shopping',
+      icon: ShoppingBag,
+      slug: '/category/shopping',
+    },
+    {
+      name: 'Music',
+      icon: Music,
+      slug: '/category/music',
+    },
+    {
+      name: "Movies",
+      icon: Clapperboard,
+      slug: '/category/movies',
+    },
+    {
+      name: 'Gaming',
+      icon: Gamepad2,
+      slug: '/category/gaming',
+    },
+    {
+      name: 'News',
+      icon: Newspaper,
+      slug: '/category/news',
+    },
+    {
+      name: 'Sports',
+      icon: Trophy,
+      slug: '/category/sports',
+    },
+    {
+      name: 'Courses',
+      icon: GraduationCap,
+      slug: '/category/courses',
+    },
+    {
+      name: 'Fashion & Beauty',
+      icon: Shirt,
+      slug: '/category/fashion',
+    },
+    {
+      name: 'Podcasts',
+      icon: Podcast,
+      slug: '/category/podcasts',
+    },
+  ]
 
   const handleLogout = async () => {
     await logout();
@@ -90,89 +146,158 @@ function Sidebar({ showMenu, toggleMenu }) {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [showMenu, toggleMenu]); // Dependencies
-
+  }, [showMenu, toggleMenu]); 
 
 
   return (
-    <>
-      <div className={`border-r top-0 h-screen fixed border-[#484848] md:h-[calc(100vh-64px)] md:sticky md:top-16 ${showMenu ? 'md:w-56' : '-translate-x-full md:translate-x-0 md:w-24  md:transition-all'} transition ease-in z-[100]  w-56  flex-col flex rounded-r-2xl md:rounded-none bg-[#111113]`}
-      >
-        <div className='flex flex-col flex-1 gap-5 '>
-          <span className='flex items-center h-16 col-span-1 gap-4 px-6 border-b border-transparent md:hidden'>
-            <IconButton
-              onClick={toggleMenu}
-              variant='ghost'
-              highContrast
-              color='gray'
-              radius='full'
-              size={'3'}
+    <aside
+      className={`fixed w-64 md:w-auto top-0 md:h-[calc(100vh-64px)] h-screen transition-all ease-in-out duration-300 md:sticky md:top-16 ${showMenu ? ' translate-x-0' : '-translate-x-full md:translate-x-0 '} z-[100] border-r border-[#484848] bg-[#111113]`}
+    >
+      <ScrollArea scrollHideDelay={500} type="hover" scrollbars="vertical" draggable={true} className='md:h-[calc(100vh-64px)] h-screen '>
+        <Box className={`${showMenu ? "pr-2" : "md:pr-0 pr-2"}`}>
+          <div className="flex items-center h-16 px-4 md:hidden">
+            <Link
+              to='/'
+              className='text-xl font-medium'
             >
-              <HamburgerMenuIcon height='20' width='20' />
+              <span className='text-sky-300'>View</span>
+              <span>Tube</span>
+            </Link>
+            <IconButton
+              onClick={() => toggleMenu()}
+              variant='ghost'
+              color='gray'
+              highContrast
+              radius='full'
+              className='ml-auto'
+            >
+              <PanelLeftClose strokeWidth={1.5} size={22} />
             </IconButton>
-            Logo
-          </span>
-          <div className={`flex-col hidden px-1 py-7 gap-1 ${showMenu ? "" : "md:flex"}`}>
-            {
-              sidebarItems.map((item) => (
-                <NavLink
-                  key={item.name}
-                  to={item.slug}
-                  className={({ isActive }) => `${isActive ? "bg-[#0077ff3a]  text-[#c2e6ff]" : ""} flex flex-col items-center gap-2 justify-center p-2 py-3 rounded-lg hover:bg-[#0077ff3a] transition-all focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b] ${item.hidden && 'hidden'} ${!isAuthenticated && item.showWhenLoggedIn && 'hidden'}`}
-                >
-                  {<item.icon height={'20'} width={'20'} />} <Text className='text-[10px]' align={'center'} >{item.name}</Text>
-                </NavLink>
-              ))
-            }
-
           </div>
-          <div className={`flex flex-col gap-1 px-3 md:py-6 ${showMenu ? "" : "md:hidden"}  flex-1`}>
-            {sidebarItems.map((item) => (
-              <div key={item.name}>
-                <NavLink
-                  to={item.slug}
-                  className={({ isActive }) => `${isActive ? "bg-[#0077ff3a]  text-[#c2e6ff]" : ""} flex hover:bg-[#0077ff3a]  transition-all p-3 gap-2 items-center rounded-lg text-sm focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b] ${!isAuthenticated && item.showWhenLoggedIn && 'hidden'}  `}
-                >
-                  {item.icon && <item.icon className={`mr-2`} height={'20'} width={"20"} />}{item.name}
-                </NavLink>
-                {item.separator &&
-                  <Separator my={'2'} className={`w-full `} />
+          <SidebarContext.Provider value={{ showMenu }}>
+            <ul className={`flex flex-col p-2  ${showMenu ? "md:p-2 md:mt-3" : "md:p-[2px] md:mt-4"}`}>
+              {sidebarItems.map(item => (
+                <SidebarItem item={item} key={item.name} Icon={item.icon} className={`${showMenu ? "" : item.hidden ? "hidden" : ""} ${!isAuthenticated && item.showWhenLoggedIn && 'hidden'}`}>{item.name}</SidebarItem>
+              ))}
+            </ul>
+          </SidebarContext.Provider>
+
+          {showMenu &&
+            <>
+              <Separator size={'4'} />
+              <div className='px-2 py-4'>
+
+                <div className='flex px-3'>
+                  <Button
+                    onClick={() => setShowCategories(prev => !prev)}
+                    variant='ghost'
+                    color='gray'
+                    highContrast
+                    className='flex justify-between flex-1 px-5 py-3 rounded-xl'
+                    size={'3'}
+                  >
+                    Explore
+                    <ChevronDownIcon height={20} width={20} className={`${showCategories ? "rotate-180" : ""} transition-all duration-200`} />
+                  </Button>
+                </div>
+                {showCategories &&
+                  <div className='pt-2'>
+                    {categories.map(category => (
+                      <NavLink
+                      title={category.name}
+                        to={category.slug}
+                        className={({ isActive }) => `${isActive ? "bg-[#0077ff3a] text-[#c2e6ff]" : ""} group flex items-center  p-3 rounded-xl active:bg-[#0081fd6b] hover:bg-[rgba(0,119,255,0.18)]  text-white outline-none cursor-pointer focus-visible:ring-[2px] ring-[#2870bd] gap-3 md:gap-0 px-4 `}
+                      >
+                        {category.icon && <category.icon strokeWidth={1.5} size={22} />}
+                        <span
+                          className={`overflow-hidden text-nowrap ${showMenu ? 'md:w-36 md:ml-4' : 'md:w-0'}  text-sm`}
+                        >
+                          {category.name}
+                        </span>
+                      </NavLink>
+                    ))}
+
+                  </div>
                 }
               </div>
-            ))}
-            <div className='block mt-auto mb-5'>
-              {
-                isAuthenticated
-                  ? <button
+              <div className=' w-full py-4 px-2 border-t border-[#484848]'>
+                {isAuthenticated
+                  ?
+                  <Button
                     onClick={handleLogout}
-                    className='flex hover:bg-[#0077ff3a]  transition-all p-3 gap-2 items-center rounded-lg text-sm focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b] w-full'
+                    variant='soft'
+                    color='gray'
+                    tabIndex={-1}
+                    aria-hidden='true'
+                    className='flex justify-start w-full px-4 py-6 rounded-xl'
+                    disabled={isLoading}
+                    highContrast
                   >
-                    <ExitIcon className="mr-2" height={'20'} width={"20"} />Logout
-                  </button>
+                    <Spinner loading={isLoading}>
+                      <ExitIcon height={'20'} width={'20'} />
+                    </Spinner>
 
-                  : <Link
-                    to={'/login'}
-                    className='flex w-full outline-none focus:ring-2'
-                  >
-                    <Button
-                      variant='outline'
-                      radius={'full'}
-                      tabIndex={-1}
-                      aria-hidden='true'
-                      className='w-full'
+                    <span>
+                      Logout
+                    </span>
+                  </Button>
+                  :
+                  <>
+                    <div className='mx-auto mb-4 max-w-48'>
+                      <Text
+                        size={'2'}
+                      >
+                        Sign in to like videos, comment, and subscribe.
+                      </Text>
+                    </div>
+                    <Link
+                      to={'/login'}
+                      className='flex w-full outline-none focus:ring-2'
                     >
-                      <AvatarIcon height={'20'} width={'20'} />
-                      Sign in
-                    </Button>
-                  </Link>
-              }
-            </div>
-          </div>
-        </div>
-      </div>
-      <div onClick={toggleMenu} className={`absolute inset-0 z-[90] w-full md:hidden bg-black/70 ${showMenu ? "" : "hidden"}`}></div>
-    </>
+                      <Button
+                        variant='outline'
+                        radius={'full'}
+                        tabIndex={-1}
+                        aria-hidden='true'
+                        className='w-full'
+                      >
+                        <AvatarIcon height={'20'} width={'20'} />
+                        <span>
+                          Sign in
+                        </span>
+                      </Button>
+                    </Link>
+                  </>
+                }
+              </div>
+            </>
+          }
+
+        </Box>
+
+      </ScrollArea>
+    </aside>
+
   )
 }
 
 export default Sidebar
+
+export function SidebarItem({ children, Icon, className = '', item }) {
+  const { showMenu } = useContext(SidebarContext);
+
+  return (
+    <NavLink
+      title={item.name}
+      to={item.slug}
+      className={({ isActive }) => `${isActive ? "bg-[#0077ff3a] text-[#c2e6ff]" : ""} flex items-center p-3 rounded-xl active:bg-[#0081fd6b] hover:bg-[#0077ff2e] outline-none focus-visible:ring-[2px] ring-[#2870bd] gap-3 md:gap-0 ${className}  ${showMenu ? "md:px-4" : "md:flex-col md:px-1"}`}
+    >
+      <Icon strokeWidth={1.5} size={22} />
+      <span
+        className={`overflow-hidden text-nowrap ${showMenu ? "md:w-36 md:ml-4" : "md:text-[10px] mt-2"}  text-sm`}
+      >
+        {children}
+      </span>
+    </NavLink>
+  );
+}

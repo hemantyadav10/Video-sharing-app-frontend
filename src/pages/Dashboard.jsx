@@ -10,11 +10,13 @@ import toast from 'react-hot-toast'
 import VideoTable from '../components/VideoTable'
 import UploadVideoDialog from '../components/UploadVideoDailog'
 import { useLocation, useNavigate } from 'react-router-dom'
+import no_content from '../assets/no_content.svg'
 
 function Dashboard() {
   const { user } = useAuth()
   const { data: videoData, isLoading: loadingVideos } = useGetChannleVideos(user?._id)
   const { data: stats, isFetching: loadingStats } = useGetChannelStats(user?._id)
+  console.log(videoData)
   const location = useLocation();
   const navigate = useNavigate()
   console.log(location)
@@ -151,7 +153,23 @@ function Dashboard() {
           loadingVideos={loadingVideos}
           togglePublishingLoading={isPending}
         />
+        {(videoData?.data.length === 0) &&
+          <>
+            <section className='flex flex-col items-center justify-center'>
+              <img
+                src={no_content}
+                alt="no content"
+                className='size-52'
+              />
+              <Text color='gray' size={'2'}>
+                No content available
+              </Text>
+            </section>
+            <Separator size={'4'} mt={'4'} />
+          </>
+        }
       </section>
+
     </div >
   )
 }

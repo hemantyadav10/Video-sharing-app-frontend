@@ -2,11 +2,11 @@ import { ArrowLeftIcon, AvatarIcon, Cross1Icon, ExitIcon, FileTextIcon, GearIcon
 import { Avatar, Button, DropdownMenu, Flex, IconButton, Text, TextField, Tooltip } from '@radix-ui/themes'
 import React, { useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { useAuth } from '../context/authContext'
-import VideoIcon from '../assets/VideoIcon'
 import { BarLoader } from 'react-spinners'
-import { useFetchVideos } from '../lib/queries/videoQueries'
 import PlaylistIcon from '../assets/PlaylistIcon'
+import VideoIcon from '../assets/VideoIcon'
+import { useAuth } from '../context/authContext'
+import { useFetchVideos } from '../lib/queries/videoQueries'
 import CreatePlaylistDialog from './CreatePlaylistDialog'
 
 function Navbar({ toggleMenu }) {
@@ -38,8 +38,8 @@ function Navbar({ toggleMenu }) {
 
 
   return (
-    <div className='sticky top-0 right-0 z-40 grid w-full grid-cols-2 sm:grid-cols-3 px-6 py-3 border-[#484848] border-b bg-[#111113]/80 backdrop-blur-md  h-16'>
-      <div className='absolute top-0 left-0 right-0'>
+    <div className='fixed top-0 right-0 z-40 grid w-full grid-cols-2 sm:grid-cols-3 px-6 py-3 border-[#484848] border-b bg-[#111113]/80 backdrop-blur-md h-16'>
+      <div className='absolute top-0 left-0 right-0 '>
         <BarLoader
           color='#70b8ff'
           width={'100%'}
@@ -48,17 +48,17 @@ function Navbar({ toggleMenu }) {
         />
       </div>
       <span className='flex items-center col-span-1 gap-4 '>
-        <IconButton
-          onClick={toggleMenu}
-          variant='ghost'
-          highContrast
-          color='gray'
-          radius='full'
-          size={'3'}
-          className={`${(dashboardRoute || isVideoRoute) ? 'hidden' : ''}`}
-        >
-          <HamburgerMenuIcon height='20' width='20' />
-        </IconButton>
+          <IconButton
+            onClick={toggleMenu}
+            variant='ghost'
+            highContrast
+            color='gray'
+            radius='full'
+            size={'3'}
+            className={`${(dashboardRoute || isVideoRoute) ? 'hidden' : ''}`}
+          >
+            <HamburgerMenuIcon height={20} width={20}/>
+          </IconButton>
         <Link
           to='/'
           className='text-xl font-medium'
