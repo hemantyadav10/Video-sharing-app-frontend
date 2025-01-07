@@ -32,6 +32,7 @@ import Dashboard from './pages/Dashboard.jsx';
 import Privacy from './pages/Privacy.jsx';
 import TermsOfService from './pages/TermsOfService.jsx';
 import Help from './pages/Help.jsx';
+import CategoryPage from './pages/CategoryPage.jsx';
 
 
 export const queryClient = new QueryClient({
@@ -76,6 +77,7 @@ const router = createBrowserRouter(
         <Route path='/privacy' element={<Privacy />} />
         <Route path='/terms-of-services' element={<TermsOfService />} />
         <Route path='/help' element={<Help />} />
+        <Route path='category/:category' element={<CategoryPage />} />
       </Route>
       <Route element={<PublicRoute />}>
         <Route path='/login' element={<Login />} />

@@ -117,7 +117,7 @@ function Sidebar({ showMenu, toggleMenu }) {
       slug: '/category/courses',
     },
     {
-      name: 'Fashion & Beauty',
+      name: 'Fashion',
       icon: Shirt,
       slug: '/category/fashion',
     },
@@ -146,7 +146,7 @@ function Sidebar({ showMenu, toggleMenu }) {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [showMenu, toggleMenu]); 
+  }, [showMenu, toggleMenu]);
 
 
   return (
@@ -204,7 +204,7 @@ function Sidebar({ showMenu, toggleMenu }) {
                   <div className='pt-2'>
                     {categories.map(category => (
                       <NavLink
-                      title={category.name}
+                        title={category.name}
                         to={category.slug}
                         className={({ isActive }) => `${isActive ? "bg-[#0077ff3a] text-[#c2e6ff]" : ""} group flex items-center  p-3 rounded-xl active:bg-[#0081fd6b] hover:bg-[rgba(0,119,255,0.18)]  text-white outline-none cursor-pointer focus-visible:ring-[2px] ring-[#2870bd] gap-3 md:gap-0 px-4 `}
                       >
