@@ -81,7 +81,7 @@ function VideoPage() {
   }
 
   return (
-    <div className='flex flex-col w-full gap-4 mb-32 sm:gap-6 sm:p-6 lg:flex-row lg:justify-center lg:items-start'>
+    <div className='flex flex-col w-full gap-4 mb-32 lg:gap-6 sm:p-6 lg:flex-row lg:justify-center lg:items-start'>
       <div className='flex-1 lg:max-w-4xl'>
         <div >
           <Skeleton loading={isLoading}>
@@ -203,11 +203,34 @@ function VideoPage() {
                   <p>
                     {video?.data.views} views
                   </p>
-                  {timeAgo(video?.data.createdAt)}
+                  {new Date(video?.data.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}
+                  <Link to={`/category/${video?.data.category}`}>
+                    <Text
+                      color='gray'
+                      className='font-semibold capitalize hover:underline'
+                    >
+                      {video?.data.category}
+                    </Text>
+                  </Link>
+                </div>
+                <div className='flex flex-wrap gap-2'>
+                  {video?.data.tags && video?.data.tags.length > 0 && video.data.tags.map(tag => (
+                    <Link
+                      to={`/hashtag/${tag}`}
+                    >
+                      <Text
+                        color='blue'
+                        size={'2'}
+                        className='hover:underline'
+                      >
+                        #{tag}
+                      </Text>
+                    </Link>
+                  ))}
                 </div>
                 <p
                   ref={descriptionRef}
-                  className={`  ${isExpanded ? "h-auto" : "line-clamp-2"} duration-300`}
+                  className={`break-words whitespace-pre-wrap  ${isExpanded ? "h-auto" : "line-clamp-2"}`}
                 >
                   {video?.data.description}
                 </p>

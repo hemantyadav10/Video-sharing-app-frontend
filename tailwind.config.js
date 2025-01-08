@@ -9,6 +9,9 @@ export default {
       boxShadow: {
         'inset-custom': 'inset 0 0 0 var(--text-field-border-width) #b54548',
         'inset-textarea': 'inset 0 0 0 var(--text-area-border-width) #b54548',
+        'inset-select': 'inset 0 0 0 1px #b54548',
+        'input-border': 'inset 0 0 0 1px #d9edff40',
+        'input-focus': 'inset 0 0 0 1.5px #2870bd'
       },
       keyframes: {
         slideDown: {

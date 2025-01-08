@@ -25,6 +25,9 @@ const useToggleSubscription = (channelId, userId) => {
       queryClient.invalidateQueries({
         queryKey: ['user', channelId, userId], 
       })
+      queryClient.invalidateQueries({
+        queryKey: ['video'], 
+      })
     }
   })
 }

@@ -129,6 +129,13 @@ const useDeleteVideo = (userId) => {
   })
 }
 
+const useGetVideosByCategories = (category) => {
+  return useQuery({
+    queryKey: ['videos', { category }],
+    queryFn: () => fetchAllVideos(`category=${category}`)
+  })
+}
+
 
 export {
   useFetchVideos,
@@ -137,5 +144,6 @@ export {
   useTogglePublishStatus,
   useUpdateVideo,
   usePublishVideo,
-  useDeleteVideo
+  useDeleteVideo,
+  useGetVideosByCategories
 }

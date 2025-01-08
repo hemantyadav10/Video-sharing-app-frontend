@@ -9,7 +9,7 @@ import { useFetchUserPlaylists } from '../lib/queries/playlistQueries'
 
 function AllPlaylists() {
   const { user } = useAuth()
-  const { data: playlists, isLoading } = useFetchUserPlaylists(user?._id)
+  const { data: playlists, isLoading } = useFetchUserPlaylists(user?._id, true)
   const [openCreatePlaylist, setOpenCreatePlaylist] = useState(false)
 
   return (

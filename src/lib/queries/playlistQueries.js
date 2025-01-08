@@ -11,10 +11,11 @@ import {
 import { queryClient } from "../../main"
 
 // Fetches all playlists for a specific user by their ID
-const useFetchUserPlaylists = (userId) => {
+const useFetchUserPlaylists = (userId, fetch) => {
   return useQuery({
     queryKey: ['playlist', 'all', userId],
-    queryFn: () => getUserPlaylists(userId)
+    queryFn: () => getUserPlaylists(userId),
+    enabled: !!(userId && fetch)
   })
 }
 

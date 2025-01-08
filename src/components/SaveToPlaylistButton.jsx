@@ -11,7 +11,7 @@ function SaveToPlaylistButton({ videoData }) {
   const [openDialog, setOpenDialog] = useState(false)
   const [openCreatePlaylist, setOpenCreatePlaylist] = useState(false)
   const { user, isAuthenticated } = useAuth()
-  const { data: playlist, isLoading: loading } = useFetchUserPlaylists(user?._id)
+  const { data: playlist, isLoading: loading } = useFetchUserPlaylists(user?._id, openDialog)
   const [checkedPlaylists, setCheckedPlaylists] = useState([])
   const { mutate: addVideoToPlaylist, isPending: addingVideo } = useAddVideoToPlaylist(videoData, user?._id)
   const { mutate: removeVideoFromPlaylist, isPending: removingVideo } = useRemoveVideoFromPlaylist(videoData, user?._id)
@@ -102,12 +102,12 @@ function SaveToPlaylistButton({ videoData }) {
             size={'3'}
             weight={'medium'}
             mb={'0'}
-            className='flex items-center justify-between px-6 py-4'
+            className='flex items-center justify-between p-6'
           >
             <Text className='w-full'>
               Save video to..
             </Text>
-            <CloseButton />
+            {/* <CloseButton /> */}
           </Dialog.Title>
           <div className={`relative py-2 ${(loading || addingVideo || removingVideo) && 'opacity-50'}`}>
             {
@@ -145,7 +145,17 @@ function SaveToPlaylistButton({ videoData }) {
             ))}
 
           </div>
-          <div className='px-6 py-4'>
+          <div className='flex flex-wrap-reverse gap-4 p-6'>
+            <Dialog.Close>
+              <Button
+                className='flex-1 text-nowrap'
+                variant='outline'
+                radius='full'
+                color='gray'
+              >
+                Cancel
+              </Button>
+            </Dialog.Close>
             <Button
               onClick={() => {
                 setOpenCreatePlaylist(true)
@@ -153,7 +163,7 @@ function SaveToPlaylistButton({ videoData }) {
               highContrast
               radius='full'
               size={'2'}
-              className='w-full'
+              className='flex-1 text-nowrap'
             >
               <PlusIcon width={'20'} height={'20'} /> New playlist
             </Button>
