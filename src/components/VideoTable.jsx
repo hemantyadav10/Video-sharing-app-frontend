@@ -182,8 +182,6 @@ function VideoTable({
 
                 {/* Delete video button that opens a delete confirmation modal */}
                 <AlertDialog.Root
-                // open={open}
-                // onOpenChange={(o) => setOpen(o)}
                 >
                   <Tooltip content='Delete video' side='bottom'>
                     <AlertDialog.Trigger>
@@ -192,45 +190,53 @@ function VideoTable({
                       </IconButton>
                     </AlertDialog.Trigger>
                   </Tooltip>
-                  <AlertDialog.Content maxWidth="550px">
-                    <AlertDialog.Title weight={'medium'}>Permanently delete this video?</AlertDialog.Title>
-                    <AlertDialog.Description size="2">
-                      <div className='flex items-start gap-4 p-4 my-4 bg-[#0c0c0d] relative'>
-                        <div className='absolute left-0 right-0 -top-0 '>
-                          <BarLoader
-                            color='#70b8ff'
-                            width={'100%'}
-                            height={'2px'}
-                            loading={deletingVideo}
-                          />
-                        </div>
-                        <div className='relative w-28 aspect-video'>
-                          <img src={video.thumbnail} alt="thumbnail" className='object-cover object-center w-full h-full rounded-lg' />
-                          <Text
-                            className='absolute bottom-1 right-1 p-[2px] px-1 text-xs bg-black/70 font-medium rounded-md text-white '
-                            as='span'
-                          >
-                            {formatVideoDuration(video?.duration)}
-                          </Text>
-                        </div>
-                        <div className='flex-1'>
-                          <Text as='p' size={'1'} weight={'medium'}>
-                            {video.title}
-                          </Text>
-                          <Text weight={'light'} color='gray' as='p' size={'1'}>
-                            Uploaded on {toIndianDateFormat(video.createdAt)}
-                          </Text>
-                          <Text weight={'light'} color='gray' as='p' size={'1'}>
-                            {video.views} views
-                          </Text>
-                        </div>
+                  <AlertDialog.Content maxWidth="550px" className='relative'>
+                    <AlertDialog.Title>
+                      Permanently delete this video?
+                    </AlertDialog.Title>
+                    <div className='absolute top-0 left-6 right-6 '>
+                      <BarLoader
+                        color='#70b8ff'
+                        width={'100%'}
+                        height={'3px'}
+                        loading={deletingVideo}
+                      />
+                    </div>
+                    <Flex p={'4'} mt={'4'} gap={'4'} className='bg-[#0c0c0d] ' >
+                      <div className='relative w-28 aspect-video'>
+                        <img src={video.thumbnail} alt="thumbnail" className='object-cover object-center w-full h-full rounded-lg' />
+                        <Text
+                          className='absolute bottom-1 right-1 p-[2px] px-1 text-xs bg-black/70 font-medium rounded-md text-white '
+                          as='span'
+                        >
+                          {formatVideoDuration(video?.duration)}
+                        </Text>
                       </div>
+                      <div className='flex-1'>
+                        <Text as='p' size={'1'} weight={'medium'}>
+                          {video.title}
+                        </Text>
+                        <Text weight={'light'} color='gray' as='p' size={'1'}>
+                          Uploaded on {toIndianDateFormat(video.createdAt)}
+                        </Text>
+                        <Text weight={'light'} color='gray' as='p' size={'1'}>
+                          {video.views} views
+                        </Text>
+                      </div>
+                    </Flex>
+
+                    <AlertDialog.Description size="2" mt={'4'}>
                       Are you sure you want to delete this video ?
                       Once its deleted, you will not be able to recover it.
                     </AlertDialog.Description>
                     <Flex gap="3" mt="4" justify="end">
                       <AlertDialog.Cancel disabled={deletingVideo}>
-                        <Button variant="soft" highContrast color="gray" radius='full'>
+                        <Button
+                          highContrast
+                          variant="surface"
+                          color="gray"
+                          radius='full'
+                        >
                           Cancel
                         </Button>
                       </AlertDialog.Cancel>

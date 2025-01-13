@@ -7,7 +7,7 @@
 }
 
 .tabNav {
-	@apply py-2 text-center border-b-[2px] mb-[1px] transition-all px-4 font-medium duration-300;
+	@apply py-2 text-center border-b-[2px] mb-[0.75px] transition-all px-4 font-medium duration-300;
 }
 
 .tabNav_active {

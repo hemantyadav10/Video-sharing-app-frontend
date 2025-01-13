@@ -13,7 +13,9 @@ function History() {
   const { data: watchHistory, isLoading, isFetching, isFetchingNextPage, hasNextPage, fetchNextPage } = useFetchUserWatchHistory(user?._id, 2)
   console.log(watchHistory)
   const { mutate: deleteHistory, isPending: deletingHistory } = useClearWatchHistory()
-  const { ref, inView } = useInView()
+  const { ref, inView } = useInView({
+    rootMargin: '150px'
+  })
 
   useEffect(() => {
     if (inView && hasNextPage) {

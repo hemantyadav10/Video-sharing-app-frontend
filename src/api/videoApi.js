@@ -39,6 +39,16 @@ const deleteVideo = async (videoId) => {
   return res.data
 }
 
+const getVideosByTag = async (tag) => {
+  const res = await apiClient.get(`${VIDEO_BASE_URL}/tags/${tag}`)
+  return res.data;
+}
+
+const getRelatedVideos = async (videoId, page = 1, limit = 10) => {
+  const res = await apiClient.get(`${VIDEO_BASE_URL}/related/${videoId}?page=${page}&limit=${limit}`)
+  return res.data
+}
+
 
 export {
   fetchAllVideos,
@@ -46,5 +56,7 @@ export {
   togglePublishStatus,
   updateVideo,
   publishVideo,
-  deleteVideo
+  deleteVideo,
+  getVideosByTag,
+  getRelatedVideos
 }

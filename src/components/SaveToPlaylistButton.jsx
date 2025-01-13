@@ -64,7 +64,9 @@ function SaveToPlaylistButton({ videoData }) {
 
 
   return (
-    <div className='z-10 flex items-center' >
+    <div className='z-10 flex items-center'
+      title='More Options'
+    >
       {/* dropdown menu - save to playlist button */}
       <DropdownMenu.Root>
         <DropdownMenu.Trigger hidden={!isAuthenticated}>

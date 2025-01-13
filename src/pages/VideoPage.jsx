@@ -1,20 +1,18 @@
+import { Button, Flex, Popover, Skeleton, Spinner, Text } from '@radix-ui/themes'
 import React, { useEffect, useRef, useState } from 'react'
+import toast from 'react-hot-toast'
+import { useInView } from 'react-intersection-observer'
 import { Link, useParams } from 'react-router-dom'
-import { useFetchVideoById } from '../lib/queries/videoQueries'
-import { Button, DropdownMenu, Flex, IconButton, Popover, ScrollArea, Skeleton, Spinner, Text } from '@radix-ui/themes'
-import { BookmarkIcon, DotsVerticalIcon, HeartFilledIcon, HeartIcon } from '@radix-ui/react-icons'
-import { timeAgo } from '../utils/formatTimeAgo'
-import CommentSection from '../components/CommentSection'
-import SubscriptionButton from '../components/SubscriptionButton'
-import { useAuth } from '../context/authContext'
 import ThumbsUp from '../assets/ThumbsUpIcon'
 import ThumbsUpSolidIcon from '../assets/ThumbsUpSolidIcon'
-import { useToggleVideoLike } from '../lib/queries/likeQueries'
-import toast from 'react-hot-toast'
+import CommentSection from '../components/CommentSection'
+import MoreVideosFromChannelSection from '../components/MoreVideosFromChannelSection'
 import SaveToPlaylistButton from '../components/SaveToPlaylistButton'
-import { useInView } from 'react-intersection-observer'
-import RelatedVideoCard from '../components/RelatedVideoCard'
+import SubscriptionButton from '../components/SubscriptionButton'
+import { useAuth } from '../context/authContext'
+import { useToggleVideoLike } from '../lib/queries/likeQueries'
 import { useFetchUserVideos } from '../lib/queries/userQueries'
+import { useFetchVideoById } from '../lib/queries/videoQueries'
 import RelatedVideoSection from '../components/RelatedVideoSection'
 
 function VideoPage() {
@@ -32,11 +30,7 @@ function VideoPage() {
     rootMargin: '50px',
     triggerOnce: true
   })
-  const { data: videoData, isLoading: loadingVideos, isFetchingNextPage, hasNextPage, fetchNextPage, isFetching } = useFetchUserVideos(
-    video?.data?.owner._id, '', 6
-  );
-
-
+  const { data: videoData, isLoading: loadingVideos, isFetchingNextPage, hasNextPage, fetchNextPage, isFetching } = useFetchUserVideos(video?.data?.owner._id, '', 6);
 
   useEffect(() => {
     if (inView) {
@@ -85,8 +79,8 @@ function VideoPage() {
       <div className='flex-1 lg:max-w-4xl'>
         <div >
           <Skeleton loading={isLoading}>
-            <div className='w-full sm:rounded-xl aspect-video'>
-              <video controls className='object-cover object-center w-full aspect-video sm:rounded-xl focus:outline-none'>
+            <div className='w-full overflow-hidden sm:rounded-xl aspect-video'>
+              <video controls className='object-contain object-center w-full h-full'>
                 <source src={video?.data.videoFile} />
               </video>
             </div>
@@ -191,7 +185,7 @@ function VideoPage() {
                 </Skeleton>
                 {/* menu button - save to playlist */}
                 <div className='ml-auto sm:ml-0'>
-                  {!isLoading && <SaveToPlaylistButton
+                  {!isLoading && video && <SaveToPlaylistButton
                     videoData={video?.data}
                   />}
                 </div>
@@ -255,22 +249,26 @@ function VideoPage() {
         </div>
 
       </div>
-      {
-        !video?.data.owner._id
-          ? <div className='lg:w-full lg:max-w-sm xl:max-w-[408px]'></div>
-          : loadingVideos
-            ?
-            <div className='lg:w-full lg:max-w-sm xl:max-w-[408px]'>
-              <Spinner className='h-6 mx-auto' />
-            </div>
-            : <RelatedVideoSection
-              channelName={video?.data.owner.fullName}
-              videoData={videoData}
-              isFetchingNextPage={isFetchingNextPage}
-              hasNextPage={hasNextPage}
-              fetchNextPage={fetchNextPage}
-            />
-      }
+      <div className='space-y-6'>
+        {
+          !video?.data.owner._id
+            ? <div className='lg:w-full lg:max-w-sm xl:max-w-[408px]'></div>
+            : loadingVideos
+              ?
+              <div className='lg:w-full lg:max-w-sm xl:max-w-[408px]'>
+                <Spinner className='h-6 mx-auto' />
+              </div>
+              : videoData?.pages[0]?.data.totalDocs > 1
+              && <MoreVideosFromChannelSection
+                channelName={video?.data.owner.fullName}
+                videoData={videoData}
+                isFetchingNextPage={isFetchingNextPage}
+                hasNextPage={hasNextPage}
+                fetchNextPage={fetchNextPage}
+              />
+        }
+        <RelatedVideoSection videoId={videoId} />
+      </div>
     </div >
   )
 }

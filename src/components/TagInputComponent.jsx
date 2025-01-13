@@ -11,7 +11,12 @@ function TagInputComponent({
 }) {
   const handleAddTag = () => {
     if (tagName?.trim() !== '' && !tags.includes(tagName.trim().toLowerCase())) {
-      setTags(prevTags => [...prevTags, tagName.trim().toLowerCase()]);
+      setTags(prevTags => {
+        if (Array.isArray(prevTags)) {
+          return [...prevTags, tagName.trim().toLowerCase()];
+        }
+        return [tagName.trim().toLowerCase()];
+      });
       setTagName('');
     }
   };
@@ -31,7 +36,7 @@ function TagInputComponent({
           as='span'
           key={i}
           color='blue'
-          className='flex items-center justify-between gap-3 py-1 pr-2 pl-3 text-sm shadow-md rounded bg-[#ddeaf814] cursor-default hover:bg-[#ddeaf810] transition '
+          className='flex items-center justify-between gap-3 py-1 pr-2 pl-3 text-sm shadow-md rounded bg-[#ddeaf814] hover:bg-[#ddeaf810] transition '
         >
           {tag}
           <IconButton

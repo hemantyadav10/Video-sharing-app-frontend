@@ -1,13 +1,15 @@
-import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query"
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import {
   deleteVideo,
   fetchAllVideos,
   fetchVideoById,
+  getRelatedVideos,
+  getVideosByTag,
   publishVideo,
   togglePublishStatus,
   updateVideo,
-} from "../../api/videoApi"
-import { queryClient } from "../../main"
+} from "../../api/videoApi";
+import { queryClient } from "../../main";
 
 const useFetchVideos = (searchParams, limit = 10) => {
   const clonedParams = new URLSearchParams(searchParams);
@@ -32,9 +34,9 @@ const useFetchAllVideos = (limit = 2) => {
   })
 }
 
-const useFetchVideoById = (videoId, userId) => {
+const useFetchVideoById = (videoId) => {
   return useQuery({
-    queryKey: ['video', videoId, userId],
+    queryKey: ['video', videoId],
     queryFn: () => fetchVideoById(videoId),
     queryFn: async () => {
       const data = await fetchVideoById(videoId);
@@ -136,14 +138,32 @@ const useGetVideosByCategories = (category) => {
   })
 }
 
+const useGetVideoByTag = (tag) => {
+  return useQuery({
+    queryKey: ['videos', { tag }],
+    queryFn: () => getVideosByTag(tag)
+  })
+}
+
+const useGetRelatedVideos = (videoId, limit = 10) => {
+  return useInfiniteQuery({
+    queryKey: ['videos', 'related_videos', { videoId }],
+    queryFn: ({ pageParam = 1 }) => getRelatedVideos(videoId, pageParam, limit),
+    getNextPageParam: (lastPage) => lastPage?.data?.nextPage || null,
+    keepPreviousData: true,
+  })
+}
+
 
 export {
-  useFetchVideos,
-  useFetchVideoById,
+  useDeleteVideo,
   useFetchAllVideos,
+  useFetchVideoById,
+  useFetchVideos,
+  useGetVideoByTag,
+  useGetVideosByCategories,
+  usePublishVideo,
   useTogglePublishStatus,
   useUpdateVideo,
-  usePublishVideo,
-  useDeleteVideo,
-  useGetVideosByCategories
-}
+  useGetRelatedVideos
+};
