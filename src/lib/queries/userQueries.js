@@ -72,7 +72,6 @@ const useFetchUserWatchHistory = (user, limit = 3) => {
     queryKey: ['watch_history'],
     queryFn: ({ pageParam = 1 }) => getUserWatchHistory(limit, pageParam),
     getNextPageParam: (lastPage) => {
-      console.log(lastPage, "hello")
       return lastPage?.data?.nextPage || null
     },
     keepPreviousData: true,

@@ -14,9 +14,7 @@ const AuthContext = createContext({
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
-  console.log(user)
   const [isAuthenticated, setIsAuthenticated] = useState(!!user)
-  // const [token, setToken] = useState(localStorage.getItem('accessToken') || null);
 
   const { data: currentUser, isLoading: loadingUserData, isError } = useGetCurrentUser(user?._id)
 
@@ -27,13 +25,12 @@ const AuthProvider = ({ children }) => {
   const login = async (data) => {
     try {
       const res = await loginMutation(data)
-      console.log(res)
-      const { user } = res.data
+      const { user, accessToken } = res.data
       setIsAuthenticated(true)
       setUser(user)
       // setToken(accessToken)
 
-      // localStorage.setItem('accessToken', accessToken)
+      localStorage.setItem('accessToken', accessToken)
       localStorage.setItem('user', JSON.stringify(user))
 
     } catch (error) {
@@ -57,7 +54,7 @@ const AuthProvider = ({ children }) => {
       setUser(null)
       toast('Logged out successfully')
 
-      // localStorage.removeItem('accessToken')
+      localStorage.removeItem('accessToken')
       localStorage.removeItem('user')
     } catch (error) {
       console.log('Logout failed', error)

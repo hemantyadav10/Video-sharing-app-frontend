@@ -1,30 +1,35 @@
-import apiClient from "./apiClient"
+import { asyncHandler } from "../utils/asyncHandler";
+import apiClient from "./apiClient";
 
-const getUserTweets = async (userId) => {
-  const res = await apiClient.get(`/tweets/user/${userId}`)
+const TWEETS_BASE_URL = '/tweets'
 
+// Fetches tweets from a specific user
+const getUserTweets = (userId) => asyncHandler(async () => {
+  const res = await apiClient.get(`${TWEETS_BASE_URL}/user/${userId}`);
   return res.data;
-}
+});
 
-const createTweet = async (content) => {
-  const res = await apiClient.post(`/tweets`, { content: content })
+// Creates a new tweet with the given content
+const createTweet = (content) => asyncHandler(async () => {
+  const res = await apiClient.post(TWEETS_BASE_URL, { content: content });
   return res.data;
-}
+});
 
-const deleteTweet = async (tweetId) => {
-  const res = await apiClient.delete(`/tweets/${tweetId}`)
+// Deletes a specific tweet by its ID
+const deleteTweet = (tweetId) => asyncHandler(async () => {
+  const res = await apiClient.delete(`${TWEETS_BASE_URL}/${tweetId}`);
   return res.data;
-}
+});
 
-const updateTweet = async (tweetId, content) => {
-  const res = await apiClient.patch(`tweets/${tweetId}`, { content: content })
+// Updates a specific tweet with new content
+const updateTweet = (tweetId, content) => asyncHandler(async () => {
+  const res = await apiClient.patch(`${TWEETS_BASE_URL}/${tweetId}`, { content: content });
   return res.data;
-}
-
+});
 
 export {
   getUserTweets,
   createTweet,
   deleteTweet,
   updateTweet
-}
+};

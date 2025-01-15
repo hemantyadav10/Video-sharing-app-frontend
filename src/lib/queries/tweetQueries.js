@@ -45,7 +45,6 @@ const useDeleteTweet = (tweetId, channelId) => {
     mutationFn: (tweetId) => deleteTweet(tweetId),
     onSuccess: () => {
       queryClient.setQueryData(['userTweets', channelId, channelId], (prev) => {
-        console.log(prev, channelId)
         return {
           ...prev,
           data: (prev.data.filter((tweet) => tweet._id !== tweetId))

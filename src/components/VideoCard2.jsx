@@ -48,7 +48,6 @@ function VideoCard2({
     }
 
   }
-  console.log(loading)
 
   return (
     <Link

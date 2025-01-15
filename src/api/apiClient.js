@@ -9,18 +9,17 @@ const apiClient = axios.create({
   }
 })
 
+// Interceptor to add an Authorization header with a Bearer token (if available) to every outgoing request.
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem("accessToken")
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
 
-// apiClient.interceptors.request.use((config) => {
-//   console.log(document.cookie)
-//   const token = localStorage.getItem("accessToken")
-//   if (token) {
-//     config.headers.Authorization = `Bearer ${token}`
-//   }
-
-//   return config;
-// }, (error) => {
-//   return Promise.reject(error)
-// })
+  return config;
+}, (error) => {
+  return Promise.reject(error)
+})
 
 
 
@@ -28,7 +27,6 @@ const apiClient = axios.create({
 apiClient.interceptors.response.use(
   response => response, // If the request is successful, return the response
   async (error) => {
-    console.log(error)
     const originalRequest = error.config;
 
     // If the error is 401 (Unauthorized), try to refresh the access token
@@ -43,6 +41,8 @@ apiClient.interceptors.response.use(
 
         // Update the Authorization header with the new access token
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+
+        localStorage.setItem('accessToken', newAccessToken)
 
         // Retry the original request with the new token
         return apiClient(originalRequest);

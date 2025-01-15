@@ -59,7 +59,6 @@ function CommentCard({
   const handleDeleteComment = async () => {
     deleteComment(comment?._id, {
       onSuccess: () => {
-        console.log('comment deleted')
         return toast('Comment deleted')
       },
       onError: () => {

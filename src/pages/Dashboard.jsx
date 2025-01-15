@@ -16,7 +16,6 @@ function Dashboard() {
   const { user, isAuthenticated } = useAuth()
   const { data: videoData, isLoading: loadingVideos } = useGetChannleVideos(isAuthenticated)
   const { data: stats, isFetching: loadingStats } = useGetChannelStats(user?._id)
-  console.log(videoData)
   const location = useLocation();
   const navigate = useNavigate()
   const [isDialogOpen, setDialogOpen] = useState(false);

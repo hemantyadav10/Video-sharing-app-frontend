@@ -16,7 +16,6 @@ function Channel() {
   const { data, isLoading: loadingProfileInfo } = useFetchUserChannelInfo(userId, user?._id, true)
   const { data: videoData, isFetching: loadingVideos } = useFetchUserVideos(userId)
   const [openDialog, setOpenDialog] = useState(false)
-  console.log(videoData)
 
   return (
     <div className='relative flex flex-col flex-1 pt-4'>

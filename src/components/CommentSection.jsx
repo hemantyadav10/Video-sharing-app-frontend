@@ -30,7 +30,6 @@ function CommentSection({ videoId }) {
     isFetching,
   } = useGetVideoComments(videoId, sortBy, limit)
   const totalComments = data?.pages[0].data.totalDocs
-  console.log(isFetching)
 
   const [commentText, setCommentText] = useState('')
   const navigate = useNavigate()

@@ -60,7 +60,6 @@ function TagInputComponent({
         type="text"
         onChange={e => setTagName(e.target.value)}
         onKeyDown={(e) => {
-          console.log(e.key)
           if (e.key === "Enter" || e.key === " " || e.key === ",") {
             e.preventDefault();
             handleAddTag();

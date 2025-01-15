@@ -1,30 +1,35 @@
-import apiClient from "./apiClient"
+import { asyncHandler } from "../utils/asyncHandler";  // Assuming asyncHandler is located here
+import apiClient from "./apiClient";
 
-const fetchVideoComments = async (videoId, page = 1, limit = 6, sortBy = 'newest') => {
-  const res = await apiClient.get(`/comments/${videoId}?page=${page}&limit=${limit}&sortBy=${sortBy}`)
+const COMMENTS_BASE_URL = '/comments';
+
+// Fetches comments for a specific video
+const fetchVideoComments = (videoId, page = 1, limit = 6, sortBy = 'newest') => asyncHandler(async () => {
+  const res = await apiClient.get(`${COMMENTS_BASE_URL}/${videoId}?page=${page}&limit=${limit}&sortBy=${sortBy}`);
   return res.data;
-}
+});
 
-const addComment = async (content, videoId) => {
-  const res = await apiClient.post(`/comments/${videoId}`, { content: content })
+// Adds a new comment to a specific video
+const addComment = (content, videoId) => asyncHandler(async () => {
+  const res = await apiClient.post(`${COMMENTS_BASE_URL}/${videoId}`, { content });
   return res.data;
-}
+});
 
-const deleteComment = async (commentId) => {
-  const res = await apiClient.delete(`/comments/c/${commentId}`)
+// Deletes a specific comment by its ID
+const deleteComment = (commentId) => asyncHandler(async () => {
+  const res = await apiClient.delete(`${COMMENTS_BASE_URL}/c/${commentId}`);
   return res.data;
-}
+});
 
-const updateComment = async (commentId, newComment) => {
-  const res = await apiClient.patch(`/comments/c/${commentId}`, { newComment: newComment })
+// Updates an existing comment by its ID
+const updateComment = (commentId, newComment) => asyncHandler(async () => {
+  const res = await apiClient.patch(`${COMMENTS_BASE_URL}/c/${commentId}`, { newComment });
   return res.data;
-}
-
-
+});
 
 export {
   fetchVideoComments,
   addComment,
   deleteComment,
   updateComment
-}
+};

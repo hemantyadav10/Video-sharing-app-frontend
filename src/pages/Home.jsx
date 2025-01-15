@@ -9,7 +9,6 @@ import { useFetchAllVideos } from '../lib/queries/videoQueries'
 function Home() {
   const [showMenu] = useOutletContext()
   const { data, isFetching, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useFetchAllVideos(12)
-  console.log(data)
   const { ref, inView } = useInView({
     rootMargin: '50px'
   })

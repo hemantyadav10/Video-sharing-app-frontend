@@ -1,71 +1,85 @@
+import { asyncHandler } from "../utils/asyncHandler"
 import apiClient from "./apiClient"
 
-const getUserChannelInfo = async (userId) => {
-  const response = await apiClient.get(`users/channel/${userId}`)
-  return response.data;
-}
+const USER_BASE_URL = '/users'
 
-const getUserVideos = async (userId, filters) => {
+// Fetches user channel information based on user ID
+const getUserChannelInfo = (userId) => asyncHandler(async () => {
+  const response = await apiClient.get(`${USER_BASE_URL}/channel/${userId}`)
+  return response.data;
+})
+
+// Fetches videos of a user with applied filters
+const getUserVideos = (userId, filters) => asyncHandler(async () => {
   const res = await apiClient.get(`videos?userId=${userId}&${filters}`)
   return res.data
-}
+})
 
-const loginUser = async (data) => {
-  const res = await apiClient.post('/users/login', data)
+// Logs in the user with provided data
+const loginUser = (data) => asyncHandler(async () => {
+  const res = await apiClient.post(`${USER_BASE_URL}/login`, data)
   return res.data
-}
+})
 
-const registerUser = async (formData) => {
-  console.log(formData)
-  const res = await apiClient.post('/users/register', formData, {
+// Registers a new user with the provided form data
+const registerUser = (formData) => asyncHandler(async () => {
+  const res = await apiClient.post(`${USER_BASE_URL}/register`, formData, {
     headers: { "Content-Type": 'multipart/form-data' }
   })
   return res.data
-}
+})
 
-const logoutUser = async () => {
-  const res = await apiClient.post('users/logout')
+// Logs out the current user
+const logoutUser = () => asyncHandler(async () => {
+  const res = await apiClient.post(`${USER_BASE_URL}/logout`)
   return res.data
-}
+})
 
-const getCurrentUser = async () => {
-  const res = await apiClient.get('/users/current-user');
+// Fetches current logged-in user information
+const getCurrentUser = () => asyncHandler(async () => {
+  const res = await apiClient.get(`${USER_BASE_URL}/current-user`);
   return res.data;
-}
+})
 
-const getUserWatchHistory = async (limit = 3, page = 1) => {
-  const res = await apiClient.get(`/users/watch-history?limit=${limit}&page=${page}`)
+// Fetches user's watch history with pagination
+const getUserWatchHistory = (limit = 3, page = 1) => asyncHandler(async () => {
+  const res = await apiClient.get(`${USER_BASE_URL}/watch-history?limit=${limit}&page=${page}`)
   return res.data
-}
+})
 
-const changePassword = async (body) => {
-  const res = await apiClient.post('/users/change-password', body)
+// Changes user's password with the provided data
+const changePassword = (body) => asyncHandler(async () => {
+  const res = await apiClient.post(`${USER_BASE_URL}/change-password`, body)
   return res.data
-}
+})
 
-const updateAccountDetails = async (details) => {
-  const res = await apiClient.patch('/users/update-account', details)
+// Updates user account details with new information
+const updateAccountDetails = (details) => asyncHandler(async () => {
+  const res = await apiClient.patch(`${USER_BASE_URL}/update-account`, details)
   return res.data
-}
+})
 
-const clearWatchHistory = async () => {
-  const res = await apiClient.delete('/users/watch-history');
+// Clears user's watch history
+const clearWatchHistory = () => asyncHandler(async () => {
+  const res = await apiClient.delete(`${USER_BASE_URL}/watch-history`);
   return res.data
-}
+})
 
-const updateAvatar = async (avatar) => {
-  const res = await apiClient.patch('/users/avatar', avatar,
+// Updates user's avatar with the provided file
+const updateAvatar = (avatar) => asyncHandler(async () => {
+  const res = await apiClient.patch(`${USER_BASE_URL}/avatar`, avatar,
     { headers: { "Content-Type": 'multipart/form-data' } }
   )
   return res.data
-}
+})
 
-const updateCoverImage = async (coverImage) => {
-  const res = await apiClient.patch('/users/cover-image', coverImage,
+// Updates user's cover image with the provided file
+const updateCoverImage = (coverImage) => asyncHandler(async () => {
+  const res = await apiClient.patch(`${USER_BASE_URL}/cover-image`, coverImage,
     { headers: { "Content-Type": 'multipart/form-data' } }
   )
   return res.data
-}
+})
 
 export {
   getUserChannelInfo,

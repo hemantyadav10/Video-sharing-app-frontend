@@ -11,7 +11,6 @@ import { useInView } from 'react-intersection-observer'
 function History() {
   const { user, isAuthenticated } = useAuth()
   const { data: watchHistory, isLoading, isFetching, isFetchingNextPage, hasNextPage, fetchNextPage } = useFetchUserWatchHistory(user?._id, 2)
-  console.log(watchHistory)
   const { mutate: deleteHistory, isPending: deletingHistory } = useClearWatchHistory()
   const { ref, inView } = useInView({
     rootMargin: '150px'

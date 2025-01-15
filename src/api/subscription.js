@@ -1,23 +1,28 @@
-import apiClient from "./apiClient"
+import { asyncHandler } from "../utils/asyncHandler";
+import apiClient from "./apiClient";
 
-const getUserSubscribedChannels = async (subscriberId) => {
-  const res = await apiClient.get(`/subscriptions/u/${subscriberId}`)
-  return res.data
-}
+const SUBSCRIPTIONS_BASE_URL = '/subscriptions'
 
-const getVideosFromSubscribedChannels = async () => {
-  const res = await apiClient.get('/subscriptions/videos')
-  return res.data
-}
-
-const toggleSubscription = async (channelId) => {
-  const res = await apiClient.post(`/subscriptions/c/${channelId}`)
-
+// Fetches a list of channels the user is subscribed to
+const getUserSubscribedChannels = (subscriberId) => asyncHandler(async () => {
+  const res = await apiClient.get(`${SUBSCRIPTIONS_BASE_URL}/u/${subscriberId}`);
   return res.data;
-}
+});
+
+// Fetches videos from the channels the user is subscribed to
+const getVideosFromSubscribedChannels = () => asyncHandler(async () => {
+  const res = await apiClient.get(`${SUBSCRIPTIONS_BASE_URL}/videos`);
+  return res.data;
+});
+
+// Toggles subscription status for a specific channel
+const toggleSubscription = (channelId) => asyncHandler(async () => {
+  const res = await apiClient.post(`${SUBSCRIPTIONS_BASE_URL}/c/${channelId}`);
+  return res.data;
+});
 
 export {
   getUserSubscribedChannels,
   getVideosFromSubscribedChannels,
   toggleSubscription
-}
+};
