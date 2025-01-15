@@ -1,11 +1,14 @@
 import { Cross1Icon } from '@radix-ui/react-icons'
-import { Avatar, Flex, IconButton, Skeleton, Text, Tooltip } from '@radix-ui/themes'
+import { Avatar, Box, Button, Flex, Grid, Heading, HoverCard, IconButton, Skeleton, Text, Tooltip } from '@radix-ui/themes'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { timeAgo } from '../utils/formatTimeAgo'
 import { formatVideoDuration } from '../utils/formatVideoDuration'
 import { useAuth } from '../context/authContext'
 import SaveToPlaylistButton from './SaveToPlaylistButton'
+import SubscriptionButton from './SubscriptionButton'
+import { useFetchUserChannelInfo } from '../lib/queries/userQueries'
+import { getInitials } from '../utils/utils'
 
 function VideoCard({
   hideAvatar = false,
@@ -15,7 +18,11 @@ function VideoCard({
   loading,
   hideUsername = false,
 }) {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user } = useAuth()
+  const load = false
+
+  const { data, isLoading: loadingProfileInfo, refetch } = useFetchUserChannelInfo(videoData?.owner?._id, user?._id, false)
+
 
   return (
     <div className={`flex gap-4 mb-4 sm:rounded-xl ${list ? 'sm:grid sm:grid-cols-12 w-full sm:mb-0 flex-col max-w-6xl ' : 'flex-col '}  line-clamp-1 sm:p-1`}>
@@ -44,17 +51,81 @@ function VideoCard({
         {/* hidden={loading || !isAuthenticated} */}
 
         {!hideAvatar &&
-          <Skeleton loading={loading}>
-            <Link to={`/channel/${videoData?.owner?._id}`} className={`w-10 h-10 transition-all rounded-full aspect-square hover:brightness-90 ${list && " sm:hidden"} mr-3 `}>
-              <Avatar
-                radius='full'
-                size={'3'}
-                src={videoData?.owner?.avatar}
-                fallback="A"
-                className={` w-full h-full object-cover object-center`}
-              />
-            </Link>
-          </Skeleton>
+          <HoverCard.Root onOpenChange={(open) => {
+            if (open) {
+              refetch()
+            }
+          }}>
+            <Skeleton loading={loading}>
+              <HoverCard.Trigger>
+                <Link to={`/channel/${videoData?.owner?._id}`} className={`w-10 h-10 transition-all rounded-full aspect-square hover:brightness-90 ${list && " sm:hidden"} mr-3 `}>
+                  <Avatar
+                    radius='full'
+                    size={'3'}
+                    src={videoData?.owner?.avatar}
+                    className={` w-full h-full object-cover object-center`}
+                    alt='profile image'
+                  />
+                </Link>
+              </HoverCard.Trigger>
+            </Skeleton>
+            <HoverCard.Content size='1' minWidth={'320px'}>
+              <Flex gap="4">
+                <Skeleton loading={loadingProfileInfo}>
+                  <Avatar
+                    size="5"
+                    fallback={getInitials(videoData?.owner?.fullName)}
+                    radius="full"
+                    src={videoData?.owner?.avatar}
+                    alt='profile image'
+                  />
+                </Skeleton>
+                <Box className='w-full'>
+                  <Text size="2" as="div" weight={'medium'} mb={'1'} >
+                    <Skeleton loading={loadingProfileInfo}>
+                      {videoData?.owner?.fullName}
+                    </Skeleton>
+                  </Text>
+                  <Text as="div" size="1" >
+                    <Skeleton loading={loadingProfileInfo}>
+                      @{videoData?.owner?.username}
+                    </Skeleton>
+                  </Text>
+                  <Text as='span' size={'1'} color="gray">
+                    <Skeleton loading={loadingProfileInfo}>
+                      {`Joined ${timeAgo(videoData?.owner?.createdAt)}`} • {data?.data?.subscribersCount} subscribers
+                    </Skeleton>
+                  </Text>
+                </Box>
+              </Flex>
+              <Flex mt={'4'} gap={'2'}>
+                {
+                  isAuthenticated
+                    ? user?._id === videoData?.owner?._id
+                      ? null
+                      : <SubscriptionButton
+                        loading={loadingProfileInfo}
+                        className='flex-1'
+                        userId={videoData?.owner?._id}
+                        subscribed={data?.data.isSubscribed}
+                      />
+                    : null
+                }
+                <Skeleton loading={loadingProfileInfo}>
+                  <Link to={`/channel/${videoData?.owner?._id}`} className='flex-1 rounded-full'>
+                    <Button
+                      radius='full'
+                      variant='soft'
+                      color='gray'
+                      highContrast
+                      className='w-full text-nowrap'
+                    >View Channel</Button>
+                  </Link>
+                </Skeleton>
+              </Flex>
+            </HoverCard.Content>
+          </HoverCard.Root>
+
         }
         <Flex
           direction={'column'}
@@ -87,11 +158,12 @@ function VideoCard({
                       src={videoData?.owner?.avatar}
                       fallback="A"
                       className={`  object-cover object-center hidden  size-6 sm:block`}
+                      alt='profile image'
                     />
                   </Skeleton>
                 }
                 <Skeleton loading={loading} className='w-1/4 h-4'>
-                  <Text as='span' size={'1'}>
+                  <Text as='span' size={'1'} title={videoData?.owner?.fullName}>
                     {videoData?.owner?.fullName}
                   </Text>
                 </Skeleton>

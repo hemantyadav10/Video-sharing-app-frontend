@@ -1,5 +1,5 @@
 import { ArrowLeftIcon, AvatarIcon, Cross1Icon, ExitIcon, FileTextIcon, GearIcon, HamburgerMenuIcon, LockClosedIcon, MagicWandIcon, MagnifyingGlassIcon, Pencil2Icon, PersonIcon, PlusIcon, QuestionMarkCircledIcon } from '@radix-ui/react-icons'
-import { Avatar, Button, DropdownMenu, Flex, IconButton, Text, TextField, Tooltip } from '@radix-ui/themes'
+import { Avatar, Button, DropdownMenu, Flex, IconButton, Skeleton, Text, TextField, Tooltip } from '@radix-ui/themes'
 import React, { useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { BarLoader } from 'react-spinners'
@@ -8,6 +8,7 @@ import VideoIcon from '../assets/VideoIcon'
 import { useAuth } from '../context/authContext'
 import { useFetchVideos } from '../lib/queries/videoQueries'
 import CreatePlaylistDialog from './CreatePlaylistDialog'
+import { getInitials } from '../utils/utils'
 
 function Navbar({ toggleMenu }) {
   const [searchParams, setSearchParams] = useSearchParams('')
@@ -48,17 +49,18 @@ function Navbar({ toggleMenu }) {
         />
       </div>
       <span className='flex items-center col-span-1 gap-4 '>
-          <IconButton
-            onClick={toggleMenu}
-            variant='ghost'
-            highContrast
-            color='gray'
-            radius='full'
-            size={'3'}
-            className={`${(dashboardRoute || isVideoRoute) ? 'hidden' : ''}`}
-          >
-            <HamburgerMenuIcon height={20} width={20}/>
-          </IconButton>
+        <IconButton
+          onClick={toggleMenu}
+          variant='ghost'
+          highContrast
+          color='gray'
+          radius='full'
+          size={'3'}
+          className={`${(dashboardRoute || isVideoRoute) ? 'hidden' : ''}`}
+          title='Click to expand sidebar'
+        >
+          <HamburgerMenuIcon height={20} width={20} />
+        </IconButton>
         <Link
           to='/'
           className='text-xl font-medium'
@@ -153,7 +155,8 @@ function Navbar({ toggleMenu }) {
                   size={'2'}
                   src={user?.avatar}
                   alt='avatar'
-                  fallback="A"
+                  variant='solid'
+                  fallback={getInitials(user?.fullName)}
                 />
               </IconButton>
             </DropdownMenu.Trigger>

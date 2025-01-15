@@ -14,11 +14,13 @@ import {
   updateCoverImage
 } from "../../api/userApi"
 import { queryClient } from "../../main"
+import toast from "react-hot-toast"
 
-const useFetchUserChannelInfo = (channelId, userId) => {
+const useFetchUserChannelInfo = (channelId, userId, fetchOnMount = true) => {
   return useQuery({
     queryKey: ['user', channelId, userId],
     queryFn: () => getUserChannelInfo(channelId, userId),
+    enabled: fetchOnMount
   })
 }
 
@@ -56,11 +58,11 @@ const userLogoutUser = () => {
   })
 }
 
-const useGetCurrentUser = (token, userId) => {
+const useGetCurrentUser = (userId) => {
   return useQuery({
-    queryKey: ['currentUser', userId],
+    queryKey: ['currentUser'],
     queryFn: getCurrentUser,
-    enabled: !!token && !!userId,
+    enabled: !!userId,
     retry: false
   })
 }

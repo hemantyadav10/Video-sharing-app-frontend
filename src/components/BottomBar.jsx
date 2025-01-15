@@ -6,7 +6,7 @@ import { useAuth } from '../context/authContext'
 
 function BottomBar() {
   const { user, isAuthenticated } = useAuth()
-  console.log(user)
+
   return (
     <div className={`fixed grid ${isAuthenticated ? 'grid-cols-4' : 'grid-cols-3'} bottom-0 left-0 right-0 bg-[#0c0c0d]/80    backdrop-blur-md border-t border-[#484848] sm:hidden h-16 z-50 `}>
       <NavLink
@@ -52,7 +52,7 @@ function BottomBar() {
         <NavLink
           to={`/channel/${user?._id}`}
           className={({ isActive }) => `${isActive ? 'font-medium text-[#70b8ff]' : ''} col-span-1 flex flex-col items-center  justify-center p-2 rounded-lg  transition-all focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b]`}
-          >
+        >
           <IconButton
             tabIndex={'-1'}
             variant='ghost'

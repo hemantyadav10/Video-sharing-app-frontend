@@ -77,6 +77,7 @@ function AboutChannelDialog({ isOpen, setOpenDialog, joiningDate, channelId }) {
                   variant="ghost"
                   color={isCopied ? 'green' : 'gray'}
                   onClick={handleCopy}
+                  title='Click to copy link'
                 >
                   {isCopied ? (
                     <CheckIcon height={16} width={16} />

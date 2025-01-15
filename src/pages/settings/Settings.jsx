@@ -6,6 +6,7 @@ import CameraIcon from '../../assets/CameraIcon';
 import UpdatePictureDialog from '../../components/UpdatePictureDialog';
 import { useAuth } from '../../context/authContext';
 import placeholder from '../../assets/bannerPlaceholder.webp'
+import { Camera } from 'lucide-react';
 
 function Settings() {
   const location = useLocation();
@@ -92,12 +93,12 @@ function Settings() {
             <CameraIcon />
           </span>
           <IconButton
-            highContrast
             radius='full'
+            highContrast
             size={'2'}
             className='absolute bottom-0 right-0'
           >
-            <Pencil1Icon height={'16'} width={'16'} />
+            <Camera size={'20px'}/>
           </IconButton>
         </label>
       </label>

@@ -9,7 +9,7 @@ import SaveToPlaylistButton from './SaveToPlaylistButton'
 function SimilarVideosCard({ video }) {
   return (
     <div className='flex rounded-xl'>
-      <Link to={`/watch/${video?._id}`} className='flex gap-2'>
+      <Link to={`/watch/${video?._id}`} className='flex flex-1 gap-2'>
         <div className='relative'>
           <img
             src={video?.thumbnail}

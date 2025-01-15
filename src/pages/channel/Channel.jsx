@@ -13,7 +13,7 @@ function Channel() {
   const { user, isAuthenticated } = useAuth()
 
   const isVideosActive = location.pathname === `/channel/${userId}` || location.pathname === `/channel/${userId}/videos`;
-  const { data, isLoading: loadingProfileInfo } = useFetchUserChannelInfo(userId, user?._id)
+  const { data, isLoading: loadingProfileInfo } = useFetchUserChannelInfo(userId, user?._id, true)
   const { data: videoData, isFetching: loadingVideos } = useFetchUserVideos(userId)
   const [openDialog, setOpenDialog] = useState(false)
   console.log(videoData)
@@ -70,12 +70,14 @@ function Channel() {
               </Text>
             </div>
             {/* <AboutChannelDialog> */}
-            <Flex hidden={loadingVideos} onClick={() => setOpenDialog(true)} gap={'1'} className='text-xs cursor-pointer lg:text-sm'>
-              <Text as='span' color='gray'>More about this channel</Text>
-              <Text weight={'medium'} as='span'>
-                ...more
-              </Text>
-            </Flex>
+            <Skeleton loading={loadingVideos}>
+              <Flex title='Click to know more about this channel' onClick={() => setOpenDialog(true)} gap={'1'} className='text-xs cursor-pointer lg:text-sm'>
+                <Text as='span' color='gray'>More about this channel</Text>
+                <button className='font-medium'>
+                  ...more
+                </button>
+              </Flex>
+            </Skeleton>
             {openDialog &&
               <AboutChannelDialog
                 isOpen={openDialog}

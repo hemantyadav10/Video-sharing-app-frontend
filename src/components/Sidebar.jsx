@@ -177,7 +177,7 @@ function Sidebar({ showMenu, toggleMenu }) {
           <SidebarContext.Provider value={{ showMenu }}>
             <ul className={`flex flex-col p-2  ${showMenu ? "md:p-2 md:mt-3" : "md:p-[2px] md:mt-4"}`}>
               {sidebarItems.map(item => (
-                <SidebarItem item={item} key={item.name} Icon={item.icon} className={`${showMenu ? "" : item.hidden ? "hidden" : ""} ${!isAuthenticated && item.showWhenLoggedIn && 'hidden'}`}>{item.name}</SidebarItem>
+                <SidebarItem item={item} key={item.name} Icon={item.icon} className={`${showMenu ? "" : item.hidden ? "md:hidden" : ""} ${!isAuthenticated && item.showWhenLoggedIn && 'hidden'}`}>{item.name}</SidebarItem>
               ))}
             </ul>
           </SidebarContext.Provider>

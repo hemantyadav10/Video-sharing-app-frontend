@@ -37,7 +37,7 @@ function ChannelTweets() {
     <div>
       {/* Text area to write a tweet */}
       {(isAuthenticated && user?._id === userId) &&
-        <div className='flex-1 max-w-4xl px-6 mb-6'>
+        <div className='flex-1 max-w-4xl px-4 mb-6'>
           <TextArea
             ref={textareaRef}
             placeholder='Add a tweet...'
@@ -80,7 +80,7 @@ function ChannelTweets() {
         </div>
       }
       {/* tweet cards */}
-      <div className='flex flex-col w-full max-w-4xl gap-6 p-6 py-4 mb-16'>
+      <div className='flex flex-col w-full max-w-4xl gap-6 p-4 py-4 mb-16'>
         {userTweets?.data.map((tweet) => (
           <TweetCard
             key={tweet._id}
