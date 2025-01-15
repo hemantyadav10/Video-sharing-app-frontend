@@ -34,6 +34,7 @@ import TermsOfService from './pages/TermsOfService.jsx';
 import Help from './pages/Help.jsx';
 import CategoryPage from './pages/CategoryPage.jsx';
 import TagsPage from './pages/TagsPage.jsx';
+import NotFound from './pages/NotFound.jsx';
 
 
 export const queryClient = new QueryClient({
@@ -85,6 +86,7 @@ const router = createBrowserRouter(
         <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<Signup />} />
       </Route>
+      <Route path='*' element={<NotFound />} />
     </Route>
   )
 )
