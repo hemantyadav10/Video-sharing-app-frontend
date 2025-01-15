@@ -52,7 +52,7 @@ const useTogglePublishStatus = (userId) => {
     mutationFn: (videoId) => togglePublishStatus(videoId),
     onSuccess: (response) => {
       console.log(response)
-      queryClient.setQueryData(['channel_videos', userId], (prev) => {
+      queryClient.setQueryData(['channel_videos'], (prev) => {
         return {
           ...prev,
           data: prev.data.map(video => (
@@ -73,7 +73,7 @@ const useUpdateVideo = (userId) => {
   return useMutation({
     mutationFn: ({ videoId, formData }) => updateVideo(videoId, formData),
     onSuccess: (res) => {
-      queryClient.setQueryData(['channel_videos', userId], prev => {
+      queryClient.setQueryData(['channel_videos'], prev => {
         if (!prev) return;
 
         return {
@@ -95,7 +95,7 @@ const usePublishVideo = (userId) => {
   return useMutation({
     mutationFn: (formData) => publishVideo(formData),
     onSuccess: (res) => {
-      queryClient.setQueryData(['channel_videos', userId], prev => {
+      queryClient.setQueryData(['channel_videos'], prev => {
         return {
           ...prev,
           data: [{ ...res.data, likes: 0 }, ...prev.data]
@@ -120,7 +120,7 @@ const useDeleteVideo = (userId) => {
     onSuccess: ({ data }) => {
       const videoId = data.videoId
       console.log(data)
-      queryClient.setQueryData(['channel_videos', userId], prev => {
+      queryClient.setQueryData(['channel_videos'], prev => {
         return {
           ...prev,
           data: prev.data.filter(video => video._id !== videoId)

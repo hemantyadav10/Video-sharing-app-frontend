@@ -13,13 +13,12 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import no_content from '../assets/no_content.svg'
 
 function Dashboard() {
-  const { user } = useAuth()
-  const { data: videoData, isLoading: loadingVideos } = useGetChannleVideos(user?._id)
+  const { user, isAuthenticated } = useAuth()
+  const { data: videoData, isLoading: loadingVideos } = useGetChannleVideos(isAuthenticated)
   const { data: stats, isFetching: loadingStats } = useGetChannelStats(user?._id)
   console.log(videoData)
   const location = useLocation();
   const navigate = useNavigate()
-  console.log(location)
   const [isDialogOpen, setDialogOpen] = useState(false);
 
   const [publishedVideos, setPublishedVideos] = useState(() => {

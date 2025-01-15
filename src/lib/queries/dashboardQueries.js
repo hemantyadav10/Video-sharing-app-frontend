@@ -4,10 +4,11 @@ import {
   getChannelVideos
 } from "../../api/dashboardApi"
 
-const useGetChannleVideos = (userId) => {
+const useGetChannleVideos = (isAuthenticated) => {
   return useQuery({
-    queryKey: ['channel_videos', userId],
+    queryKey: ['channel_videos'],
     queryFn: getChannelVideos,
+    enabled: isAuthenticated, 
   })
 }
 

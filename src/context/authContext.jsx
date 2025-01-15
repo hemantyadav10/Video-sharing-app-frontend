@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 
 const AuthContext = createContext({
   user: null,
-  token: null,
+  // token: null,
   login: async () => { },
   register: async () => { },
   logout: async () => { },
@@ -14,10 +14,11 @@ const AuthContext = createContext({
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
-  const [token, setToken] = useState(localStorage.getItem('token') || null);
-  const { data: currentUser, isLoading: loadingUserData } = useGetCurrentUser(token, user?._id)
-  const isAuthenticated = !!user && !!token;
+  console.log(user)
+  const [isAuthenticated, setIsAuthenticated] = useState(!!user)
+  // const [token, setToken] = useState(localStorage.getItem('accessToken') || null);
 
+  const { data: currentUser, isLoading: loadingUserData, isError } = useGetCurrentUser(user?._id)
 
   const { mutateAsync: loginMutation, isPending: loggingIn } = useLoginUser()
   const { mutateAsync: registerMutation, isPending: registeringUser } = useRegisterUser()
@@ -27,11 +28,12 @@ const AuthProvider = ({ children }) => {
     try {
       const res = await loginMutation(data)
       console.log(res)
-      const { user, accessToken } = res.data
-      setToken(accessToken)
+      const { user } = res.data
+      setIsAuthenticated(true)
       setUser(user)
+      // setToken(accessToken)
 
-      localStorage.setItem('token', accessToken)
+      // localStorage.setItem('accessToken', accessToken)
       localStorage.setItem('user', JSON.stringify(user))
 
     } catch (error) {
@@ -50,11 +52,12 @@ const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await logoutMutation()
-      toast('Logged out successfully')
-      setToken(null)
+      setIsAuthenticated(false)
+      // setToken(null)
       setUser(null)
+      toast('Logged out successfully')
 
-      localStorage.removeItem('token')
+      // localStorage.removeItem('accessToken')
       localStorage.removeItem('user')
     } catch (error) {
       console.log('Logout failed', error)
@@ -62,25 +65,16 @@ const AuthProvider = ({ children }) => {
     }
   }
 
-  useEffect(() => {
-    const storedToken = localStorage.getItem('token')
-    const storedUser = JSON.parse(localStorage.getItem('user'))
-    if (storedUser && storedToken) {
-      setToken(storedToken)
-      setUser(storedUser)
-    }
-  }, [])
-
   const data = {
-    user: user || currentUser?.data.user,
-    token,
+    user: currentUser?.data?.user || user,
+    setUser,
+    // token,
     login,
     register,
     logout,
     isAuthenticated,
     isLoading: loadingUserData || loggingIn || loggingOut || registeringUser,
-    setUser,
-    logoutLoading: loggingOut
+    logoutLoading: loggingOut,
   }
 
   return (
