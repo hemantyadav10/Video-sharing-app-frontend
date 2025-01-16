@@ -43,10 +43,8 @@ function TweetCard({
       {
         loading: 'Deleting tweet...',
         success: 'Tweet deleted',
-        error: 'Something went wrong, please try again.',
-      }, {
-      icon: false
-    })
+        error: (error) => error?.response?.data?.message || 'Something went wrong, please try again.',
+      })
   }
 
   const handleToggleLike = async () => {
@@ -74,6 +72,10 @@ function TweetCard({
       onSuccess: () => {
         setIsEditable(false)
         toast('Tweet updated')
+      },
+      onError: (error) => {
+        const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+        toast.error(errorMessage);
       }
     })
   }
@@ -107,7 +109,7 @@ function TweetCard({
               setIsEditable(false)
               setContent(tweetData?.content)
             }}
-            variant='soft'
+            variant='surface'
             color='gray'
             className='px-4'
             radius='full'

@@ -11,11 +11,19 @@
 }
 
 .tabNav_active {
-	@apply border-b-[#2870bd] text-[#edeef0] ;
+	@apply border-b-[#2870bd] text-[#edeef0];
 }
 
 .tabNav_inactive {
-	@apply border-transparent hover:border-[#484848]  active:text-white text-[#f1f7feb5];
+	@apply border-transparent hover:border-[#484848] active:text-white text-[#f1f7feb5];
+}
+
+.toast {
+	@apply p-2 text-sm text-black shadow-lg min-w-52;
+}
+
+.toast_error {
+	@apply p-2 text-sm text-white bg-red-500 shadow-lg min-w-52;
 }
 
 .radix-themes {

@@ -3,9 +3,10 @@ import SimilarVideosCard from './SimilarVideosCard'
 import { useGetRelatedVideos } from '../lib/queries/videoQueries'
 import { Spinner, Text } from '@radix-ui/themes'
 import { useInView } from 'react-intersection-observer'
+import QueryErrorHandler from './QueryErrorHandler'
 
 function RelatedVideoSection({ videoId }) {
-  const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } = useGetRelatedVideos(videoId)
+  const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, isError, error, refetch } = useGetRelatedVideos(videoId)
 
   const { inView, ref } = useInView()
 
@@ -19,7 +20,10 @@ function RelatedVideoSection({ videoId }) {
   return (
     <div className='lg:w-[384px] xl:w-[408px] space-y-4 px-4 sm:px-0'>
       <Spinner loading={isLoading} className='h-6 mx-auto' />
-      {data?.pages?.length > 0 && (
+      {isError &&
+        < QueryErrorHandler error={error} onRetry={refetch} />
+      }
+      {!isLoading && !isError && data?.pages?.length > 0 && (
         data?.pages.map((page, pageIndex) => (
           <React.Fragment key={pageIndex}>
             {page.data.totalDocs > 0

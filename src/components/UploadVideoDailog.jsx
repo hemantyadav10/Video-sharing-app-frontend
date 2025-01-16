@@ -68,11 +68,15 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
     if (tags.length > 0) {
       formData["tags"] = tags
     }
-    console.log(formData)
+
     publishVideo(formData, {
       onSuccess: () => {
-        toast('Video uploaded sucessfully')
+        toast.success('Video uploaded sucessfully')
         setDialogOpen(false)
+      },
+      onError: (error) => {
+        const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+        toast.error(errorMessage);
       }
     })
   }
@@ -371,7 +375,7 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
         >
           <Dialog.Close>
             <Button
-              variant='soft'
+              variant='surface'
               highContrast
               color='gray'
               radius='full'

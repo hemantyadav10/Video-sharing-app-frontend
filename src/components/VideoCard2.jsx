@@ -1,31 +1,38 @@
 import { DotsVerticalIcon, TrashIcon } from '@radix-ui/react-icons'
-import { DropdownMenu, IconButton, Skeleton, Text } from '@radix-ui/themes'
-import { Link, useNavigate } from 'react-router-dom'
-import { timeAgo } from '../utils/formatTimeAgo'
-import { useToggleVideoLike } from '../lib/queries/likeQueries'
-import { queryClient } from '../main'
-import { useAuth } from '../context/authContext'
-import { useRemoveVideoFromPlaylist } from '../lib/queries/playlistQueries'
+import { DropdownMenu, IconButton, Skeleton, Spinner, Text } from '@radix-ui/themes'
+import { useState } from 'react'
 import toast from 'react-hot-toast'
+import { Link } from 'react-router-dom'
+import { useAuth } from '../context/authContext'
+import { useToggleVideoLike } from '../lib/queries/likeQueries'
+import { useRemoveVideoFromPlaylist } from '../lib/queries/playlistQueries'
+import { queryClient } from '../main'
+import { timeAgo } from '../utils/formatTimeAgo'
 import { formatVideoDuration } from '../utils/formatVideoDuration'
 
 function VideoCard2({
   videoNumber = 0,
   video,
   playlistOwnerId,
+  playlistName,
   removeType,
   removeContent = 'Remove from playlist',
   playlistId,
   loading = true
 }) {
   const { user } = useAuth()
-  const navigate = useNavigate()
   const { mutate: unlikeVideo } = useToggleVideoLike(video?._id)
-  const { mutate: removeVideoFromPlaylist } = useRemoveVideoFromPlaylist(video, user?._id)
+  const {
+    mutate: removeVideoFromPlaylist,
+    isPending: removingVideo,
+  } = useRemoveVideoFromPlaylist(video, user?._id)
+  const [open, setOpen] = useState(false)
 
 
   const handleRemoveVideo = async (e) => {
-    e.stopPropagation();
+    e.preventDefault()
+    e.stopPropagation()
+    if (removingVideo) return;
 
     if (removeType === 'like') {
       unlikeVideo(video?._id, {
@@ -41,8 +48,12 @@ function VideoCard2({
     } else if (removeType === 'playlist') {
       removeVideoFromPlaylist({ playlistId, videoId: video._id }, {
         onSuccess: () => {
-          toast(`Removed from ${playlistName}`)
-          console.log(`Removed from ${playlistName}`)
+          setOpen(false)
+          return toast.success(`Removed from ${playlistName}`)
+        },
+        onError: (error) => {
+          const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+          toast.error(errorMessage);
         }
       })
     }
@@ -93,7 +104,12 @@ function VideoCard2({
           </Skeleton>
         </div>
         {user?._id === playlistOwnerId && <div className='flex items-center justify-center'>
-          <DropdownMenu.Root>
+          <DropdownMenu.Root
+            open={open}
+            onOpenChange={(o) => {
+              setOpen(o)
+            }}
+          >
             <DropdownMenu.Trigger>
               <IconButton
                 aria-label="More options"
@@ -105,7 +121,14 @@ function VideoCard2({
               </IconButton>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content variant='soft'>
-              <DropdownMenu.Item onClick={(e) => handleRemoveVideo(e)}><TrashIcon />{removeContent}</DropdownMenu.Item>
+              <DropdownMenu.Item
+                disabled={removingVideo}
+                onClick={(e) => handleRemoveVideo(e)}>
+                <Spinner loading={removingVideo}>
+                  <TrashIcon />
+                </Spinner>
+                {removeContent}
+              </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
         </div>}

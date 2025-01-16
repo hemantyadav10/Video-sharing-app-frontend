@@ -36,7 +36,11 @@ function VideoTable({
   const handleDeleteVideo = async (videoId) => {
     deleteVideo(videoId, {
       onSuccess: () => {
-        toast('Video successfully deleted')
+        toast.success('Video successfully deleted')
+      },
+      onError: (error) => {
+        const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+        toast.error(errorMessage);
       }
     })
   }
@@ -106,8 +110,7 @@ function VideoTable({
             <Table.Row key={video._id} className='bg-[#111113] hover:bg-[#d8f4f601] transition-all'>
               <Table.Cell>
                 <Switch
-                  variant='surface'
-                  color='blue'
+                  color='sky'
                   checked={publishedVideos?.includes(video._id)}
                   onCheckedChange={(checked) => onTogglePublish(video._id, checked)}
                 />
@@ -121,8 +124,9 @@ function VideoTable({
                   }
                   size={'2'}
                   radius='full'
-                  variant='surface'
-                  className='font-normal'
+                // variant='outline'
+                // highContrast
+                // className='font-normal'
                 >
                   {video.isPublished
                     ? 'Published'
@@ -163,6 +167,7 @@ function VideoTable({
                       color='gray'
                       size={'1'}
                       className=' line-clamp-2'
+                      title={video.description}
                     >
                       {video.description}
                     </Text>

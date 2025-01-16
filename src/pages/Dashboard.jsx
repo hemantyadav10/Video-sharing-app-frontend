@@ -1,16 +1,15 @@
 import { Button, Heading, Separator, Text } from '@radix-ui/themes'
+import { Eye, ThumbsUp, TvMinimalPlay, Upload, UsersRound } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import { useAuth } from '../context/authContext'
-import { EyeOpenIcon, HeartIcon, PersonIcon } from '@radix-ui/react-icons'
+import toast from 'react-hot-toast'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import no_content from '../assets/no_content.svg'
 import ChannelStatsCard from '../components/ChannelStatsCard'
-import VideoIcon from '../assets/VideoIcon'
+import UploadVideoDialog from '../components/UploadVideoDailog'
+import VideoTable from '../components/VideoTable'
+import { useAuth } from '../context/authContext'
 import { useGetChannelStats, useGetChannleVideos } from '../lib/queries/dashboardQueries'
 import { useTogglePublishStatus } from '../lib/queries/videoQueries'
-import toast from 'react-hot-toast'
-import VideoTable from '../components/VideoTable'
-import UploadVideoDialog from '../components/UploadVideoDailog'
-import { useLocation, useNavigate } from 'react-router-dom'
-import no_content from '../assets/no_content.svg'
 
 function Dashboard() {
   const { user, isAuthenticated } = useAuth()
@@ -31,22 +30,22 @@ function Dashboard() {
   const statsData = [
     {
       statType: "Videos",
-      Icon: VideoIcon,
+      Icon: TvMinimalPlay,
       statNumbers: stats?.data.totalVideos || 0,
     },
     {
       statType: "Views",
-      Icon: EyeOpenIcon,
+      Icon: Eye,
       statNumbers: stats?.data.totalViews || 0,
     },
     {
       statType: "Subscribers",
-      Icon: PersonIcon,
+      Icon: UsersRound,
       statNumbers: stats?.data.totalSubscribers || 0,
     },
     {
       statType: "Likes",
-      Icon: HeartIcon,
+      Icon: ThumbsUp,
       statNumbers: stats?.data.totalLikes || 0,
     },
   ];
@@ -79,34 +78,41 @@ function Dashboard() {
     setPublishedVideos(updatedList)
 
     toast.promise(
-      toggleStatus(videoId),
+      toggleStatus(videoId, {
+        onError: () => {
+          const updatedList = checked
+            ? publishedVideos.filter(id => id !== videoId)
+            : [...publishedVideos, videoId]
+
+          setPublishedVideos(updatedList)
+        }
+      }),
       {
         loading: checked ? 'Publishing...' : 'Unpublishing...',
         success: checked ? 'Video published' : 'Video unpublished',
-        error: 'Something went wrong, please try again.',
-      }, {
-      icon: false
-    }
+        error: (error) => error?.response?.data?.message || 'Something went wrong, please try again.',
+      }
     );
   }
 
 
   return (
-    <div className='flex flex-col w-full gap-6 p-6 py-12 md:px-24'>
+    <div className='flex flex-col w-full gap-6 p-6 py-12 lg:px-20'>
 
       {/* Top section */}
-      <section className='flex flex-col gap-6 sm:flex-row sm:justify-between'>
-        <div>
+      <section className={`flex flex-col gap-6 p-6 border rounded-lg sm:justify-between border-[#484848] relative bg-dashboard_bg`}>
+        <div className='absolute inset-0 bg-gradient-to-r from-[#111111] to-[rgba(17,17,17,0.75)] rounded-lg'></div>
+        <div className='z-10'>
           <Heading mb={'1'}>
             Welcome back, {user?.fullName}
           </Heading>
           <Text
             as='p'
-            color='gray'
             weight={'light'}
             size={'2'}
+            className='lg:w-1/2'
           >
-            Seamless Video Management, Elevated Results
+            Experience a smarter, faster way to manage your videos, designed to save time, enhance productivity, and deliver superior outcomes.
           </Text>
         </div>
 
@@ -118,16 +124,16 @@ function Dashboard() {
           <Button
             highContrast
             radius='full'
-            className='w-max'
+            className='z-10 w-max'
           >
-            Upload video
+            <Upload size={16} /> Upload video
           </Button>
         </UploadVideoDialog>
 
       </section>
 
       {/*Section Separator */}
-      <Separator size={'4'} />
+      {/* <Separator size={'4'} /> */}
 
       {/* Stats cards section */}
       <section className='flex flex-col flex-wrap gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-4'>
@@ -167,7 +173,28 @@ function Dashboard() {
           </>
         }
       </section>
-
+      <div className='flex flex-wrap-reverse items-center justify-center w-full gap-4 pt-12 mt-auto'>
+        <Text as='span' color='gray' size={'1'} className='text-nowrap'>
+          © 2024 ViewTube. All rights reserved.
+        </Text>
+        <div className='flex items-center gap-4'>
+          <Text as='span' color='gray' size={'1'} className='hover:underline'>
+            <Link to={'/privacy'} >
+              Privacy
+            </Link>
+          </Text>
+          <Text as='span' color='gray' size={'1'} className='hover:underline'>
+            <Link to={'/help'} >
+              Help
+            </Link>
+          </Text>
+          <Text as='span' color='gray' size={'1'} className='hover:underline'>
+            <Link to={'/terms-of-services'} >
+              Terms
+            </Link>
+          </Text>
+        </div>
+      </div>
     </div >
   )
 }

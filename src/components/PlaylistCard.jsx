@@ -1,4 +1,4 @@
-import { AspectRatio, DropdownMenu, IconButton, Skeleton, Text } from '@radix-ui/themes'
+import { AspectRatio, DropdownMenu, IconButton, Skeleton, Spinner, Text } from '@radix-ui/themes'
 import React from 'react'
 import PlaylistIcon from '../assets/PlaylistIcon'
 import { Link } from 'react-router-dom'
@@ -14,13 +14,19 @@ function PlaylistCard({
   loading
 }) {
   const { isAuthenticated, user } = useAuth()
-  const { mutate: deletePlaylist } = useDeletePlaylist(playlistData?._id, user?._id)
+  const { mutate: deletePlaylist, isPending, } = useDeletePlaylist(playlistData?._id, user?._id)
 
   const handleDeletePlaylist = async (e) => {
     e.preventDefault()
+    e.stopPropagation()
+    if (isPending) return;
     deletePlaylist(playlistData?._id, {
       onSuccess: () => {
-        toast('Playlist deleted')
+        toast.success('Playlist deleted')
+      },
+      onError: (error) => {
+        const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+        toast.error(errorMessage);
       }
     })
   }
@@ -76,8 +82,12 @@ function PlaylistCard({
               <DropdownMenu.Content variant='soft' >
                 <DropdownMenu.Item
                   onClick={(e) => handleDeletePlaylist(e)}
+                  disabled={isPending}
                 >
-                  <TrashIcon /> Delete playlist
+                  <Spinner loading={isPending}>
+                    <TrashIcon />
+                  </Spinner>
+                  Delete playlist
                 </DropdownMenu.Item>
               </DropdownMenu.Content>
             </DropdownMenu.Root>

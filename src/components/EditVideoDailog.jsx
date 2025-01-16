@@ -66,8 +66,12 @@ function EditVideoDailog({ children, video }) {
     if (Object.keys(formData).length > 0) {
       updateVideo({ videoId, formData }, {
         onSuccess: () => {
-          toast('Video updated')
+          toast.success('Video updated')
           setOpen(false)
+        },
+        onError: (error) => {
+          const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+          toast.error(errorMessage);
         }
       })
     } else {
@@ -104,7 +108,7 @@ function EditVideoDailog({ children, video }) {
           </Text>
           <CloseButton />
         </Dialog.Title>
-        <Dialog.Description size="1" color='gray'  className='px-4 pb-4  border-[#484848] border-b'>
+        <Dialog.Description size="1" color='gray' className='px-4 pb-4  border-[#484848] border-b'>
           Make your video stand out with a fresh thumbnail, title, and description!
         </Dialog.Description>
         <div className='absolute top-0 left-0 right-0'>
@@ -264,7 +268,7 @@ function EditVideoDailog({ children, video }) {
             <Button
               onClick={() => reset()}
               radius='full'
-              variant="soft"
+              variant="surface"
               color="gray"
               disabled={updatingVideo}
               highContrast
@@ -282,7 +286,7 @@ function EditVideoDailog({ children, video }) {
               disabled={!data[0]?.trim() && !data[1]?.trim() && !data[2] || updatingVideo}
               className='px-4'
             >
-              Save
+              Save changes
             </Button>
           </Dialog.Close>
         </Flex>

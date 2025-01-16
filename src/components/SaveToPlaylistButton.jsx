@@ -45,8 +45,17 @@ function SaveToPlaylistButton({ videoData }) {
       // Add the video to the playlist
       addVideoToPlaylist({ playlistId, videoId }, {
         onSuccess: () => {
-          toast(`Added to ${playlistName}`)
+          toast.success(`Added to ${playlistName}`)
           console.log(`Added to ${playlistName}`)
+        },
+        onError: (error) => {
+          // Uncheck if error occurs
+          const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+          toast.error(errorMessage);
+
+          // Rollback changes
+          const revertedCheckedPlaylists = checkedPlaylists.filter(id => id !== playlistId);
+          setCheckedPlaylists(revertedCheckedPlaylists);
         }
       })
     }
@@ -54,8 +63,16 @@ function SaveToPlaylistButton({ videoData }) {
       // Remove the video from the playlist
       removeVideoFromPlaylist({ playlistId, videoId }, {
         onSuccess: () => {
-          toast(`Removed from ${playlistName}`)
+          toast.success(`Removed from ${playlistName}`)
           console.log(`Removed from ${playlistName}`)
+        }, 
+        onError: (error) => {
+          const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+          toast.error(errorMessage);
+  
+          // Rollback changes
+          const revertedCheckedPlaylists = [...checkedPlaylists, playlistId];
+          setCheckedPlaylists(revertedCheckedPlaylists);
         }
       })
     }
@@ -111,7 +128,7 @@ function SaveToPlaylistButton({ videoData }) {
             </Text>
             {/* <CloseButton /> */}
           </Dialog.Title>
-          <div className={`relative py-2 ${(loading || addingVideo || removingVideo) && 'opacity-50'}`}>
+          <div className={`relative py-2 ${(addingVideo || removingVideo) && 'bg-opacity-50'}`}>
             {
               (loading || addingVideo || removingVideo) &&
               <div className='absolute inset-0 flex items-center justify-center'>
@@ -122,7 +139,7 @@ function SaveToPlaylistButton({ videoData }) {
               <Text
                 as="label"
                 size="2"
-                className={`cursor-pointer ${(loading || addingVideo || removingVideo) && 'pointer-events-none'} `}
+                className={`cursor-pointer ${(addingVideo || removingVideo) && 'pointer-events-none'} `}
                 title={data.name}
               >
                 <Flex

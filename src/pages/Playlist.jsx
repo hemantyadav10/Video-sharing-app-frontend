@@ -1,19 +1,20 @@
 import { Cross1Icon, InfoCircledIcon, Pencil1Icon, PlusIcon, TrashIcon } from '@radix-ui/react-icons'
 import { AlertDialog, Avatar, Button, Dialog, Flex, IconButton, Skeleton, Spinner, Text, TextArea, TextField, Tooltip } from '@radix-ui/themes'
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import VideoCard2 from '../components/VideoCard2'
-import { useDeletePlaylist, useFetchPlaylistById, useUpdatePlaylist } from '../lib/queries/playlistQueries'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { useAuth } from '../context/authContext'
-import { timeAgo } from '../utils/formatTimeAgo'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import NoContent from '../components/NoContent'
+import QueryErrorHandler from '../components/QueryErrorHandler'
+import VideoCard2 from '../components/VideoCard2'
+import { useAuth } from '../context/authContext'
+import { useDeletePlaylist, useFetchPlaylistById, useUpdatePlaylist } from '../lib/queries/playlistQueries'
+import { timeAgo } from '../utils/formatTimeAgo'
 
 function PlaylistVideos() {
   const { playlistId } = useParams();
   const { user } = useAuth()
-  const { data: playlist, isLoading: loadingPlaylistData } = useFetchPlaylistById(playlistId)
+  const { data: playlist, isLoading: loadingPlaylistData, error, isError, refetch } = useFetchPlaylistById(playlistId)
   const { mutate: updatePlaylist, isPending: updatingPlaylist } = useUpdatePlaylist(playlistId)
   const { mutate: deletePlaylist, isPending: isDeletingPlaylist } = useDeletePlaylist(playlistId, user?._id)
   const navigate = useNavigate();
@@ -44,8 +45,9 @@ function PlaylistVideos() {
         toast('Playlist updated')
         setIsDialogOpen(false); // Close the dialog on successful update
       },
-      onError: () => {
-        toast.error('Error updating playlist')
+      onError: (error) => {
+        const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+        toast.error(errorMessage);
       }
     })
   }
@@ -69,9 +71,17 @@ function PlaylistVideos() {
     deletePlaylist(playlistId, {
       onSuccess: () => {
         navigate('/playlists')
-        toast('Playlist deleted')
+        toast.success('Playlist deleted')
+      },
+      onError: (error) => {
+        const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+        toast.error(errorMessage);
       }
     })
+  }
+
+  if (isError) {
+    return <QueryErrorHandler error={error} onRetry={refetch} />
   }
 
   return (
@@ -230,16 +240,15 @@ function PlaylistVideos() {
                         </label>
                       </Flex>
 
-                      <Flex gap="3" mt="4">
-                        <Dialog.Close>
+                      <Flex gap="3" mt="4" wrap={'wrap-reverse'}>
+                        <Dialog.Close className='flex-1'>
                           <Button
                             disabled={updatingPlaylist}
                             type='button'
-                            variant="soft"
+                            variant="surface"
                             color="gray"
                             highContrast
                             radius='full'
-                            className='flex-1'
                           >
                             Cancel
                           </Button>
@@ -247,14 +256,14 @@ function PlaylistVideos() {
                         {/* <Dialog.Close> */}
                         <Button
                           type='submit'
-                          loading={updatingPlaylist}
                           onClick={handleSubmit(handleEditPlaylist)}
-                          disabled={name.trim() === playlist?.data.name && description.trim() === playlist?.data.description}
+                          disabled={name.trim() === playlist?.data.name && description.trim() === playlist?.data.description || updatingPlaylist}
                           highContrast
                           radius='full'
-                          className='flex-1'
+                          className='flex-1 text-nowrap'
                         >
-                          Save
+                          <Spinner loading={updatingPlaylist} />
+                          Save changes
                         </Button>
                         {/* </Dialog.Close> */}
                       </Flex>
@@ -287,10 +296,10 @@ function PlaylistVideos() {
                           disabled={isDeletingPlaylist}
                         >
                           <Button
-                            variant="soft"
                             color="gray"
                             highContrast
                             radius='full'
+                            variant="surface"
                           >
                             Cancel
                           </Button>
@@ -336,6 +345,7 @@ function PlaylistVideos() {
             removeType={'playlist'}
             playlistId={playlist?.data._id}
             loading={loadingPlaylistData}
+            playlistName={playlist?.data?.name}
           />
         ))}
         <hr hidden={!playlist?.data?.videos.length} className="border-t border-[#484848]" />

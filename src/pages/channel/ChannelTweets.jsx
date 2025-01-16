@@ -4,6 +4,7 @@ import React, { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useOutletContext } from 'react-router-dom'
 import EmptyLibrary from '../../components/EmptyLibrary'
+import QueryErrorHandler from '../../components/QueryErrorHandler'
 import TweetCard from '../../components/TweetCard'
 import { useAuth } from '../../context/authContext'
 import { useCreateTweet, useFetchUserTweets } from '../../lib/queries/tweetQueries'
@@ -11,7 +12,7 @@ import { useCreateTweet, useFetchUserTweets } from '../../lib/queries/tweetQueri
 function ChannelTweets() {
   const { userId } = useOutletContext()
   const { user, isAuthenticated } = useAuth()
-  const { data: userTweets, isLoading } = useFetchUserTweets(userId, user?._id)
+  const { data: userTweets, isLoading, isError, error, refetch } = useFetchUserTweets(userId, user?._id)
   const { mutate: createTweet, isPending: creatingTweet } = useCreateTweet(user, userId)
   const [content, setContent] = useState('')
   const textareaRef = useRef(null);
@@ -27,6 +28,10 @@ function ChannelTweets() {
       onSuccess: () => {
         setContent('')
         toast('Tweet posted')
+      },
+      onError: (error) => {
+        const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+        toast.error(errorMessage);
       }
     })
   }
@@ -57,7 +62,7 @@ function ChannelTweets() {
 
               }}
               hidden={!content?.trim()}
-              variant='soft'
+              variant='surface'
               color='gray'
               highContrast
               className='px-4'
@@ -74,14 +79,20 @@ function ChannelTweets() {
               className='px-4'
               radius='full'
             >
-              Send
+                Send
             </Button>
           </div>
         </div>
       }
+
       {/* tweet cards */}
       <div className='flex flex-col w-full max-w-4xl gap-6 p-4 py-4 mb-16'>
-        {userTweets?.data.map((tweet) => (
+
+        {isError && (
+          <QueryErrorHandler error={error} onRetry={refetch} />
+        )}
+
+        {!isLoading && !isError && userTweets?.data.map((tweet) => (
           <TweetCard
             key={tweet._id}
             loading={isLoading}
@@ -89,7 +100,7 @@ function ChannelTweets() {
             channelId={userId}
           />
         ))}
-        {userTweets?.data.length === 0 &&
+        {!isLoading && !isError && userTweets?.data.length === 0 &&
           <EmptyLibrary
             Icon={Pencil2Icon}
             title='Publish Tweet'

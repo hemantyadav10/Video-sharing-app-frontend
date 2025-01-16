@@ -26,6 +26,10 @@ function CreatePlaylistDialog({
         toggleOpen(open)
         toast('Playlist created')
         reset()
+      },
+      onError: (error) => {
+        const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+        toast.error(errorMessage);
       }
     })
   }

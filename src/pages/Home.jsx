@@ -3,12 +3,13 @@ import React, { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useOutletContext } from 'react-router-dom'
 import Container from '../components/Container'
+import QueryErrorHandler from '../components/QueryErrorHandler'
 import VideoCard from '../components/VideoCard'
 import { useFetchAllVideos } from '../lib/queries/videoQueries'
 
 function Home() {
   const [showMenu] = useOutletContext()
-  const { data, isFetching, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useFetchAllVideos(12)
+  const { data, isFetching, error, fetchNextPage, hasNextPage, isFetchingNextPage, isError, refetch } = useFetchAllVideos(12)
   const { ref, inView } = useInView({
     rootMargin: '50px'
   })
@@ -18,6 +19,10 @@ function Home() {
       fetchNextPage();
     }
   }, [inView, hasNextPage]);
+
+  if (isError) {
+    return <QueryErrorHandler error={error} onRetry={refetch} />;
+  }
 
   return (
     <div className='flex-1 mb-16 sm:mb-16'>

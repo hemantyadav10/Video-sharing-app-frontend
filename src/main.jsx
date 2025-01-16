@@ -40,9 +40,9 @@ import NotFound from './pages/NotFound.jsx';
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false,
       staleTime: 60 * 2 * 1000,
-      retry: 3
+      refetchOnReconnect: 'always',
+      retry: 2
     },
   },
 });
@@ -97,9 +97,12 @@ createRoot(document.getElementById('root')).render(
     <AuthProvider>
       <Theme appearance='dark' accentColor='blue'>
         <RouterProvider router={router} />
-        <Toaster position='bottom-left'
+        <Toaster
+          position='bottom-left'
           toastOptions={{
-            className: 'text-sm text-black p-2 min-w-52 ',
+            className: 'toast',
+            error: { icon: false, className: "toast_error text-center flex justify-center" },
+            success: { icon: false }
           }}
         />
         <ReactQueryDevtools initialIsOpen={false} />
