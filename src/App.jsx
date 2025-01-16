@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import Navbar from './components/Navbar.jsx'
-import Sidebar, { SidebarItem } from './components/Sidebar.jsx'
-import BottomBar from './components/BottomBar.jsx'
+import React, { useState } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
-import { Home, LayoutDashboard } from 'lucide-react'
-import { HomeIcon } from '@radix-ui/react-icons'
+import BottomBar from './components/BottomBar.jsx'
+import Navbar from './components/Navbar.jsx'
+import OfflineBanner from './components/OfflineBanner.jsx'
+import Sidebar from './components/Sidebar.jsx'
+import useIsOnline from './hooks/useIsOnline.js'
 
 function App() {
   const [showMenu, setShowMenu] = useState(false)
@@ -12,6 +12,9 @@ function App() {
   const isDashboardRoute = pathname === '/dashboard'
   const isVideoRoute = pathname.startsWith('/watch')
   const toggleMenu = () => setShowMenu(!showMenu)
+  const isOnline = useIsOnline();
+
+  
 
   return (
     <div className='flex flex-col h-screen'>
@@ -25,11 +28,13 @@ function App() {
           />
         }
         {showMenu && <div onClick={() => toggleMenu()} className='fixed md:hidden inset-0 bg-black/70 z-[90]'></div>}
-        <Outlet context={[showMenu]} />
+
+          <Outlet context={[showMenu]} />
+      
       </div>
       {!isDashboardRoute && <BottomBar />}
 
-
+      {!isOnline &&<OfflineBanner />}
     </div>
   )
 }

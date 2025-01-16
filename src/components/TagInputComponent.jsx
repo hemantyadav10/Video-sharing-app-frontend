@@ -1,5 +1,6 @@
 import { Cross1Icon } from '@radix-ui/react-icons';
 import { IconButton, Text, TextField } from '@radix-ui/themes';
+import { X } from 'lucide-react';
 import React from 'react'
 
 function TagInputComponent({
@@ -36,21 +37,21 @@ function TagInputComponent({
           as='span'
           key={i}
           color='blue'
-          className='flex items-center justify-between gap-3 py-1 pr-2 pl-3 text-sm shadow-md rounded bg-[#ddeaf814] hover:bg-[#ddeaf810] transition '
+          className='flex items-center justify-between gap-3 py-1 pr-2 pl-3 text-sm shadow-md rounded bg-[#388bfd1a] transition hover:bg-[#3e63dd] hover:text-white group'
         >
           {tag}
           <IconButton
             type='button'
             variant='ghost'
             color='blue'
-            highContrast
             size={'1'}
             radius='full'
             onClick={() => {
               removeTag(tag); // Remove the tag
             }}
+            className='group-hover:text-white'
           >
-            <Cross1Icon height={'10'} width={'10'} />
+            <X size={16} />
           </IconButton>
         </Text>
       ))}

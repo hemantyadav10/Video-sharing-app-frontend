@@ -1,14 +1,13 @@
-import { ArrowLeftIcon, AvatarIcon, Cross1Icon, ExitIcon, FileTextIcon, GearIcon, HamburgerMenuIcon, LockClosedIcon, MagicWandIcon, MagnifyingGlassIcon, Pencil2Icon, PersonIcon, PlusIcon, QuestionMarkCircledIcon } from '@radix-ui/react-icons'
-import { Avatar, Button, DropdownMenu, Flex, IconButton, Skeleton, Text, TextField, Tooltip } from '@radix-ui/themes'
+import { ArrowLeftIcon, AvatarIcon, Cross1Icon, ExitIcon, FileTextIcon, GearIcon, HamburgerMenuIcon, LockClosedIcon, MagicWandIcon, MagnifyingGlassIcon, PersonIcon, PlusIcon, QuestionMarkCircledIcon } from '@radix-ui/react-icons'
+import { Avatar, Button, DropdownMenu, Flex, IconButton, Text, TextField, Tooltip } from '@radix-ui/themes'
+import { ListVideo, SquarePen, SquarePlay } from 'lucide-react'
 import React, { useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { BarLoader } from 'react-spinners'
-import PlaylistIcon from '../assets/PlaylistIcon'
-import VideoIcon from '../assets/VideoIcon'
 import { useAuth } from '../context/authContext'
 import { useFetchVideos } from '../lib/queries/videoQueries'
-import CreatePlaylistDialog from './CreatePlaylistDialog'
 import { getInitials } from '../utils/utils'
+import CreatePlaylistDialog from './CreatePlaylistDialog'
 
 function Navbar({ toggleMenu }) {
   const [searchParams, setSearchParams] = useSearchParams('')
@@ -109,7 +108,7 @@ function Navbar({ toggleMenu }) {
       </form>
       {isAuthenticated &&
         <div className='items-center justify-end hidden col-span-1 gap-4 sm:flex'>
-          <DropdownMenu.Root >
+          <DropdownMenu.Root>
             <DropdownMenu.Trigger>
               <Button
                 variant='soft'
@@ -129,12 +128,12 @@ function Navbar({ toggleMenu }) {
                 replace:true
               >
                 <DropdownMenu.Item >
-                  <VideoIcon /> Upload video
+                  <SquarePlay strokeWidth={1} size={22} /> Upload video
                 </DropdownMenu.Item>
               </Link>
               <Link to={`/channel/${user?._id}/tweets`}>
                 <DropdownMenu.Item >
-                  <Pencil2Icon />Create tweet
+                  <SquarePen strokeWidth={1} size={22} />Create tweet
                 </DropdownMenu.Item>
               </Link>
               <DropdownMenu.Item
@@ -142,7 +141,7 @@ function Navbar({ toggleMenu }) {
                   setOpenCreatePlaylist(true)
                 }}
               >
-                <PlaylistIcon /> New playlist
+                <ListVideo strokeWidth={1} size={22} /> Create new playlist
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>

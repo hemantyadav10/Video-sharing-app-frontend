@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/authContext';
 import { useGetChannelStats } from '../lib/queries/dashboardQueries';
+import { CalendarDays, Earth, Link, Link2, LoaderCircle, SquarePlay, TrendingUp, UsersRound } from 'lucide-react';
 
 function AboutChannelDialog({ isOpen, setOpenDialog, joiningDate, channelId }) {
   const { data: stats, isFetching: loadingStats } = useGetChannelStats(channelId, false);
@@ -31,23 +32,23 @@ function AboutChannelDialog({ isOpen, setOpenDialog, joiningDate, channelId }) {
 
   const channelDetails = [
     {
-      icon: <PersonIcon height={20} width={20} />,
+      icon: <UsersRound strokeWidth={1.25} size={22} />,
       label: `${stats?.data?.totalSubscribers || 0} subscribers`,
     },
     {
-      icon: <VideoIcon height={20} width={20} />,
+      icon: <SquarePlay strokeWidth={1.25} size={22} />,
       label: `${stats?.data?.totalVideos || 0} videos`,
     },
     {
-      icon: <EyeOpenIcon height={20} width={20} />,
+      icon: <TrendingUp strokeWidth={1.25} size={22} />,
       label: `${stats?.data?.totalViews || 0} views`,
     },
     {
-      icon: <InfoCircledIcon height={20} width={20} />,
+      icon: <CalendarDays strokeWidth={1.25} size={22} />,
       label: `Joined ${new Date(joiningDate).toDateString('en-IN')}`,
     },
     {
-      icon: <GlobeIcon height={20} width={20} />,
+      icon: <Earth strokeWidth={1.25} size={22} />,
       label: 'India',
     },
   ];
@@ -71,7 +72,7 @@ function AboutChannelDialog({ isOpen, setOpenDialog, joiningDate, channelId }) {
           {!loadingStats && stats?.data && (
             <>
               <Text as="p" size="2" className="flex items-center gap-3">
-                <Link2Icon height={24} width={24} />
+                <Link2 strokeWidth={1.25} size={22} />
                 <input id="copy-text" type="text" readOnly value={window.location.href} className='flex-1 bg-transparent focus:outline-none focus:ring-1 focus:ring-[#2870bd] rounded-sm' />
                 <IconButton
                   variant="ghost"
