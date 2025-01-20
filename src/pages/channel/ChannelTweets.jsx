@@ -79,7 +79,7 @@ function ChannelTweets() {
               className='px-4'
               radius='full'
             >
-                Send
+              Send
             </Button>
           </div>
         </div>
@@ -89,7 +89,9 @@ function ChannelTweets() {
       <div className='flex flex-col w-full max-w-4xl gap-6 p-4 py-4 mb-16'>
 
         {isError && (
-          <QueryErrorHandler error={error} onRetry={refetch} />
+          <div className='border border-[#484848] rounded-xl p-6 pt-0'>
+            <QueryErrorHandler error={error} onRetry={refetch} />
+          </div>
         )}
 
         {!isLoading && !isError && userTweets?.data.map((tweet) => (

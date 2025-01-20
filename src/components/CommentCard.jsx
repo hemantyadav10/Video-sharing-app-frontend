@@ -20,20 +20,11 @@ function CommentCard({
   const [isCommentLiked, setIsCommentLiked] = useState(comment?.isLiked || false)
   const navigate = useNavigate();
 
-  const { mutate: toggleLike } = useToggleCommentLike(comment?._id, videoId)
-  const { mutate: deleteComment, isPending: deletingComment } = useDeleteComment(videoId, sortBy, comment?._id)
+  const { mutate: toggleLike, isPending: isToggleLikePending } = useToggleCommentLike(comment?._id, videoId)
+  const { mutate: deleteComment, isPending: deletingComment } = useDeleteComment(videoId, sortBy, comment?._id, user?._id)
   const [isEditable, setIsEditable] = useState(false);
   const [content, setContent] = useState(comment?.content || '')
   const { mutate: updateComment, isPending: updatingComment } = useUpdateComment(videoId, sortBy, user)
-
-
-
-  useEffect(() => {
-    if (comment?.isLiked !== undefined) {
-      setIsCommentLiked(comment?.isLiked);
-    }
-  }, [comment?.isLiked]);
-
 
   const handleToggleLike = async () => {
 
@@ -47,7 +38,7 @@ function CommentCard({
         onError: () => {
           // Revert the optimistic update in case of an error
           setIsCommentLiked((prev) => !prev);
-          setCommentLikesCount((prev) => !prev);
+          setCommentLikesCount(comment?.likesCount)
           toast.error('Something went wrong. Please try again.');
         }
       })
@@ -61,8 +52,9 @@ function CommentCard({
       onSuccess: () => {
         return toast('Comment deleted')
       },
-      onError: () => {
-        return toast.err('Some error occured. Please try again.')
+      onError: (error) => {
+        const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+        toast.error(errorMessage);
       }
     })
   }
@@ -74,7 +66,8 @@ function CommentCard({
         return toast('Comment updated')
       },
       onError: (error) => {
-        console.log(error)
+        const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+        toast.error(errorMessage);
       }
     })
   }
@@ -101,6 +94,7 @@ function CommentCard({
             value={content}
             onChange={(e) => setContent(e.target.value)}
             disabled={updatingComment}
+            resize={'vertical'}
           />
           <div className='flex justify-end gap-2 mt-2 '>
             <Button
@@ -109,21 +103,20 @@ function CommentCard({
                 setContent(comment?.content)
               }}
               radius='full'
-              variant='soft'
+              variant='surface'
               color='gray'
               highContrast
-              disabled={updatingComment}
+              hidden={updatingComment}
             >
               Cancel
             </Button>
             <Button
               onClick={handleUpdateComment}
-              disabled={!content?.trim() || content?.trim() === comment?.content}
-              loading={updatingComment}
+              disabled={!content?.trim() || content?.trim() === comment?.content || updatingComment}
               radius='full'
               highContrast
             >
-              Save
+              <Spinner loading={updatingComment} /> {updatingComment ? "Saving" : "Save"}
             </Button>
           </div>
         </div>}
@@ -131,7 +124,7 @@ function CommentCard({
           <div className='flex items-center justify-between gap-1 text-sm '>
             <div className='flex items-center gap-1 text-sm '>
               <Link
-                to={`/ channel / ${comment?.owner._id} `}
+                to={`/channel/${comment?.owner._id}`}
                 className='font-medium'
               >
                 @{comment?.owner.username}
@@ -181,8 +174,7 @@ function CommentCard({
               color='gray'
               highContrast
               radius='full'
-              disabled={deletingComment}
-
+              disabled={deletingComment || isToggleLikePending}
             >
               {isCommentLiked ?
                 <ThumbsUpSolidIcon height='20' width='20' /> :

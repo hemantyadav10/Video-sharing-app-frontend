@@ -1,15 +1,20 @@
 import { Skeleton } from '@radix-ui/themes'
-import React from 'react'
+import React, { useState } from 'react'
 import NoContent from '../components/NoContent'
 import SignInPrompt from '../components/SignInPrompt '
 import VideoCard2 from '../components/VideoCard2'
 import { useAuth } from '../context/authContext'
 import { useGetUserLikedVideos } from '../lib/queries/likeQueries'
 import { timeAgo } from '../utils/formatTimeAgo'
+import QueryErrorHandler from '../components/QueryErrorHandler'
 
 function LikedVideos() {
   const { user, isAuthenticated } = useAuth()
-  const { data, isLoading } = useGetUserLikedVideos(user?._id)
+  const { data, isLoading, error, isError, refetch } = useGetUserLikedVideos(user?._id)
+
+  if (isError) {
+    return <QueryErrorHandler error={error} onRetry={refetch} />
+  }
 
   return (
     <div className="flex flex-col w-full mb-16 sm:mb-0 lg:flex-row lg:p-6">

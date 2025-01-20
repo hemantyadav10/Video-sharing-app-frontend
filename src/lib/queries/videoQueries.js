@@ -34,14 +34,15 @@ const useFetchAllVideos = (limit = 2) => {
   })
 }
 
-const useFetchVideoById = (videoId) => {
+const useFetchVideoById = (videoId, userId, ownerId) => {
   return useQuery({
-    queryKey: ['video', videoId],
+    queryKey: ['video', videoId, userId],
     queryFn: () => fetchVideoById(videoId),
     queryFn: async () => {
       const data = await fetchVideoById(videoId);
       // Invalidate the user history query
       queryClient.invalidateQueries({ queryKey: ['watch_history'] });
+      queryClient.invalidateQueries({ queryKey: ['stats'] });
       return data;
     },
   })

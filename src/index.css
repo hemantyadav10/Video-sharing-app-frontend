@@ -19,11 +19,11 @@
 }
 
 .toast {
-	@apply p-2 text-sm text-black shadow-lg min-w-52;
+	@apply p-3 text-sm text-[#fafafa] shadow-lg bg-[#09090b] border border-[#484848] min-w-60;
 }
 
 .toast_error {
-	@apply p-2 text-sm text-white bg-red-500 shadow-lg min-w-52;
+	@apply p-3 text-sm text-[#fafafa] bg-[#7f1d1d] shadow-lg border border-[#7f1d1d] min-w-60;
 }
 
 .radix-themes {

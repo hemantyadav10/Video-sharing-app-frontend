@@ -1,10 +1,10 @@
-import { ColumnSpacingIcon, Cross1Icon } from '@radix-ui/react-icons'
+import { Cross1Icon } from '@radix-ui/react-icons'
 import { Box, Button, Dialog, Flex, IconButton, Text } from '@radix-ui/themes'
-import React, { useState } from 'react'
-import { useUpdateAvatar, useUpdateCoverImage } from '../lib/queries/userQueries'
-import { BarLoader } from 'react-spinners'
+import React from 'react'
 import toast from 'react-hot-toast'
+import { BarLoader } from 'react-spinners'
 import { useAuth } from '../context/authContext'
+import { useUpdateAvatar, useUpdateCoverImage } from '../lib/queries/userQueries'
 
 function UpdatePictureDialog({
   type = 'avatar',
@@ -42,6 +42,10 @@ function UpdatePictureDialog({
           }))
           setOpenDialog(false)
         },
+        onError: (error) => {
+          const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+          toast.error(errorMessage);
+        }
       });
     } else {
       updateCoverImage(formData, {
@@ -55,6 +59,10 @@ function UpdatePictureDialog({
           }))
           setOpenDialog(false)
         },
+        onError: (error) => {
+          const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+          toast.error(errorMessage);
+        }
       });
     }
   };

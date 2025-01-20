@@ -8,12 +8,13 @@ import { useAuth } from '../context/authContext'
 import SignInPrompt from '../components/SignInPrompt '
 import SubscriptionIcon from '../assets/SubscriptionIcon'
 import no_content from '../assets/no_content.svg'
+import QueryErrorHandler from '../components/QueryErrorHandler'
 
 
 function SubscriptionVideos() {
   const [showMenu] = useOutletContext()
   const { isAuthenticated, user } = useAuth()
-  const { data: videos, isLoading } = useFetchSubscribedChannelVideos(user?._id)
+  const { data: videos, isFetching, error, isError, refetch } = useFetchSubscribedChannelVideos(user?._id)
 
   return (
     <div className='w-full py-6'>
@@ -31,17 +32,20 @@ function SubscriptionVideos() {
             <Button size={'2'} radius='full' className='font-medium' variant='ghost'>Manage</Button>
           </Link>
         </div>
+        {isError && (
+          <QueryErrorHandler error={error} onRetry={refetch} />
+        )}
         <Container showMenu={showMenu}>
-          {isLoading &&
+          {isFetching &&
             Array.from({ length: 8 }).fill(1).map((_, i) => (
-              <VideoCard key={i} loading={isLoading} />
+              <VideoCard key={i} loading={isFetching} />
             ))
           }
-          {videos?.data.docs.map((video) => (
-            <VideoCard key={video._id} videoData={video} loading={isLoading} />
+          {!isError && videos?.data.docs.map((video) => (
+            <VideoCard key={video._id} videoData={video} loading={isFetching} />
           ))}
         </Container>
-        {videos?.data?.docs.length === 0 && (
+        {!isError && videos?.data?.docs.length === 0 && (
           <section className='flex flex-col items-center justify-center flex-1'>
             <img
               src={no_content}

@@ -24,9 +24,7 @@ function ChangePassword() {
         toast('Password changed successfully')
       },
       onError: (err) => {
-        if (err.response.status === 400) {
-          setError('Current password is incorrect')
-        }
+        setError(err.response.data.message || error.response.message || "Something  went wrong. Please try again later.")
       }
     })
   }

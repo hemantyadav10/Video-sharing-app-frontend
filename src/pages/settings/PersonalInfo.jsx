@@ -40,10 +40,7 @@ function PersonalInfo() {
         toast('Personal info updated')
       },
       onError: (err) => {
-        if (err.response.status === 409) {
-          setError('This email address is already registered with another account.')
-        }
-        console.log(err)
+        setError(err.response.data.message || err.response.message || "Something went wrong. Please try again later.")
       }
     })
   }

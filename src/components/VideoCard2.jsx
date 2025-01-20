@@ -21,7 +21,7 @@ function VideoCard2({
   loading = true
 }) {
   const { user } = useAuth()
-  const { mutate: unlikeVideo } = useToggleVideoLike(video?._id)
+  const { mutate: unlikeVideo } = useToggleVideoLike(video?._id, user?._id)
   const {
     mutate: removeVideoFromPlaylist,
     isPending: removingVideo,
@@ -30,21 +30,22 @@ function VideoCard2({
 
 
   const handleRemoveVideo = async (e) => {
-    e.preventDefault()
+    if (removeType === 'playlist') {
+      e.preventDefault()
+    }
     e.stopPropagation()
     if (removingVideo) return;
 
     if (removeType === 'like') {
-      unlikeVideo(video?._id, {
+      unlikeVideo(video, {
         onSuccess: () => {
-          queryClient.setQueryData(['liked_videos', user?._id], (prev) => {
-            return {
-              ...prev,
-              data: prev.data.filter((item) => item.video._id !== video?._id)
-            }
-          })
+        },
+        onError: (error) => {
+          const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+          toast.error(errorMessage);
         }
-      })
+      }
+      )
     } else if (removeType === 'playlist') {
       removeVideoFromPlaylist({ playlistId, videoId: video._id }, {
         onSuccess: () => {

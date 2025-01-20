@@ -4,7 +4,7 @@ import { queryClient } from "../../main"
 
 const useFetchSubcribedChannels = (subscriberId) => {
   return useQuery({
-    queryKey: ['videos', subscriberId],
+    queryKey: ['subscriptionChannels', subscriberId],
     queryFn: () => getUserSubscribedChannels(subscriberId),
     enabled: !!subscriberId
   })
@@ -12,7 +12,7 @@ const useFetchSubcribedChannels = (subscriberId) => {
 
 const useFetchSubscribedChannelVideos = (userId) => {
   return useQuery({
-    queryKey: ['subscriptionVideos', userId],
+    queryKey: ['videos', 'subscriptionVideos', userId],
     queryFn: getVideosFromSubscribedChannels,
     enabled: !!userId
   })
@@ -22,11 +22,28 @@ const useToggleSubscription = (channelId, userId) => {
   return useMutation({
     mutationFn: () => toggleSubscription(channelId),
     onSuccess: () => {
+      queryClient.setQueryData(['user', channelId, userId], prev => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          data: {
+            ...prev.data,
+            subscribersCount: prev.data.isSubscribed
+              ? prev.data.subscribersCount - 1
+              : prev.data.subscribersCount + 1,
+            isSubscribed: !prev.data.isSubscribed,
+          }
+        }
+      })
+
       queryClient.invalidateQueries({
-        queryKey: ['user', channelId, userId], 
+        queryKey: ['user', channelId, userId],
       })
       queryClient.invalidateQueries({
-        queryKey: ['video'], 
+        queryKey: ['subscriptionChannels', userId],
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['videos', 'subscriptionVideos', userId],
       })
     }
   })

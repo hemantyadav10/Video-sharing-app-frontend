@@ -6,6 +6,7 @@ import EmptyLibrary from '../../components/EmptyLibrary';
 import VideoCard from '../../components/VideoCard';
 import { useFetchUserVideos } from '../../lib/queries/userQueries';
 import { useAuth } from '../../context/authContext';
+import QueryErrorHandler from '../../components/QueryErrorHandler';
 
 function ChannelVideos() {
   const [filters, setFilters] = useState('sortBy=createdAt&sortType=desc'); // Initial filter query
@@ -13,7 +14,7 @@ function ChannelVideos() {
   const { user } = useAuth()
 
   const { userId } = useOutletContext()
-  const { data: videoData, isLoading: loadingVideos, isFetchingNextPage, hasNextPage, fetchNextPage, isFetching } = useFetchUserVideos(userId, filters, 6)
+  const { data: videoData, isLoading: loadingVideos, isFetchingNextPage, hasNextPage, fetchNextPage, isFetching, error, isError, refetch } = useFetchUserVideos(userId, filters, 6)
   const filterOptions = [
     { label: 'Latest', value: 'Latest', query: 'sortBy=createdAt&sortType=desc' },
     { label: 'Popular', value: 'Popular', query: 'sortBy=views&sortType=desc' },
@@ -53,7 +54,12 @@ function ChannelVideos() {
       </>}
 
       {loadingVideos && <Spinner className='mx-auto my-4 size-6' />}
-      {!loadingVideos && videoData?.pages[0]?.data.totalDocs === 0 &&
+      {isError &&
+        <div className='border rounded-xl border-[#484848] pt-0 p-6 mt-6'>
+          <QueryErrorHandler error={error} onRetry={refetch} />
+        </div>
+      }
+      {!loadingVideos && !isError && videoData?.pages[0]?.data.totalDocs === 0 &&
         <div className='flex flex-col items-center justify-center gap-6'>
           <EmptyLibrary
             Icon={PlayIcon}
@@ -78,7 +84,7 @@ function ChannelVideos() {
           </Link>}
         </div>
       }
-      <div className='flex flex-col pt-4 gap-y-6 gap-x-2 sm:grid sm:grid-cols-2 lg:grid-cols-3'>
+      {!isError && <div className='flex flex-col pt-4 gap-y-6 gap-x-2 sm:grid sm:grid-cols-2 lg:grid-cols-3'>
         {videoData?.pages?.length > 0 && (
           videoData?.pages.map((page, pageIndex) => (
             <React.Fragment key={pageIndex}>
@@ -96,7 +102,7 @@ function ChannelVideos() {
             </React.Fragment>
           ))
         )}
-      </div>
+      </div>}
       {isFetchingNextPage && <div className='flex items-center h-8 my-4'><Spinner className='h-6 mx-auto' /></div>}
       {/* Load More Button */}
       {(hasNextPage && !isFetchingNextPage) ?

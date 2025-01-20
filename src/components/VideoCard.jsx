@@ -19,7 +19,6 @@ function VideoCard({
   hideUsername = false,
 }) {
   const { isAuthenticated, user } = useAuth()
-  const load = false
 
   const { data, isLoading: loadingProfileInfo, refetch } = useFetchUserChannelInfo(videoData?.owner?._id, user?._id, false)
 
@@ -52,7 +51,7 @@ function VideoCard({
 
         {!hideAvatar &&
           <HoverCard.Root onOpenChange={(open) => {
-            if (open) {
+            if (open && !data) {
               refetch()
             }
           }}>
@@ -93,7 +92,11 @@ function VideoCard({
                   </Text>
                   <Text as='span' size={'1'} color="gray">
                     <Skeleton loading={loadingProfileInfo}>
-                      {`Joined ${timeAgo(videoData?.owner?.createdAt)}`} • {data?.data?.subscribersCount} subscribers
+                      {`Joined ${timeAgo(videoData?.owner?.createdAt)}`}
+                    </Skeleton>
+                    {' '}
+                    <Skeleton loading={loadingProfileInfo}>
+                      • {data?.data?.subscribersCount} subscribers
                     </Skeleton>
                   </Text>
                 </Box>
@@ -103,12 +106,14 @@ function VideoCard({
                   isAuthenticated
                     ? user?._id === videoData?.owner?._id
                       ? null
-                      : <SubscriptionButton
-                        loading={loadingProfileInfo}
-                        className='flex-1'
-                        userId={videoData?.owner?._id}
-                        subscribed={data?.data.isSubscribed}
-                      />
+                      :
+                      <Skeleton loading={loadingProfileInfo}>
+                        <SubscriptionButton
+                          className='flex-1'
+                          userId={videoData?.owner?._id}
+                          subscribed={data?.data.isSubscribed}
+                        />
+                      </Skeleton>
                     : null
                 }
                 <Skeleton loading={loadingProfileInfo}>

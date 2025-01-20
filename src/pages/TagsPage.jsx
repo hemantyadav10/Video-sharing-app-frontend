@@ -53,7 +53,11 @@ function TagsPage() {
       </div>
       <Separator size={'4'} />
 
-      {isError && <QueryErrorHandler error={error} onRetry={refetch} />}
+      {isError && (
+        <div className='border rounded-xl border-[#484848] p-6 pt-0 m-6'>
+          <QueryErrorHandler error={error} onRetry={refetch} />
+        </div>
+      )}
 
       <Container showMenu={showMenu}>
         {isFetching &&
@@ -61,7 +65,7 @@ function TagsPage() {
             <VideoCard key={i} loading={isFetching} />
           ))
         }
-        {data?.data?.docs.length > 0 &&
+        {!isError && data?.data?.docs.length > 0 &&
           data?.data?.docs?.map(video =>
             <VideoCard
               key={video._id}

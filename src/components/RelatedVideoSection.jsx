@@ -29,7 +29,7 @@ function RelatedVideoSection({ videoId }) {
             {page.data.totalDocs > 0
               ? (
                 page.data.docs.map((video) => (
-                  <SimilarVideosCard video={video} />
+                  <SimilarVideosCard video={video} key={video?._id} />
                 ))
               )
               : <Text as='p' size={'2'} align={'center'} >No related videos found.</Text>

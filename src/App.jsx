@@ -7,7 +7,7 @@ import Sidebar from './components/Sidebar.jsx'
 import useIsOnline from './hooks/useIsOnline.js'
 
 function App() {
-  const [showMenu, setShowMenu] = useState(false)
+  const [showMenu, setShowMenu] = useState(window.innerWidth < 1024 ? false : true)
   const { pathname } = useLocation()
   const isDashboardRoute = pathname === '/dashboard'
   const isVideoRoute = pathname.startsWith('/watch')
@@ -27,7 +27,7 @@ function App() {
             toggleMenu={toggleMenu}
           />
         }
-        {showMenu && <div onClick={() => toggleMenu()} className='fixed md:hidden inset-0 bg-black/70 z-[90]'></div>}
+        {showMenu && (!isDashboardRoute && !isVideoRoute) && <div onClick={() => toggleMenu()} className='fixed md:hidden inset-0  bg-black/70 z-[90]'></div>}
 
           <Outlet context={[showMenu]} />
       

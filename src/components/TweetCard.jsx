@@ -17,9 +17,7 @@ function TweetCard({
   const { user, isAuthenticated } = useAuth();
   const { mutateAsync: deleteComment, isPending: deletingComment } = useDeleteTweet(tweetData?._id, channelId)
   const navigate = useNavigate()
-  const [tweetLikesCount, setTweetLikesCount] = useState(tweetData?.likesCount || 0)
-  const [isTweetLiked, setIsTweetLiked] = useState(tweetData?.isLiked || false)
-  const { mutate: toggleLike } = useToggleTweetLike(tweetData?._id, channelId)
+  const { mutate: toggleLike, isPending: likeTweetLoading } = useToggleTweetLike(tweetData?._id, channelId, user?._id)
   const [isEditable, setIsEditable] = useState(false);
   const [content, setContent] = useState(tweetData?.content)
   const { mutate: updateTweet, isPending: updatingTweet } = useUpdateTweet(tweetData?._id, channelId)
@@ -30,12 +28,6 @@ function TweetCard({
     textarea.style.height = "auto"; // Reset the height
     textarea.style.height = `${textarea.scrollHeight}px`; // Set height based on scroll height
   };
-
-  useEffect(() => {
-    if (tweetData?.isLiked !== undefined) {
-      setIsTweetLiked(tweetData?.isLiked);
-    }
-  }, [tweetData?.isLiked]);
 
   const handleDeleteTweet = async () => {
     toast.promise(
@@ -49,17 +41,10 @@ function TweetCard({
 
   const handleToggleLike = async () => {
     if (isAuthenticated) {
-
-      setIsTweetLiked(prev => !prev)
-      setTweetLikesCount(prev => {
-        return isTweetLiked ? prev - 1 : prev + 1
-      })
       toggleLike(tweetData?._id, {
-        onError: () => {
-          // Revert the optimistic update in case of an error
-          setIsTweetLiked((prev) => !prev);
-          setTweetLikesCount((prev) => !prev);
-          toast.error('Something went wrong. Please try again.');
+        onError: (error) => {
+          const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+          toast.error(errorMessage);
         }
       })
     } else {
@@ -87,7 +72,7 @@ function TweetCard({
   }, [isEditable]);
 
   return (
-    <div className='flex gap-3 pb-4 border border-[#484848] p-4 rounded-xl'>
+    <div className='flex gap-3 pb-4 border border-[#484848] p-4 rounded-xl hover:shadow-lg hover:shadow-black/30 transition-shadow'>
       <Avatar
         radius='full'
         src={tweetData?.owner.avatar}
@@ -147,6 +132,13 @@ function TweetCard({
             >
               {timeAgo(tweetData?.createdAt)}
             </Text>
+            <Text
+              as='span'
+              size={'1'}
+              color='gray'
+            >
+              {" "}{tweetData?.createdAt !== tweetData?.updatedAt && "(edited)"}
+            </Text>
           </div>
           {tweetData?.owner._id === user?._id &&
             <DropdownMenu.Root>
@@ -157,6 +149,8 @@ function TweetCard({
                   color='gray'
                   radius='full'
                   size={'2'}
+                  title='More options'
+                  aria-label='More options'
                 >
                   <DotsVerticalIcon height={'18px'} width={'18px'} />
                 </IconButton>
@@ -186,20 +180,22 @@ function TweetCard({
         </Text>
         <div className='flex items-center gap-1 mt-2 text-xs '>
           <IconButton
+            aria-label={tweetData?.isLiked ? 'Unlike tweet' : 'Like tweet'}
+            title={tweetData?.isLiked ? 'Unlike tweet' : 'Like tweet'}
             onClick={handleToggleLike}
             variant='ghost'
             color='gray'
             highContrast
             radius='full'
-            disabled={deletingComment}
+            disabled={deletingComment || likeTweetLoading}
           >
-            {(isAuthenticated && isTweetLiked) ?
+            {(tweetData?.isLiked) ?
               <ThumbsUpSolidIcon height='20' width='20' /> :
               <ThumbsUp height='20' width='20' />
             }
           </IconButton>
           <Text as='span' color='gray' size={'1'}>
-            {tweetLikesCount}
+            {tweetData?.likesCount || 0}
           </Text>
         </div>
       </div>}

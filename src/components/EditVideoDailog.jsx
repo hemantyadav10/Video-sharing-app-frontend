@@ -9,6 +9,9 @@ import { useAuth } from '../context/authContext'
 import { categories } from '../utils/categories'
 import TagInputComponent from './TagInputComponent'
 import { BarLoader } from 'react-spinners'
+import uploadImg from '../assets/uploadImg.png'
+
+
 
 function EditVideoDailog({ children, video }) {
   const { _id: videoId } = video
@@ -141,7 +144,7 @@ function EditVideoDailog({ children, video }) {
                   />
                   <div className='flex justify-center'>
                     <Button
-                      variant='soft'
+                      variant='surface'
                       color='gray'
                       highContrast
                       className='w-full max-w-sm font-normal'
@@ -160,11 +163,9 @@ function EditVideoDailog({ children, video }) {
                   <label htmlFor="upload_thumbnail" className='hover:cursor-pointer'>
                     <div
                       tabIndex={1}
-                      className='w-full h-40 border-2 border-dashed rounded-xl border-[#484848] hover:opacity-85 transition-opacity space-y-2 focus-within:border-[#2870bd]'>
-                      <div className='flex items-center justify-center p-2  rounded-full w-max bg-[rgba(0,119,255,0.1)] mx-auto mt-4'>
-                        <div className='p-[6px]   rounded-full bg-[#0077ff3a]'>
-                          <UploadIcon width='24px' height='24px' className='text-[#c2e6ff]' fill='#c2e6ff' />
-                        </div>
+                      className='w-full p-4 border-2 border-dashed rounded-xl border-[#484848] hover:opacity-85 transition-opacity space-y-2 focus-within:border-[#2870bd]'>
+                      <div className='flex items-center justify-center p-8 mx-auto rounded-full w-max bg-[#00000040] mb-2'>
+                        <img src={uploadImg} alt="" className='size-14 brightness-75' />
                       </div>
                       <Text align={'center'} as='p' size={'2'} highContrast color='blue'>
                         Click to upload image

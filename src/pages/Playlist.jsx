@@ -132,7 +132,7 @@ function PlaylistVideos() {
                   </Text>
                 </Dialog.Trigger>
                 <Dialog.Content>
-                  <Dialog.Title size={'3'} className='flex justify-between '>
+                  <Dialog.Title size={'4'} className='flex justify-between '>
                     <Text className='mr-auto break-all'>
                       {playlist?.data?.name}
                     </Text>
@@ -191,7 +191,7 @@ function PlaylistVideos() {
                         </IconButton>
                       </Dialog.Trigger>
                     </Tooltip>
-                    <Dialog.Content maxWidth="400px">
+                    <Dialog.Content maxWidth="600px">
                       <Dialog.Title>Edit playlist</Dialog.Title>
                       <Dialog.Description size="2" mb="4">
                         Make changes to your playlist.
@@ -230,7 +230,7 @@ function PlaylistVideos() {
                               validate: value => value.trim() !== "" || "Please enter some text",
                             })}
                             placeholder="Add description…"
-                            className={`${errors.description && 'shadow-inset-textarea'}`}
+                            className={`${errors.description && 'shadow-inset-textarea'} min-h-60`}
                           />
                           {errors.description &&
                             <Text as='p' size={'1'} mt={'2'} color='red' className='flex items-center gap-1 '>

@@ -10,11 +10,12 @@ import VideoTable from '../components/VideoTable'
 import { useAuth } from '../context/authContext'
 import { useGetChannelStats, useGetChannleVideos } from '../lib/queries/dashboardQueries'
 import { useTogglePublishStatus } from '../lib/queries/videoQueries'
+import QueryErrorHandler from '../components/QueryErrorHandler'
 
 function Dashboard() {
   const { user, isAuthenticated } = useAuth()
-  const { data: videoData, isLoading: loadingVideos } = useGetChannleVideos(isAuthenticated)
-  const { data: stats, isFetching: loadingStats } = useGetChannelStats(user?._id)
+  const { data: videoData, isLoading: loadingVideos, error, isError, refetch } = useGetChannleVideos(isAuthenticated)
+  const { data: stats, isFetching: loadingStats, error: errorfetchingStats, refetch: retryFetchStats, isError: isFetchStatsError } = useGetChannelStats(user?._id)
   const location = useLocation();
   const navigate = useNavigate()
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -62,6 +63,7 @@ function Dashboard() {
   useEffect(() => {
     if (location.state?.openDialog) {
       setDialogOpen(true); // Set dialog open first
+      
     }
 
     if (location.state) {
@@ -136,7 +138,12 @@ function Dashboard() {
       {/* <Separator size={'4'} /> */}
 
       {/* Stats cards section */}
-      <section className='flex flex-col flex-wrap gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-4'>
+      {isFetchStatsError &&
+        <div className='border rounded-lg border-[#484848] p-4'>
+          <QueryErrorHandler error={errorfetchingStats} onRetry={retryFetchStats} className='mt-0' />
+        </div>
+      }
+      {!isFetchStatsError && <section className='flex flex-col flex-wrap gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-4'>
         {statsData.map((stat, index) => (
           <ChannelStatsCard
             key={index}
@@ -146,17 +153,23 @@ function Dashboard() {
             statNumbers={stat.statNumbers}
           />
         ))}
-      </section>
+      </section>}
 
       {/* video details table */}
       <section>
-        <VideoTable
+        {isError &&
+          <div className='border rounded-lg border-[#484848] p-4 '>
+            <QueryErrorHandler error={error} onRetry={refetch} className='mt-0' />
+          </div>
+        }
+
+        {!isError && <VideoTable
           videos={videoData}
           publishedVideos={publishedVideos}
           onTogglePublish={handleTogglePublish}
           loadingVideos={loadingVideos}
           togglePublishingLoading={isPending}
-        />
+        />}
         {(videoData?.data.length === 0) &&
           <>
             <section className='flex flex-col items-center justify-center'>

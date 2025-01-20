@@ -7,13 +7,14 @@ import { useAuth } from '../context/authContext'
 import SignInPrompt from '../components/SignInPrompt '
 import toast from 'react-hot-toast'
 import { useInView } from 'react-intersection-observer'
+import QueryErrorHandler from '../components/QueryErrorHandler'
 
 function History() {
   const { user, isAuthenticated } = useAuth()
-  const { data: watchHistory, isLoading, isFetching, isFetchingNextPage, hasNextPage, fetchNextPage } = useFetchUserWatchHistory(user?._id, 2)
+  const { data: watchHistory, isLoading, isFetching, isFetchingNextPage, hasNextPage, fetchNextPage, error, isError, refetch } = useFetchUserWatchHistory(user?._id, 2)
   const { mutate: deleteHistory, isPending: deletingHistory } = useClearWatchHistory()
   const { ref, inView } = useInView({
-    rootMargin: '150px'
+    rootMargin: '250px'
   })
 
   useEffect(() => {
@@ -28,8 +29,9 @@ function History() {
       onSuccess: () => {
         toast('Watch history cleared')
       },
-      onError: () => {
-        toast.error('Something went wrong, please try again.')
+      onError: (error) => {
+        const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+        toast.error(errorMessage);
       }
     })
   }
@@ -48,21 +50,12 @@ function History() {
         <h1 className='flex flex-col max-w-6xl gap-4 px-1 mx-auto mb-4 text-3xl font-semibold sm:mb-10 sm:flex-row'>
           <div className='flex items-center gap-4'>
             Watch History
-            {/* <IconButton
-              variant='ghost'
-              highContrast
-              color='gray'
-              radius='full'
-              className={`${isFetching && 'animate-spin'}`}
-            // className='animate-spin'
-            > */}
             {isFetching && <span className={`${isFetching && 'animate-spin'}`}>
               <UpdateIcon />
             </span>}
-            {/* </IconButton> */}
           </div>
 
-          <AlertDialog.Root >
+          {!isError && <AlertDialog.Root >
             <AlertDialog.Trigger
               disabled={deletingHistory || isLoading || watchHistory?.pages[0].data.totalDocs === 0}
             >
@@ -107,11 +100,16 @@ function History() {
                 </AlertDialog.Action>
               </Flex>
             </AlertDialog.Content>
-          </AlertDialog.Root>
+          </AlertDialog.Root>}
 
         </h1>
       }
-      {isAuthenticated && <div className='flex flex-col items-center justify-center max-w-6xl gap-6 mx-auto sm:gap-0'>
+      {isError && (
+        <div className='border rounded-xl border-[#484848] p-6 pt-0'>
+          <QueryErrorHandler error={error} onRetry={refetch} />
+        </div>
+      )}
+      {isAuthenticated && !isError && <div className='flex flex-col items-center justify-center max-w-6xl gap-6 mx-auto sm:gap-0'>
         {isLoading &&
           Array.from({ length: 1 }).fill(1).map((_, i) => (
             <React.Fragment key={i}>

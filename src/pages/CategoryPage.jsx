@@ -14,6 +14,7 @@ import { useGetVideosByCategories } from '../lib/queries/videoQueries'
 import VideoCard from '../components/VideoCard'
 import Container from '../components/Container'
 import no_content from '../assets/no_content.svg'
+import QueryErrorHandler from '../components/QueryErrorHandler'
 
 
 function CategoryPage() {
@@ -31,7 +32,7 @@ function CategoryPage() {
     "fashion": fashionImg,
     "podcasts": podcastImg
   }
-  const { data, isFetching } = useGetVideosByCategories(category)
+  const { data, isFetching, error, isError, refetch } = useGetVideosByCategories(category)
 
   return (
     <div className='w-full '>
@@ -55,13 +56,18 @@ function CategoryPage() {
         </Text>
       </div>
       <Separator size={'4'} />
+      {isError && (
+        <div className='border rounded-xl border-[#484848] p-6 pt-0 m-6'>
+          <QueryErrorHandler error={error} onRetry={refetch} />
+        </div>
+      )}
       <Container showMenu={showMenu}>
         {isFetching &&
           Array.from({ length: 12 }).fill(1).map((_, i) => (
             <VideoCard key={i} loading={isFetching} />
           ))
         }
-        {data?.data?.docs.length > 0 &&
+        {!isError && data?.data?.docs.length > 0 &&
           data?.data?.docs?.map(video =>
             <VideoCard
               key={video._id}
@@ -71,7 +77,7 @@ function CategoryPage() {
           )
         }
       </Container>
-      {
+      {!isError &&
         data?.data?.docs.length === 0 && (
           <>
             <section className='flex flex-col items-center justify-center'>

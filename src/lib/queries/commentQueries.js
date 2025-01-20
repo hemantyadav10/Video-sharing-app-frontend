@@ -2,9 +2,9 @@ import { useInfiniteQuery, useMutation } from "@tanstack/react-query"
 import { addComment, deleteComment, fetchVideoComments, updateComment } from "../../api/commentApi"
 import { queryClient } from "../../main"
 
-const useGetVideoComments = (videoId, sortBy = 'newest', limit = 5) => {
+const useGetVideoComments = (videoId, sortBy = 'newest', limit = 5, userId) => {
   return useInfiniteQuery({
-    queryKey: ['comments', { videoId, sortBy }],
+    queryKey: ['comments', { videoId, sortBy, userId }],
     queryFn: ({ pageParam = 1 }) => fetchVideoComments(videoId, pageParam, limit, sortBy),
     getNextPageParam: (lastPage) => lastPage?.data?.nextPage || null,
     keepPreviousData: true,
@@ -15,7 +15,9 @@ const useAddComment = (videoId, sortBy = 'newest', user) => {
   return useMutation({
     mutationFn: (content) => addComment(content, videoId),
     onSuccess: (newComment) => {
-      queryClient.setQueryData(['comments', { videoId, sortBy }], (prev) => {
+      queryClient.setQueryData(['comments', { videoId, sortBy, userId: user?._id }], (prev) => {
+        if (!prev) return prev;
+
         return {
           ...prev,
           pages: prev.pages.map((page, index) => {
@@ -52,7 +54,8 @@ const useUpdateComment = (videoId, sortBy = 'newest', user) => {
   return useMutation({
     mutationFn: ({ commentId, content }) => updateComment(commentId, content),
     onSuccess: ({ data: updatedComment }) => {
-      queryClient.setQueryData(['comments', { videoId, sortBy }], (prev) => {
+      queryClient.setQueryData(['comments', { videoId, sortBy, userId: user?._id }], (prev) => {
+        if (!prev) return prev;
         return {
           ...prev,
           pages: prev.pages.map((page) => ({
@@ -72,11 +75,13 @@ const useUpdateComment = (videoId, sortBy = 'newest', user) => {
 };
 
 
-const useDeleteComment = (videoId, sortBy = 'newest', commentId) => {
+const useDeleteComment = (videoId, sortBy = 'newest', commentId, userId) => {
   return useMutation({
     mutationFn: deleteComment,
     onSuccess: () => {
-      queryClient.setQueryData(['comments', { videoId, sortBy }], (prev) => {
+      queryClient.setQueryData(['comments', { videoId, sortBy, userId: userId }], (prev) => {
+        if (!prev) return prev;
+
         return {
           ...prev,
           pages: prev.pages.map((page, index) => {

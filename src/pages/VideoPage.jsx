@@ -11,26 +11,27 @@ import SaveToPlaylistButton from '../components/SaveToPlaylistButton'
 import SubscriptionButton from '../components/SubscriptionButton'
 import { useAuth } from '../context/authContext'
 import { useToggleVideoLike } from '../lib/queries/likeQueries'
-import { useFetchUserVideos } from '../lib/queries/userQueries'
+import { useFetchUserChannelInfo, useFetchUserVideos } from '../lib/queries/userQueries'
 import { useFetchVideoById } from '../lib/queries/videoQueries'
 import RelatedVideoSection from '../components/RelatedVideoSection'
+import QueryErrorHandler from '../components/QueryErrorHandler'
 
 function VideoPage() {
   const { videoId } = useParams()
   const { isAuthenticated, user } = useAuth()
-  const { data: video, isLoading } = useFetchVideoById(videoId, user?._id)
+  const { data: video, isLoading, isError, error, refetch } = useFetchVideoById(videoId, user?._id)
+  const { data: channelInfo, isLoading: loadingProfileInfo, refetch: refetchUserInfo } = useFetchUserChannelInfo(video?.data?.owner._id, user?._id, !!video?.data?._id)
+
   const [isExpanded, setIsExpanded] = useState(false);
   const descriptionRef = useRef(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
-  const { mutate: toggleLike } = useToggleVideoLike(videoId)
-  const [isVideoLiked, setIsVideoLiked] = useState(video?.data.isLiked || false)
-  const [videoLikesCount, setVideoLikesCount] = useState(video?.data.likesCount || 0)
+  const { mutate: toggleLike, isPending } = useToggleVideoLike(videoId, user?._id)
   const [loadCommentSection, setLoadCommentSection] = useState(false)
   const { inView, ref } = useInView({
     rootMargin: '50px',
     triggerOnce: true
   })
-  const { data: videoData, isLoading: loadingVideos, isFetchingNextPage, hasNextPage, fetchNextPage, isFetching } = useFetchUserVideos(video?.data?.owner._id, '', 6);
+  const { data: videoData, isLoading: loadingVideos, isFetchingNextPage, hasNextPage, fetchNextPage } = useFetchUserVideos(video?.data?.owner._id, '', 6);
 
   useEffect(() => {
     if (inView) {
@@ -44,31 +45,12 @@ function VideoPage() {
     }
   }, [video?.data.description]);
 
-  useEffect(() => {
-    if (video?.data.isLiked !== undefined) {
-      setIsVideoLiked(video?.data.isLiked);
-    }
-  }, [video?.data.isLiked]);
-
-  useEffect(() => {
-    setVideoLikesCount(video?.data.likesCount);
-  }, [video?.data.likesCount]);
-
-
-
   const handleToggleLike = async () => {
     if (isAuthenticated) {
-
-      setIsVideoLiked(prev => !prev)
-      setVideoLikesCount(prev => {
-        return isVideoLiked ? prev - 1 : prev + 1
-      })
-      toggleLike(videoId, {
-        onError: () => {
-          // Revert the optimistic update in case of an error
-          setIsVideoLiked((prev) => !prev);
-          setVideoLikesCount((prev) => !prev);
-          toast.error('Something went wrong. Please try again.');
+      toggleLike(video?.data, {
+        onError: (error) => {
+          const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+          toast.error(errorMessage);
         }
       })
     }
@@ -77,7 +59,12 @@ function VideoPage() {
   return (
     <div className='flex flex-col w-full gap-4 mb-32 lg:gap-6 sm:p-6 lg:flex-row lg:justify-center lg:items-start'>
       <div className='flex-1 lg:max-w-4xl'>
-        <div >
+        {isError && (
+          <div className='w-full border aspect-video border-[#484848] rounded-xl flex items-center justify-center'>
+            <QueryErrorHandler onRetry={refetch} error={error} />
+          </div>
+        )}
+        {!isError && <div >
           <Skeleton loading={isLoading}>
             <div className='w-full overflow-hidden sm:rounded-xl aspect-video'>
               <video controls className='object-contain object-center w-full h-full'>
@@ -94,30 +81,39 @@ function VideoPage() {
             <div className='flex flex-col gap-3 sm:flex-row sm:justify-between'>
               <div className='flex items-center justify-between gap-6'>
                 <div
-                  to={`/channel/${video?.data.owner._id}`}
+                  to={`/channel/${channelInfo?.data?._id}`}
                   className='flex items-center gap-3'
                 >
                   <Skeleton
-                    loading={isLoading}
+                    loading={isLoading || loadingProfileInfo}
                     className='rounded-full'>
                     <Link
-                      to={`/channel/${video?.data.owner._id}`}
+                      to={`/channel/${channelInfo?.data?._id}`}
                     >
                       <img
-                        src={video?.data.owner.avatar}
+                        src={channelInfo?.data?.avatar}
                         alt=""
                         className='object-cover object-center rounded-full size-10'
                       />
                     </Link>
                   </Skeleton>
-                  <Skeleton loading={isLoading}>
-                    <Link
-                      to={`/channel/${video?.data.owner._id}`}
-                      className='text-sm'>
-                      <p className='font-medium sm:text-base'>{video?.data.owner.username}</p>
-                      <p className='text-xs text-[#f1f7feb5]'>{video?.data.owner.subscribersCount} subscribers</p>
-                    </Link>
-                  </Skeleton>
+                  <div>
+                    <Text as='p' >
+                      <Skeleton loading={isLoading || loadingProfileInfo} mb={'1'} className='h-4 min-w-28'>
+                        <Link
+                          to={`/channel/${channelInfo?.data?._id}`}
+                          className='text-sm font-medium sm:text-base'
+                        >
+                          {channelInfo?.data?.username}
+                        </Link>
+                      </Skeleton>
+                    </Text>
+                    <Text as='p' color='gray' size={'1'}>
+                      <Skeleton loading={isLoading || loadingProfileInfo}>
+                        {channelInfo?.data?.subscribersCount} subscribers
+                      </Skeleton>
+                    </Text>
+                  </div>
                 </div>
                 {isAuthenticated ?
                   (user?._id === video?.data.owner._id ?
@@ -134,14 +130,15 @@ function VideoPage() {
                         Edit video
                       </Button>
                     </Link> :
-                    <SubscriptionButton
-                      loading={isLoading}
-                      userId={video?.data.owner._id}
-                      subscribed={video?.data.owner.isSubscribed}
-                    />
+                    <Skeleton loading={isLoading || loadingProfileInfo}>
+                      <SubscriptionButton
+                        userId={channelInfo?.data?._id}
+                        subscribed={channelInfo?.data?.isSubscribed}
+                      />
+                    </Skeleton>
                   ) :
                   <Popover.Root >
-                    <Skeleton loading={isLoading}>
+                    <Skeleton loading={isLoading || loadingProfileInfo}>
                       <Popover.Trigger>
                         <Button
                           color='blur'
@@ -179,8 +176,13 @@ function VideoPage() {
                     color='gray'
                     highContrast
                     radius='full'
+                    disabled={isPending}
+                    className='group tabular-nums'
                   >
-                    {isVideoLiked ? <ThumbsUpSolidIcon height='20' width='20' /> : <ThumbsUp height='20' width='20' />} {videoLikesCount}
+                    {video?.data.isLiked
+                      ? <ThumbsUpSolidIcon height='20' width='20' />
+                      : <span className='transition-all group-active:scale-125 group-active:-rotate-[15deg]'><ThumbsUp height='20' width='20' /></span>
+                    } {video?.data.likesCount || 0}
                   </Button>
                 </Skeleton>
                 {/* menu button - save to playlist */}
@@ -208,9 +210,10 @@ function VideoPage() {
                   </Link>
                 </div>
                 <div className='flex flex-wrap gap-2'>
-                  {video?.data.tags && video?.data.tags.length > 0 && video.data.tags.map(tag => (
+                  {video?.data.tags && video?.data.tags.length > 0 && video.data.tags.map((tag, i) => (
                     <Link
                       to={`/hashtag/${tag}`}
+                      key={i}
                     >
                       <Text
                         color='blue'
@@ -243,8 +246,8 @@ function VideoPage() {
             </Skeleton>
           </div>
 
-        </div >
-        <div hidden={isLoading} ref={ref}>
+        </div >}
+        <div ref={ref}>
           {loadCommentSection && < CommentSection hidden videoId={videoId} />}
         </div>
 

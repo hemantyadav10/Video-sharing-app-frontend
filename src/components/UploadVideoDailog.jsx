@@ -9,6 +9,8 @@ import { useAuth } from '../context/authContext'
 import { categories } from '../utils/categories'
 import { useState } from 'react'
 import TagInputComponent from './TagInputComponent'
+import { X } from 'lucide-react'
+import uploadImg from '../assets/uploadImg.png'
 
 const ErrorLine = ({ errors }) => {
   return (
@@ -48,6 +50,7 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
   const [categoryError, setCategoryError] = useState(null)
   const [tagName, setTagName] = useState('')
   const [tags, setTags] = useState([])
+  const [hideCallout, setHideCallout] = useState(false)
 
 
   // Function to handle video upload
@@ -95,6 +98,8 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
           setTags([])
           setDialogOpen(open)
         }
+
+        if (!isDialogOpen) setHideCallout(false)
       }}
     >
       <Dialog.Trigger>
@@ -128,12 +133,20 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
         </div>
         {publishingVideo && <div className='absolute inset-0 bg-black/30 top-14 rounded-b-xl z-[100]'></div>}
         {/* Callout- info */}
-        <Callout.Root className='rounded-none' variant='surface'>
+        <Callout.Root className={`flex items-center rounded-none ${hideCallout && "hidden"}`}>
           <Callout.Icon>
             <InfoCircledIcon />
           </Callout.Icon>
-          <Callout.Text>
+          <Callout.Text className='flex items-center justify-between w-full'>
             Your videos will be private untill you publish them.
+            <IconButton
+              variant='ghost'
+              radius='full'
+              highContrast
+              onClick={() => setHideCallout(true)}
+            >
+              <X size={16} />
+            </IconButton>
           </Callout.Text>
         </Callout.Root>
         {/* Video Details section */}
@@ -203,11 +216,10 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
                 <label htmlFor="upload_thumbnail" className='hover:cursor-pointer'>
                   <div className={`w-full min-h-40 flex flex-col justify-center items-center  border-2 border-dashed rounded-md  hover:opacity-85 transition-opacity gap-2 ${!errors.thumbnail ? "border-[#484848]" : "border-[#b54548]"} p-4 md:w-[384px]`}>
                     {!image
-                      ? <><div className='flex items-center justify-center p-2  rounded-full w-max bg-[rgba(0,119,255,0.1)] mx-auto '>
-                        <div className='p-[6px]   rounded-full bg-[#0077ff3a]'>
-                          <UploadIcon width='24px' height='24px' className='text-[#c2e6ff]' fill='#c2e6ff' />
+                      ? <>
+                        <div className='flex items-center justify-center p-8 mx-auto rounded-full w-max bg-[#00000040]'>
+                          <img src={uploadImg} alt="" className='size-14 brightness-75' />
                         </div>
-                      </div>
                         <Text align={'center'} as='p' size={'2'} color='blue'>
                           Click to upload image
                         </Text>
@@ -245,8 +257,11 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
                 </Text>
                 {!videoUrl && <>
                   <label htmlFor="upload_video" className='hover:cursor-pointer'>
-                    <div className={`w-full h-40 border-2 border-dashed rounded-xl hover:opacity-85 transition-opacity gap-4 flex flex-col items-center justify-center ${errors.videoFile ? 'border-[#b54548]' : 'border-[#484848]'} `}>
+                    <div className={`w-full  border-2 border-dashed rounded-xl hover:opacity-85 transition-opacity gap-4 flex flex-col items-center justify-center p-6 ${errors.videoFile ? 'border-[#b54548]' : 'border-[#484848]'} `}>
                       <div>
+                        <div className='flex items-center justify-center p-8 mx-auto rounded-full w-max bg-[#00000040] mb-2'>
+                          <img src={uploadImg} alt="" className='size-14 brightness-75' />
+                        </div>
                         <Text align={'center'} as='p' mb={'1'} size={'2'} color='blue'>
                           Click to upload video
                         </Text>
@@ -355,7 +370,6 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
                   tagName={tagName}
                   tags={tags}
                   setTags={setTags}
-                  className='max-w-sm'
                 />
                 <Text as="p" size="1" mt="2" color='gray'>
                   Maximum 5 tags allowed. {5 - `${tags.length}`} remaining.

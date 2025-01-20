@@ -2,7 +2,7 @@ import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
 import "@radix-ui/themes/styles.css";
 import './index.css'
-import { Theme } from '@radix-ui/themes';
+import { Spinner, Theme } from '@radix-ui/themes';
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom';
 import Home from './pages/Home.jsx';
 import Channel from './pages/channel/Channel.jsx';
@@ -35,6 +35,7 @@ import Help from './pages/Help.jsx';
 import CategoryPage from './pages/CategoryPage.jsx';
 import TagsPage from './pages/TagsPage.jsx';
 import NotFound from './pages/NotFound.jsx';
+import { TriangleAlert } from 'lucide-react';
 
 
 export const queryClient = new QueryClient({
@@ -42,7 +43,8 @@ export const queryClient = new QueryClient({
     queries: {
       staleTime: 60 * 2 * 1000,
       refetchOnReconnect: 'always',
-      retry: 2
+      retry: 2,
+      refetchOnWindowFocus: false
     },
   },
 });
@@ -101,8 +103,9 @@ createRoot(document.getElementById('root')).render(
           position='bottom-left'
           toastOptions={{
             className: 'toast',
-            error: { icon: false, className: "toast_error text-center flex justify-center" },
-            success: { icon: false }
+            error: { icon: false, className: "toast_error" },
+            success: { icon: false },
+            loading: { icon: <Spinner size={'3'} /> }
           }}
         />
         <ReactQueryDevtools initialIsOpen={false} />

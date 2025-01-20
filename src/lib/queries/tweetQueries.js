@@ -5,29 +5,26 @@ import { queryClient } from "../../main"
 const useFetchUserTweets = (channelId, currentUserId) => {
   return useQuery({
     queryKey: ['userTweets', channelId, currentUserId],
-    queryFn: () => getUserTweets(channelId)
+    queryFn: () => getUserTweets(channelId),
+    enabled: !!channelId,
   })
 }
 
 const useCreateTweet = (user, channelId) => {
   return useMutation({
     mutationFn: (content) => createTweet(content),
-    onSuccess: (tweet) => {
+    onSuccess: (response, content) => {
       queryClient.setQueryData(['userTweets', channelId, user._id], (prev) => {
+        if (!prev) return prev;
         return {
           ...prev,
           data: [
             {
-              _id: Date.now(),
-              content: tweet.data.content,
-              owner: {
-                _id: user._id,
-                username: user.username,
-                fullName: user.fullName,
-                avatar: user.avatar
-              },
-              createdAt: new Date(),
-              updatedAt: new Date(),
+              _id: response?.data?._id || Date.now(),
+              content: response?.data?.content || content,
+              owner: user,
+              createdAt: response?.data?.createdAt || new Date(),
+              updatedAt: response?.data?.updatedAt || new Date(),
               likesCount: 0,
               isliked: false
             },
@@ -35,7 +32,7 @@ const useCreateTweet = (user, channelId) => {
           ],
         }
       })
-      queryClient.invalidateQueries({ queryKey: ['userTweets', channelId] });
+      // queryClient.invalidateQueries({ queryKey: ['userTweets', channelId] });
     }
   })
 }
@@ -45,12 +42,15 @@ const useDeleteTweet = (tweetId, channelId) => {
     mutationFn: (tweetId) => deleteTweet(tweetId),
     onSuccess: () => {
       queryClient.setQueryData(['userTweets', channelId, channelId], (prev) => {
+        if (!prev) return prev;
+
         return {
           ...prev,
           data: (prev.data.filter((tweet) => tweet._id !== tweetId))
         }
       })
-      queryClient.invalidateQueries({ queryKey: ['userTweets', channelId] });
+
+      // queryClient.invalidateQueries({ queryKey: ['userTweets', channelId] });
 
     }
   })
@@ -59,23 +59,25 @@ const useDeleteTweet = (tweetId, channelId) => {
 const useUpdateTweet = (tweetId, channelId) => {
   return useMutation({
     mutationFn: (content) => updateTweet(tweetId, content),
-    onSuccess: (updatedTweet) => {
+    onSuccess: (response) => {
       queryClient.setQueryData(['userTweets', channelId, channelId], (prev) => {
+        if (!prev) return prev;
+
         return {
           ...prev,
           data: prev.data.map((tweet) => {
             if (tweet._id === tweetId) {
               return {
                 ...tweet,
-                content: updatedTweet.data.content,
-                updatedAt: new Date()
+                content: response?.data?.content || content,
+                updatedAt: response?.data?.updatedAt || new Date()
               }
             }
-            return tweet
+            return tweet;
           })
         }
       })
-      queryClient.invalidateQueries({ queryKey: ['userTweets', channelId] })
+      // queryClient.invalidateQueries({ queryKey: ['userTweets', channelId] })
     }
   })
 }

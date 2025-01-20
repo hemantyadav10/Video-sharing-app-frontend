@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import EmojiPicker from 'emoji-picker-react';
 import { queryClient } from '../main'
+import QueryErrorHandler from './QueryErrorHandler'
 // import { useInView } from 'react-intersection-observer'
 
 function CommentSection({ videoId }) {
@@ -28,7 +29,9 @@ function CommentSection({ videoId }) {
     isPending: loadingComments,
     isError,
     isFetching,
-  } = useGetVideoComments(videoId, sortBy, limit)
+    error,
+    refetch
+  } = useGetVideoComments(videoId, sortBy, limit, user?._id)
   const totalComments = data?.pages[0].data.totalDocs
 
   const [commentText, setCommentText] = useState('')
@@ -39,9 +42,9 @@ function CommentSection({ videoId }) {
       onSuccess: () => {
         setCommentText('')
       },
-      onError: (err) => {
-        console.log(err)
-        toast.error(err.message)
+      onError: (error) => {
+        const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+        toast.error(errorMessage);
       }
     })
   }
@@ -112,7 +115,7 @@ function CommentSection({ videoId }) {
               return navigate('/login')
             }
           }}
-
+          resize={'vertical'}
           disabled={addingComment}
         />
         <div className='relative flex items-center justify-between'>
@@ -142,32 +145,35 @@ function CommentSection({ videoId }) {
               onClick={() => {
                 setCommentText('')
               }}
-              hidden={!commentText?.trim()}
-              variant='soft'
+              hidden={!commentText?.trim() || addingComment}
+              variant='surface'
               color='gray'
               highContrast
               radius='full'
-              disabled={addingComment}
             >
               Cancel
             </Button>
             <Button
               onClick={handleAddComment}
-              disabled={!commentText?.trim()}
-              loading={addingComment}
+              disabled={!commentText?.trim() || addingComment}
               highContrast
               radius='full'
             >
-              Comment
+              <Spinner loading={addingComment} />Comment
             </Button>
           </div>
         </div>
       </div>
-      <div className='relative'>
+      {isError && (
+        <div className='border rounded-xl border-[#484848] p-6 pt-0'>
+          <QueryErrorHandler error={error} onRetry={refetch} className='mt-0' />
+        </div>
+      )}
+      {!!totalComments && totalComments > 0 && <div className='relative'>
         {(isFetching && !isFetchingNextPage) && <div className='absolute inset-0 flex justify-center mt-20'>
           <Spinner size={'3'} />
         </div>}
-        <div className={` flex flex-col gap-6 mt-2 ${(isFetching && !isFetchingNextPage) && 'opacity-30'} `}>
+        {!isError && <div className={` flex flex-col gap-6 mt-2 ${(isFetching && !isFetchingNextPage) && 'opacity-30'} `}>
           {data?.pages.map((comments) => (
             comments.data.docs.map((comment =>
               <CommentCard
@@ -199,8 +205,8 @@ function CommentSection({ videoId }) {
               Load more
             </Button>
           }
-        </div>
-      </div>
+        </div>}
+      </div>}
     </div>
   )
 }

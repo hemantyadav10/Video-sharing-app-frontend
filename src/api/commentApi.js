@@ -1,4 +1,4 @@
-import { asyncHandler } from "../utils/asyncHandler";  // Assuming asyncHandler is located here
+import { asyncHandler } from "../utils/asyncHandler";
 import apiClient from "./apiClient";
 
 const COMMENTS_BASE_URL = '/comments';
