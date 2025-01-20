@@ -1,6 +1,6 @@
 import { ArrowLeftIcon, AvatarIcon, Cross1Icon, ExitIcon, FileTextIcon, GearIcon, HamburgerMenuIcon, LockClosedIcon, MagicWandIcon, MagnifyingGlassIcon, PersonIcon, PlusIcon, QuestionMarkCircledIcon } from '@radix-ui/react-icons'
 import { Avatar, Button, DropdownMenu, Flex, IconButton, Text, TextField, Tooltip } from '@radix-ui/themes'
-import { ListVideo, SquarePen, SquarePlay } from 'lucide-react'
+import { ListVideo, PlayIcon, SquarePen, SquarePlay, TvMinimal, TvMinimalPlay } from 'lucide-react'
 import React, { useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { BarLoader } from 'react-spinners'
@@ -8,6 +8,7 @@ import { useAuth } from '../context/authContext'
 import { useFetchVideos } from '../lib/queries/videoQueries'
 import { getInitials } from '../utils/utils'
 import CreatePlaylistDialog from './CreatePlaylistDialog'
+import Logo from './Logo'
 
 function Navbar({ toggleMenu }) {
   const [searchParams, setSearchParams] = useSearchParams('')
@@ -47,7 +48,7 @@ function Navbar({ toggleMenu }) {
           loading={logoutLoading}
         />
       </div>
-      <span className='flex items-center col-span-1 gap-4 '>
+      <span className='flex items-center col-span-1 gap-3 '>
         <IconButton
           onClick={toggleMenu}
           variant='ghost'
@@ -60,13 +61,7 @@ function Navbar({ toggleMenu }) {
         >
           <HamburgerMenuIcon height={20} width={20} />
         </IconButton>
-        <Link
-          to='/'
-          className='text-xl font-medium'
-        >
-          <span className='text-sky-300'>View</span>
-          <span>Tube</span>
-        </Link>
+        <Logo />
       </span>
       <form onSubmit={handleSearch} className='hidden col-span-1 sm:flex'>
         <TextField.Root

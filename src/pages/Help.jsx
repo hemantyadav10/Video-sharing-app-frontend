@@ -2,7 +2,9 @@ import { Button, Text } from '@radix-ui/themes'
 import React from 'react'
 import { faqData } from '../utils/faqData.js'
 import * as Accordion from "@radix-ui/react-accordion";
-import { ChevronDownIcon } from "@radix-ui/react-icons";
+import { ChevronDownIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
+import { Link } from 'react-router-dom';
+import { ExternalLink } from 'lucide-react';
 
 function Help() {
 
@@ -25,15 +27,15 @@ function Help() {
         {/*FAQs content */}
         <div>
           <div className='flex w-full '>
-            <Button
-              highContrast
-              size={'3'}
-              mb={'9'}
-              radius='full'
-              className='w-full px-6 sm:w-max sm:mx-auto'
-            >
-              Contact
-            </Button>
+            <a href="https://github.com/hemantyadav10/Video-sharing-app-frontend" className='w-full sm:mx-auto sm:w-max'>
+              <Button
+                className='w-full px-6 transition-opacity bg-[#00000040] border border-[#484848] hover:opacity-70 active:opacity-100'
+                radius='full'
+                mb={'9'}
+              >
+                <GitHubLogoIcon height={'20'} width={'20'} /> View Project on GitHub
+              </Button>
+            </a>
           </div>
 
           <Accordion.Root
@@ -79,7 +81,7 @@ function Help() {
       {/* footer */}
       <div className='flex justify-center mx-10 mt-10 mb-10 sm:mb-0 sm:justify-end '>
         <Text as='span' color='gray' size={'2'} >
-          © 2024 copyright ViewTube. All rights reserved.
+          © 2024 copyright VidNova. All rights reserved.
         </Text>
       </div>
     </div>

@@ -10,6 +10,7 @@ import noThumbnail from '../../assets/noThumbnail.webp'
 import CameraIcon from '../../assets/CameraIcon';
 import CloseButton from '../../components/CloseButton';
 import toast from 'react-hot-toast';
+import Logo from '../../components/Logo';
 
 function Signup() {
   const { register, handleSubmit, formState: { errors }, watch, resetField } = useForm()
@@ -59,6 +60,9 @@ function Signup() {
     <>
 
       <div className="flex flex-col items-center justify-center w-full min-h-screen p-4">
+        <span className='mr-auto'>
+          <Logo />
+        </span>
         <p className="mt-12 mb-4 text-3xl font-semibold text-center capitalize">
           Create Your Account
         </p>
@@ -332,7 +336,7 @@ function Signup() {
         </Text>
         <div className='flex flex-col items-center w-full mt-12 sm:flex-row sm:justify-between'>
           <Text as='span' color='gray' size={'2'} className='min-w-min'>
-            © 2024 ViewTube. All rights reserved.
+            © 2024 VidNova. All rights reserved.
           </Text>
           <div className='flex gap-2'>
             <Link to={'/privacy'} >
@@ -362,21 +366,3 @@ export default Signup
 
 
 
-// {/* <div className='flex justify-center w-full h-32 gap-2 p-2 border border-green-500 '>
-// {errors.avatar &&
-//   <Text as='p' size={'1'} mt={'2'} color='red' className='absolute z-30 flex items-center gap-1 top-full w-max'>
-//     <InfoCircledIcon height={"16"} width={"16"} />{errors.avatar.message}
-//   </Text>
-// }
-// <label
-//   htmlFor='profile_image'
-//   className={`overflow-hidden border  rounded-full size-32  flex justify-center items-center hover:cursor-pointer hover:brightness-75 transition-all  group ${errors.avatar ? "border-[#b54548]" : "border-[#d9edff40]"}`}
-// >
-
-//   <span className='absolute z-10 transition-all translate-x-1/2 -translate-y-1/2 opacity-0 top-1/2 right-1/2 group-hover:opacity-100'>
-//     <CameraIcon />
-//   </span>
-
-
-// </label>
-// </div> */}

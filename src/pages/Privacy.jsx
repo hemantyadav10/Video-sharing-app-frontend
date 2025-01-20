@@ -171,7 +171,7 @@ function Privacy() {
       </div>
       <div className='flex justify-center mx-10 mt-10 mb-10 sm:mb-0 sm:justify-end '>
         <Text as='span' color='gray' size={'2'} >
-          © 2024 copyright ViewTube. All rights reserved.
+          © 2024 copyright VidNova. All rights reserved.
         </Text>
       </div>
     </div>

@@ -1,15 +1,16 @@
-import { AvatarIcon, ChevronDownIcon, ExitIcon } from '@radix-ui/react-icons'
+import { AvatarIcon, ChevronDownIcon, ExitIcon, HamburgerMenuIcon } from '@radix-ui/react-icons'
 import { Box, Button, IconButton, ScrollArea, Separator, Spinner, Text } from '@radix-ui/themes'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { CircleHelp, Clapperboard, Flame, Gamepad2, GraduationCap, History, Home, ListVideo, LockKeyhole, Music, Newspaper, PanelLeftClose, Podcast, ReceiptText, Settings, Shirt, ShoppingBag, ThumbsUp, Trophy, TvMinimalPlay, WandSparkles } from 'lucide-react'
 import { useAuth } from '../context/authContext'
+import Logo from './Logo'
 
 const SidebarContext = createContext();
 
 
 function Sidebar({ showMenu, toggleMenu }) {
-  const { logout, isAuthenticated, isLoading } = useAuth()
+  const { logout, isAuthenticated, logoutLoading } = useAuth()
   const [showCategories, setShowCategories] = useState(false)
   const sidebarItems = [
     {
@@ -155,24 +156,19 @@ function Sidebar({ showMenu, toggleMenu }) {
     >
       <ScrollArea scrollHideDelay={500} type="hover" scrollbars="vertical" draggable={true} className='md:h-[calc(100vh-64px)] h-screen '>
         <Box className={`${showMenu ? "pr-2" : "md:pr-0 pr-2"}`}>
-          <div className="flex items-center h-16 px-4 md:hidden">
-            <Link
-              to='/'
-              className='text-xl font-medium'
-            >
-              <span className='text-sky-300'>View</span>
-              <span>Tube</span>
-            </Link>
-            <IconButton
+          <div className="flex items-center h-16 gap-2 px-5 md:hidden">
+          <IconButton
               onClick={() => toggleMenu()}
               variant='ghost'
               color='gray'
               highContrast
               radius='full'
-              className='ml-auto'
+              size={'3'}
             >
-              <PanelLeftClose strokeWidth={1.5} size={22} />
+              <HamburgerMenuIcon height={20} width={20} />
             </IconButton>
+            <Logo />
+            
           </div>
           <SidebarContext.Provider value={{ showMenu }}>
             <ul className={`flex flex-col p-2  ${showMenu ? "md:p-2 md:mt-3" : "md:p-[2px] md:mt-4"}`}>
@@ -230,10 +226,10 @@ function Sidebar({ showMenu, toggleMenu }) {
                     tabIndex={-1}
                     aria-hidden='true'
                     className='flex justify-start w-full px-4 py-6 rounded-xl'
-                    disabled={isLoading}
+                    disabled={logoutLoading}
                     highContrast
                   >
-                    <Spinner loading={isLoading}>
+                    <Spinner loading={logoutLoading}>
                       <ExitIcon height={'20'} width={'20'} />
                     </Spinner>
 
