@@ -1,8 +1,8 @@
-import { AvatarIcon, ChevronDownIcon, ExitIcon, HamburgerMenuIcon } from '@radix-ui/react-icons'
+import { AvatarIcon, ChevronDownIcon, ChevronRightIcon, ExitIcon, HamburgerMenuIcon } from '@radix-ui/react-icons'
 import { Box, Button, IconButton, ScrollArea, Separator, Spinner, Text } from '@radix-ui/themes'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import { CircleHelp, Clapperboard, Flame, Gamepad2, GraduationCap, History, Home, ListVideo, LockKeyhole, Music, Newspaper, PanelLeftClose, Podcast, ReceiptText, Settings, Shirt, ShoppingBag, ThumbsUp, Trophy, TvMinimalPlay, WandSparkles } from 'lucide-react'
+import { ChevronRight, CircleHelp, Clapperboard, Flame, Gamepad2, GraduationCap, History, Home, ListVideo, LockKeyhole, Music, Newspaper, PanelLeftClose, Podcast, ReceiptText, Settings, Shirt, ShoppingBag, ThumbsUp, Trophy, TvMinimalPlay, WandSparkles } from 'lucide-react'
 import { useAuth } from '../context/authContext'
 import Logo from './Logo'
 
@@ -157,7 +157,7 @@ function Sidebar({ showMenu, toggleMenu }) {
       <ScrollArea scrollHideDelay={500} type="hover" scrollbars="vertical" draggable={true} className='md:h-[calc(100vh-64px)] h-screen '>
         <Box className={`${showMenu ? "pr-2" : "md:pr-0 pr-2"}`}>
           <div className="flex items-center h-16 gap-2 px-5 md:hidden">
-          <IconButton
+            <IconButton
               onClick={() => toggleMenu()}
               variant='ghost'
               color='gray'
@@ -168,7 +168,7 @@ function Sidebar({ showMenu, toggleMenu }) {
               <HamburgerMenuIcon height={20} width={20} />
             </IconButton>
             <Logo />
-            
+
           </div>
           <SidebarContext.Provider value={{ showMenu }}>
             <ul className={`flex flex-col p-2  ${showMenu ? "md:p-2 md:mt-3" : "md:p-[2px] md:mt-4"}`}>
@@ -193,28 +193,27 @@ function Sidebar({ showMenu, toggleMenu }) {
                     size={'3'}
                   >
                     Explore
-                    <ChevronDownIcon height={20} width={20} className={`${showCategories ? "rotate-180" : ""} transition-all duration-200`} />
+                    <ChevronRight size={'18'} className={`${showCategories ? "-rotate-90" : ""} transition-all duration-200`} />
                   </Button>
                 </div>
-                {showCategories &&
-                  <div className='pt-2'>
-                    {categories.map(category => (
-                      <NavLink
-                        title={category.name}
-                        to={category.slug}
-                        className={({ isActive }) => `${isActive ? "bg-[#0077ff3a] text-[#c2e6ff]" : ""} group flex items-center  p-3 rounded-xl active:bg-[#0081fd6b] hover:bg-[rgba(0,119,255,0.18)]  text-white outline-none cursor-pointer focus-visible:ring-[2px] ring-[#2870bd] gap-3 md:gap-0 px-4 `}
+                <div className={`overflow-hidden transition-[max-height] duration-300 ease-in-out ${showCategories ? 'max-h-[468px]' : 'max-h-0'
+                  } pt-2`}>
+                  {categories.map(category => (
+                    <NavLink
+                      title={category.name}
+                      to={category.slug}
+                      className={({ isActive }) => `${isActive ? "bg-[#0077ff3a] text-[#c2e6ff]" : ""} group flex items-center  p-3 rounded-xl active:bg-[#0081fd6b] hover:bg-[rgba(0,119,255,0.18)]  text-white outline-none cursor-pointer focus-visible:ring-[2px] ring-[#2870bd] gap-3 md:gap-0 px-4 `}
+                    >
+                      {category.icon && <category.icon strokeWidth={1.5} size={22} />}
+                      <span
+                        className={`overflow-hidden text-nowrap ${showMenu ? 'md:w-36 md:ml-4' : 'md:w-0'}  text-sm`}
                       >
-                        {category.icon && <category.icon strokeWidth={1.5} size={22} />}
-                        <span
-                          className={`overflow-hidden text-nowrap ${showMenu ? 'md:w-36 md:ml-4' : 'md:w-0'}  text-sm`}
-                        >
-                          {category.name}
-                        </span>
-                      </NavLink>
-                    ))}
+                        {category.name}
+                      </span>
+                    </NavLink>
+                  ))}
 
-                  </div>
-                }
+                </div>
               </div>
               <div className=' w-full py-4 px-2 border-t border-[#484848]'>
                 {isAuthenticated
