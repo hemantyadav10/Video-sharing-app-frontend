@@ -4,20 +4,28 @@ import VideoCard from '../components/VideoCard'
 import FilterDialog from '../components/FilterDialog'
 import { useFetchVideos } from '../lib/queries/videoQueries'
 import NoContent from '../components/NoContent'
-import { Spinner } from '@radix-ui/themes'
+import { Button, Spinner } from '@radix-ui/themes'
 import { useInView } from 'react-intersection-observer'
+import { useSearchUser } from '../lib/queries/userQueries'
+import SubscribedChannelCard from '../components/SubscribedChannelCard'
+import ChannelCard from '../components/ChannelCard'
+import { useAuth } from '../context/authContext'
+import QueryErrorHandler from '../components/QueryErrorHandler'
 
 const SearchResults = () => {
 	const [searchParams, setSearchParams] = useSearchParams()
 	const query = searchParams.get('query')
 	const currentSortBy = searchParams.get('sortBy')
 	const currentSortType = searchParams.get('sortType')
+	const searchType = searchParams.get('type')
+	const { user } = useAuth()
 
-	const { data: result, isLoading: loadingResults, hasNextPage, fetchNextPage, isFetchingNextPage } = useFetchVideos(searchParams)
+	const { data: result, isLoading: loadingResults, hasNextPage, fetchNextPage, isFetchingNextPage, error: errorFetchingVideos, isError: isErrorFetchingVideos, refetch: refetchVideos } = useFetchVideos(searchParams)
 	const { ref, inView } = useInView({
 		rootMargin: '100px'
 	})
 
+	const { data, isLoading: loadingChannelResults, isError, isFetching, error, refetch } = useSearchUser(query, searchType, user?._id)
 
 	useEffect(() => {
 		if (!query) {
@@ -58,20 +66,54 @@ const SearchResults = () => {
 
 	return (
 		<div className='w-full py-4 mx-auto mb-16 sm:mb-0 lg:px-16 sm:px-6'>
-			<div className='mb-6 mr-4 text-end sm:mr-0'>
-				<FilterDialog
-					filters={filters}
-					currentSortBy={currentSortBy}
-					currentSortType={currentSortType}
-					setSearchParams={setSearchParams}
-					loading={loadingResults}
-				/>
+			<div className='flex items-center justify-between px-4 mb-6 sm:px-0'>
+				<div className='flex gap-2'>
+					<Button
+						onClick={() => {
+							searchParams.set('type', 'videos')
+							setSearchParams(searchParams)
+						}}
+						variant={searchType ? searchType === "videos" ? "classic" : "soft" : "classic"}
+						color='gray'
+						highContrast
+						radius='large'
+					>
+						Videos
+					</Button>
+					<Button
+						onClick={() => {
+							searchParams.set('type', 'channels')
+							setSearchParams(searchParams)
+						}}
+						variant={searchType === "channels" ? "classic" : "soft"}
+						color='gray'
+						highContrast
+						radius='large'
+					>
+						Channels
+					</Button>
+				</div>
+				{searchType !== "channels" && (
+					<FilterDialog
+						filters={filters}
+						currentSortBy={currentSortBy}
+						currentSortType={currentSortType}
+						setSearchParams={setSearchParams}
+						loading={loadingResults}
+					/>
+				)
+				}
 			</div>
-			<div className='flex flex-col items-center gap-0 sm:gap-2'>
+			{(!searchType || searchType === "videos") ? <div className='flex flex-col items-center gap-0 sm:gap-2'>
 				{loadingResults && (
 					Array.from({ length: 4 }).map((_, i) => <VideoCard key={i} list loading={loadingResults} />)
 				)}
-				{!loadingResults && result?.pages.length > 0 && (
+				{isErrorFetchingVideos && (
+					<div className='border border-[#484848] rounded-xl p-6 pt-0 w-full'>
+						<QueryErrorHandler error={errorFetchingVideos} onRetry={refetchVideos} />
+					</div>
+				)}
+				{!loadingResults && !isErrorFetchingVideos && result?.pages.length > 0 && (
 					result.pages.map((page, pageIndex) => (
 						<div key={pageIndex} className="flex flex-col items-center w-full gap-0 sm:gap-2">
 							{page.data.totalDocs > 0 ? (
@@ -94,6 +136,37 @@ const SearchResults = () => {
 					description='Try different keywords or remove search filters'
 				/>}
 			</div>
+				: (
+					<div className='flex flex-col px-6'>
+						{loadingChannelResults &&
+							Array.from({ length: 3 }).fill(1).map((_, i) => (
+								<ChannelCard
+									key={i}
+									loading={loadingChannelResults}
+								/>
+							))
+						}
+						{isError && (
+							<div className='border border-[#484848] rounded-xl p-6 pt-0'>
+								<QueryErrorHandler error={error} onRetry={refetch} />
+							</div>
+						)}
+						{!isError && !loadingChannelResults && (data?.data.length > 0
+							? data?.data.map((subscription, i) => (
+								<ChannelCard
+									channel={subscription}
+									loading={loadingChannelResults}
+									isFetching={isFetching}
+								/>
+							)) : (
+								<NoContent
+									title='No results found'
+									description='Try different keywords.'
+								/>
+							))}
+					</div>
+				)
+			}
 		</div>
 	)
 }

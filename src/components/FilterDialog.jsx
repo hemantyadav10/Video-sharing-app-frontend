@@ -1,8 +1,8 @@
 import React from 'react'
 import { Button, Dialog, Skeleton, Text } from '@radix-ui/themes'
 import { Cross1Icon } from '@radix-ui/react-icons'
-import FilterIcon from '../assets/FilterIcon'
 import CloseButton from './CloseButton'
+import { SlidersHorizontal } from 'lucide-react'
 
 const FilterDialog = ({ filters, currentSortBy, currentSortType, setSearchParams, loading, }) => {
   const getButtonClass = (isActive) => isActive && 'text-white font-semibold';
@@ -18,12 +18,12 @@ const FilterDialog = ({ filters, currentSortBy, currentSortType, setSearchParams
               highContrast
               color='gray'
             >
-              Filters<FilterIcon width='24' height='24' />
+              Filters<SlidersHorizontal size={18} />
             </Button>
           </Dialog.Trigger>
         </Skeleton>
       <Dialog.Content maxWidth={'500px'}>
-        <Dialog.Title mb={'6'} weight={'medium'} size={'5'} className='flex items-center'>
+        <Dialog.Title mb={'6'} weight={'medium'} size={'6'} className='flex items-center'>
           <Text className='mr-auto'>Search Filter</Text>
           <CloseButton />
         </Dialog.Title>
@@ -70,19 +70,3 @@ const FilterDialog = ({ filters, currentSortBy, currentSortType, setSearchParams
 }
 
 export default FilterDialog
-
-
-{/* <div className='flex flex-col items-center gap-6 sm:gap-0'>
-        {loadingResults && Array.from({ length: 2 }).fill(1).map((_, i) => (
-          <VideoCard key={i} list loading={loadingResults} />
-        ))}
-        {result?.data?.totalDocs > 0
-          ? result?.data?.docs.map((video) => (
-            <VideoCard key={video._id} list videoData={video} loading={loadingResults} />
-          ))
-          : <NoContent
-            title='No results found'
-            description='Try different keywords or remove search filters'
-          />
-        }
-      </div> */}

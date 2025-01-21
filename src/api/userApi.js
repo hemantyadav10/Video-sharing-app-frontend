@@ -81,6 +81,11 @@ const updateCoverImage = (coverImage) => asyncHandler(async () => {
   return res.data
 })
 
+const searchUser = (query) => asyncHandler(async () => {
+  const res = await apiClient.get(`${USER_BASE_URL}/search?query=${query}`)
+  return res.data;
+})
+
 export {
   getUserChannelInfo,
   getUserVideos,
@@ -93,5 +98,6 @@ export {
   clearWatchHistory,
   registerUser,
   updateAvatar,
-  updateCoverImage
+  updateCoverImage,
+  searchUser
 }

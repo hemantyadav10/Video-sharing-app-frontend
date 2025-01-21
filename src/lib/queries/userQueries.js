@@ -9,6 +9,7 @@ import {
   loginUser,
   logoutUser,
   registerUser,
+  searchUser,
   updateAccountDetails,
   updateAvatar,
   updateCoverImage
@@ -136,6 +137,15 @@ const useUpdateCoverImage = () => {
   })
 }
 
+const useSearchUser = (query, searchType, userId) => {
+  console.log(query, searchType)
+  return useQuery({
+    queryKey: ["search", 'channels', { query, userId}],
+    queryFn: () => searchUser(query),
+    enabled: !!query && searchType === "channels"
+  })
+}
+
 export {
   useFetchUserChannelInfo,
   useFetchUserVideos,
@@ -148,5 +158,6 @@ export {
   useClearWatchHistory,
   useRegisterUser,
   useUpdateAvatar,
-  useUpdateCoverImage
+  useUpdateCoverImage,
+  useSearchUser
 }
