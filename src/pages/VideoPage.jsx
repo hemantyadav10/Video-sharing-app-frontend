@@ -1,5 +1,5 @@
 import { Button, Flex, Popover, Skeleton, Spinner, Text } from '@radix-ui/themes'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useInView } from 'react-intersection-observer'
 import { Link, useParams } from 'react-router-dom'
@@ -7,14 +7,15 @@ import ThumbsUp from '../assets/ThumbsUpIcon'
 import ThumbsUpSolidIcon from '../assets/ThumbsUpSolidIcon'
 import CommentSection from '../components/CommentSection'
 import MoreVideosFromChannelSection from '../components/MoreVideosFromChannelSection'
+import QueryErrorHandler from '../components/QueryErrorHandler'
+import RelatedVideoSection from '../components/RelatedVideoSection'
 import SaveToPlaylistButton from '../components/SaveToPlaylistButton'
 import SubscriptionButton from '../components/SubscriptionButton'
 import { useAuth } from '../context/authContext'
 import { useToggleVideoLike } from '../lib/queries/likeQueries'
 import { useFetchUserChannelInfo, useFetchUserVideos } from '../lib/queries/userQueries'
 import { useFetchVideoById } from '../lib/queries/videoQueries'
-import RelatedVideoSection from '../components/RelatedVideoSection'
-import QueryErrorHandler from '../components/QueryErrorHandler'
+import { useReadMore } from '../hooks/useReadMore'
 
 function VideoPage() {
   const { videoId } = useParams()
@@ -22,9 +23,6 @@ function VideoPage() {
   const { data: video, isLoading, isError, error, refetch } = useFetchVideoById(videoId, user?._id)
   const { data: channelInfo, isLoading: loadingProfileInfo, refetch: refetchUserInfo } = useFetchUserChannelInfo(video?.data?.owner._id, user?._id, !!video?.data?._id)
 
-  const [isExpanded, setIsExpanded] = useState(false);
-  const descriptionRef = useRef(null);
-  const [isOverflowing, setIsOverflowing] = useState(false);
   const { mutate: toggleLike, isPending } = useToggleVideoLike(videoId, user?._id)
   const [loadCommentSection, setLoadCommentSection] = useState(false)
   const { inView, ref } = useInView({
@@ -32,6 +30,12 @@ function VideoPage() {
     triggerOnce: true
   })
   const { data: videoData, isLoading: loadingVideos, isFetchingNextPage, hasNextPage, fetchNextPage } = useFetchUserVideos(video?.data?.owner._id, '', 6);
+  const {
+    contentRef,
+    isExpanded,
+    isLongContent,
+    toggleExpand,
+  } = useReadMore(video?.data.description)
 
   useEffect(() => {
     if (inView) {
@@ -39,11 +43,7 @@ function VideoPage() {
     }
   }, [inView])
 
-  useEffect(() => {
-    if (descriptionRef.current) {
-      setIsOverflowing(descriptionRef.current.scrollHeight > descriptionRef.current.clientHeight);
-    }
-  }, [video?.data.description]);
+
 
   const handleToggleLike = async () => {
     if (isAuthenticated) {
@@ -226,18 +226,18 @@ function VideoPage() {
                   ))}
                 </div>
                 <p
-                  ref={descriptionRef}
-                  className={`break-words whitespace-pre-wrap  ${isExpanded ? "h-auto" : "line-clamp-2"}`}
+                  ref={contentRef}
+                  className={`break-words whitespace-pre-wrap  ${isExpanded ? "" : "line-clamp-2"}`}
                 >
                   {video?.data.description}
                 </p>
-                {isOverflowing &&
+                {isLongContent &&
                   <Button
                     variant='ghost'
                     color='blue'
                     className='font-medium'
                     radius='full'
-                    onClick={() => setIsExpanded(!isExpanded)}
+                    onClick={() => toggleExpand()}
                   >
                     {isExpanded ? "Show less" : "Show more"}
                   </Button>

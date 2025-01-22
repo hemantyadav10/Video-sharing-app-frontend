@@ -28,6 +28,8 @@ function ChannelTweets() {
       onSuccess: () => {
         setContent('')
         toast('Tweet posted')
+        const textarea = textareaRef.current;
+        textarea.style.height = "auto";
       },
       onError: (error) => {
         const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
@@ -45,6 +47,7 @@ function ChannelTweets() {
         <div className='flex-1 max-w-4xl px-4 mb-6'>
           <TextArea
             ref={textareaRef}
+            size={'3'}
             placeholder='Add a tweet...'
             value={content}
             onChange={e => setContent(e.target.value)}

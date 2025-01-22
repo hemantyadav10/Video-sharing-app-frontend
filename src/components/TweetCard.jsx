@@ -1,5 +1,5 @@
 import { DotsVerticalIcon, Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
-import { Avatar, Button, DropdownMenu, IconButton, Text, TextArea } from '@radix-ui/themes'
+import { Avatar, Button, DropdownMenu, IconButton, Skeleton, Spinner, Text, TextArea } from '@radix-ui/themes'
 import React, { useEffect, useRef, useState } from 'react'
 import { timeAgo } from '../utils/formatTimeAgo'
 import ThumbsUpSolidIcon from '../assets/ThumbsUpSolidIcon'
@@ -9,6 +9,7 @@ import { useAuth } from '../context/authContext'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import { useToggleTweetLike } from '../lib/queries/likeQueries'
+import { useReadMore } from '../hooks/useReadMore'
 
 function TweetCard({
   tweetData,
@@ -22,6 +23,14 @@ function TweetCard({
   const [content, setContent] = useState(tweetData?.content)
   const { mutate: updateTweet, isPending: updatingTweet } = useUpdateTweet(tweetData?._id, channelId)
   const textareaRef = useRef(null);
+  const {
+    contentRef,
+    isExpanded,
+    isLongContent,
+    toggleExpand,
+    setIsExpanded,
+    setIsLongContent
+  } = useReadMore(content)
 
   const handleInput = () => {
     const textarea = textareaRef.current;
@@ -57,6 +66,8 @@ function TweetCard({
       onSuccess: () => {
         setIsEditable(false)
         toast('Tweet updated')
+        setIsExpanded(true)
+        setIsLongContent(false)
       },
       onError: (error) => {
         const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
@@ -80,12 +91,13 @@ function TweetCard({
       />
       {isEditable && <div className='flex-1'>
         <TextArea
+          autoFocus
+          size={'3'}
           ref={textareaRef}
           onInput={handleInput}
           placeholder='Add a tweet...'
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          autoFocus
           disabled={updatingTweet}
         />
         <div className='flex justify-end gap-2 mt-2 '>
@@ -115,7 +127,7 @@ function TweetCard({
           </Button>
         </div>
       </div>}
-      {!isEditable && <div className='flex flex-col w-full gap-2'>
+      <div className={`flex flex-col w-full gap-2 ${isEditable ? "hidden" : ""} `}>
         <div className='flex items-center justify-between '>
           <div>
             <Text
@@ -123,7 +135,7 @@ function TweetCard({
               size={'2'}
               mr={'3'}
             >
-              @{tweetData?.owner.username}
+              {tweetData?.owner.fullName}
             </Text>
             <Text
               as='span'
@@ -170,14 +182,26 @@ function TweetCard({
             </DropdownMenu.Root>
           }
         </div>
-
         <Text
+          ref={contentRef}
           as='p'
-          size={'2'}
-          className='pr-4 break-words whitespace-pre-wrap'
+          className={`pr-4 break-words whitespace-pre-wrap ${isExpanded ? "" : "line-clamp-3"}`}
         >
           {tweetData?.content}
         </Text>
+        {!updatingTweet && isLongContent && <div>
+          <Button
+            variant='ghost'
+            color='gray'
+            radius='full'
+            onClick={() => {
+              toggleExpand()
+            }}
+            className='py-0 font-medium transition bg-transparent hover:text-white'
+          >
+            {isExpanded ? "Show less" : "Read more"}
+          </Button>
+        </div>}
         <div className='flex items-center gap-1 mt-2 text-xs '>
           <IconButton
             aria-label={tweetData?.isLiked ? 'Unlike tweet' : 'Like tweet'}
@@ -198,9 +222,8 @@ function TweetCard({
             {tweetData?.likesCount || 0}
           </Text>
         </div>
-      </div>}
-
-    </div>
+      </div>
+    </div >
   )
 }
 
