@@ -1,5 +1,6 @@
 import axios from 'axios'
 import toast from 'react-hot-toast';
+import { logoutUser } from './userApi';
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -30,7 +31,12 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config;
 
     // If the error is 401 (Unauthorized), try to refresh the access token
-    if (error.response && error.response.status === 401 && error.response.data?.errors?.name === "TokenExpiredError" && !originalRequest._retry) {
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      error.response.data?.errors?.name === "TokenExpiredError" &&
+      !originalRequest._retry
+    ) {
       originalRequest._retry = true; // Mark this request as retried
 
       try {
@@ -53,6 +59,7 @@ apiClient.interceptors.response.use(
         toast('Your session has expired. Please log in again.')
 
         // Remove any tokens from localStorage
+        await logoutUser()
         localStorage.removeItem('accessToken');
         localStorage.removeItem('user');
 

@@ -4,7 +4,6 @@ import toast from "react-hot-toast";
 
 const AuthContext = createContext({
   user: null,
-  // token: null,
   login: async () => { },
   register: async () => { },
   logout: async () => { },
@@ -16,23 +15,30 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
   const [isAuthenticated, setIsAuthenticated] = useState(!!user)
 
-  const { data: currentUser, isLoading: loadingUserData, isError } = useGetCurrentUser(user?._id)
+  const { data: currentUser, isLoading: loadingUserData } = useGetCurrentUser(user?._id)
 
   const { mutateAsync: loginMutation, isPending: loggingIn } = useLoginUser()
   const { mutateAsync: registerMutation, isPending: registeringUser } = useRegisterUser()
   const { mutateAsync: logoutMutation, isPending: loggingOut } = userLogoutUser()
 
+  // Automatically update user state when `currentUser` changes
+  useEffect(() => {
+    if (currentUser?.data?.user) {
+      setUser(currentUser.data.user);
+      setIsAuthenticated(true);
+      localStorage.setItem('user', JSON.stringify(currentUser.data.user));
+    }
+  }, [currentUser]);
+
   const login = async (data) => {
     try {
       const res = await loginMutation(data)
       const { user, accessToken } = res.data
-      setIsAuthenticated(true)
-      setUser(user)
-      // setToken(accessToken)
 
+      setUser(user)
+      setIsAuthenticated(true)
       localStorage.setItem('accessToken', accessToken)
       localStorage.setItem('user', JSON.stringify(user))
-
     } catch (error) {
       throw error
     }
@@ -49,8 +55,8 @@ const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await logoutMutation()
+      
       setIsAuthenticated(false)
-      // setToken(null)
       setUser(null)
       toast('Logged out successfully')
 
@@ -65,11 +71,11 @@ const AuthProvider = ({ children }) => {
   const data = {
     user: currentUser?.data?.user || user,
     setUser,
-    // token,
     login,
     register,
     logout,
     isAuthenticated,
+    setIsAuthenticated,
     isLoading: loadingUserData || loggingIn || loggingOut || registeringUser,
     logoutLoading: loggingOut,
   }
