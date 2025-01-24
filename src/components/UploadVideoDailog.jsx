@@ -244,9 +244,9 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
                 </label>
               </div>
             </Flex>
-            <div className='flex flex-col gap-6'>
+            <div className='flex flex-col w-full gap-6 md:w-[384px]'>
               {/* Upload Video Section */}
-              <div className='md:w-[384px] pt-4 md:pt-0 w-full'>
+              <div className='w-full pt-4 md:pt-0'>
                 <Text
                   as="p"
                   size="2"
@@ -290,7 +290,7 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
 
                 </>}
                 {videoUrl && <div className='flex flex-col items-center '>
-                  <div className='md:w-[384px]  w-full rounded-t-md  aspect-video '>
+                  <div className='w-full rounded-t-md aspect-video'>
                     <video controls className='object-cover object-center w-full h-full rounded-t-md aspect-video'>
                       <source src={videoUrl} type="video/mp4" />
                     </video>
@@ -355,7 +355,7 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
                 <ErrorLine errors={categoryError} />
               </label>
               {/* Tags Section */}
-              <div>
+              <div className='w-full'>
                 <label
                   htmlFor='tag_input'
                   className='flex-1 text-sm font-medium'

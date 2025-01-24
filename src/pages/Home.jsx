@@ -1,4 +1,4 @@
-import { Spinner } from '@radix-ui/themes'
+import { Card, Flex, Spinner, Text } from '@radix-ui/themes'
 import React, { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useOutletContext } from 'react-router-dom'
@@ -26,6 +26,18 @@ function Home() {
 
   return (
     <div className='flex-1 mb-16 sm:mb-16'>
+      {data?.pages[0]?.data?.totalDocs === 0 && (
+        <Flex className='flex-1' mt={'6'} justify={'center'} m={'4'}>
+          <Card variant="surface" size={'3'}>
+            <Text as="div" weight="bold">
+              No Videos Yet
+            </Text>
+            <Text as="div" color="gray">
+              Looks like there's nothing here. Be the first to add a video and get started!
+            </Text>
+          </Card>
+        </Flex>
+      )}
       <Container showMenu={showMenu}>
         {isFetching && !isFetchingNextPage &&
           Array.from({ length: 12 }).fill(1).map((_, i) => (
