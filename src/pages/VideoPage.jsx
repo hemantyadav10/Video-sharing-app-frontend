@@ -67,7 +67,7 @@ function VideoPage() {
         {!isError && <div >
           <Skeleton loading={isLoading}>
             <div className='w-full overflow-hidden sm:rounded-xl aspect-video'>
-              <video controls className='object-contain object-center w-full h-full'>
+              <video key={video?.data._id} controls className='object-contain object-center w-full h-full'>
                 <source src={video?.data.videoFile} />
               </video>
             </div>

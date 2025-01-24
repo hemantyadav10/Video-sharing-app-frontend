@@ -35,7 +35,7 @@ function CategoryPage() {
   const { data, isFetching, error, isError, refetch } = useGetVideosByCategories(category)
 
   return (
-    <div className='w-full '>
+    <div className='w-full mb-16 sm:mb-0'>
       <div className='flex items-center gap-4 p-6'>
         {categories[category] &&
           <div className='size-[72px] rounded-full overflow-hidden border border-[#484848]'>

@@ -17,7 +17,7 @@ function SubscriptionVideos() {
   const { data: videos, isFetching, error, isError, refetch } = useFetchSubscribedChannelVideos(user?._id)
 
   return (
-    <div className='w-full py-6'>
+    <div className='w-full py-6 mb-16 sm:mb-0'>
       {!isAuthenticated && <>
         <SignInPrompt
           Icon={SubscriptionIcon}

@@ -23,6 +23,7 @@ function TweetCard({
   const [content, setContent] = useState(tweetData?.content)
   const { mutate: updateTweet, isPending: updatingTweet } = useUpdateTweet(tweetData?._id, channelId)
   const textareaRef = useRef(null);
+  const cardRef = useRef(null)
   const {
     contentRef,
     isExpanded,
@@ -78,12 +79,21 @@ function TweetCard({
 
   useEffect(() => {
     if (isEditable && textareaRef.current) {
-      handleInput(); // Adjust height when entering edit mode
+      handleInput();
+      // Adjust height when entering edit mode
+    }
+    if (cardRef?.current && isEditable) {
+      const offset = 124;
+      const elementTop = cardRef.current.getBoundingClientRect().top + window.scrollY;
+
+      window.scrollTo({
+        top: elementTop - offset,
+      });
     }
   }, [isEditable]);
 
   return (
-    <div className='flex gap-3 pb-4 border border-[#484848] p-4 rounded-xl hover:shadow-lg hover:shadow-black/30 transition-shadow'>
+    <div ref={cardRef} className='flex gap-3 pb-4 border border-[#484848] p-4 rounded-xl hover:shadow-lg hover:shadow-black/30 transition-shadow'>
       <Avatar
         radius='full'
         src={tweetData?.owner.avatar}
@@ -127,7 +137,7 @@ function TweetCard({
           </Button>
         </div>
       </div>}
-      <div className={`flex flex-col w-full gap-2 ${isEditable ? "hidden" : ""} `}>
+      {!isEditable && <div className={`flex flex-col w-full gap-2`}>
         <div className='flex items-center justify-between '>
           <div>
             <Text
@@ -222,7 +232,7 @@ function TweetCard({
             {tweetData?.likesCount || 0}
           </Text>
         </div>
-      </div>
+      </div>}
     </div >
   )
 }

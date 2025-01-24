@@ -50,7 +50,7 @@ function VideoCard({
         {/* hidden={loading || !isAuthenticated} */}
 
         {!hideAvatar &&
-          <HoverCard.Root onOpenChange={(open) => {
+          <HoverCard.Root openDelay={500} onOpenChange={(open) => {
             if (open && !data) {
               refetch()
             }

@@ -65,11 +65,11 @@ function SaveToPlaylistButton({ videoData }) {
         onSuccess: () => {
           toast.success(`Removed from ${playlistName}`)
           console.log(`Removed from ${playlistName}`)
-        }, 
+        },
         onError: (error) => {
           const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
           toast.error(errorMessage);
-  
+
           // Rollback changes
           const revertedCheckedPlaylists = [...checkedPlaylists, playlistId];
           setCheckedPlaylists(revertedCheckedPlaylists);
@@ -118,15 +118,12 @@ function SaveToPlaylistButton({ videoData }) {
           className='flex flex-col p-0'
         >
           <Dialog.Title
-            size={'3'}
+            size={'4'}
             weight={'medium'}
-            mb={'0'}
-            className='flex items-center justify-between p-6'
+            mb={'1'}
+            className='p-6'
           >
-            <Text className='w-full'>
-              Save video to..
-            </Text>
-            {/* <CloseButton /> */}
+            Save video to..
           </Dialog.Title>
           <div className={`relative py-2 ${(addingVideo || removingVideo) && 'bg-opacity-50'}`}>
             {
@@ -137,6 +134,7 @@ function SaveToPlaylistButton({ videoData }) {
             }
             {playlist?.data.map((data) => (
               <Text
+                key={data._id}
                 as="label"
                 size="2"
                 className={`cursor-pointer ${(addingVideo || removingVideo) && 'pointer-events-none'} `}

@@ -35,7 +35,6 @@ import Help from './pages/Help.jsx';
 import CategoryPage from './pages/CategoryPage.jsx';
 import TagsPage from './pages/TagsPage.jsx';
 import NotFound from './pages/NotFound.jsx';
-import { TriangleAlert } from 'lucide-react';
 
 
 export const queryClient = new QueryClient({

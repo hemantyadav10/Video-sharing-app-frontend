@@ -14,7 +14,7 @@ function TagsPage() {
   const [showMenu] = useOutletContext()
 
   return (
-    <div className='w-full'>
+    <div className='w-full mb-16 sm:mb-0'>
       <div className='p-6 px-4 sm:px-6 lg:px-10 bg-gradient-to-t from-[#111111] from-40%  to-[rgba(0,119,255,0.1)]'>
         <Text
           weight={'medium'}
