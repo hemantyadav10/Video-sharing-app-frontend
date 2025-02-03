@@ -11,7 +11,7 @@ function AboutChannelDialog({ isOpen, setOpenDialog, joiningDate, channelId }) {
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopy = () => {
-    const textToCopy = window.location.href;
+    const textToCopy = `${window.location.origin}/channel/${channelId}`;
     navigator.clipboard.writeText(textToCopy).then(() => {
       // Highlight the text
       const textElement = document.getElementById("copy-text");
@@ -27,6 +27,7 @@ function AboutChannelDialog({ isOpen, setOpenDialog, joiningDate, channelId }) {
       }, 2000);
     });
   };
+
 
 
 
@@ -73,7 +74,13 @@ function AboutChannelDialog({ isOpen, setOpenDialog, joiningDate, channelId }) {
             <>
               <Text as="p" size="2" className="flex items-center gap-3">
                 <Link2 strokeWidth={1.25} size={22} />
-                <input id="copy-text" type="text" readOnly value={window.location.href} className='flex-1 bg-transparent focus:outline-none focus:ring-1 focus:ring-[#2870bd] rounded-sm' />
+                <input
+                  id="copy-text"
+                  type="text"
+                  readOnly
+                  value={`${window.location.origin}/channel/${channelId}`}
+                  className='flex-1 bg-transparent focus:outline-none focus:ring-1 focus:ring-[#2870bd] rounded-sm'
+                />
                 <IconButton
                   variant="ghost"
                   color={isCopied ? 'green' : 'gray'}

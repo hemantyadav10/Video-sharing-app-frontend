@@ -1,23 +1,24 @@
-import { AvatarIcon, HamburgerMenuIcon, HomeIcon, PlusCircledIcon, VideoIcon } from '@radix-ui/react-icons'
 import { Avatar, IconButton, Text } from '@radix-ui/themes'
+import { CirclePlus, Home, TvMinimalPlay } from 'lucide-react'
 import React from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { useAuth } from '../context/authContext'
 
 function BottomBar() {
   const { user, isAuthenticated } = useAuth()
 
   return (
-    <div className={`fixed grid ${isAuthenticated ? 'grid-cols-4' : 'grid-cols-3'} bottom-0 left-0 right-0 bg-[#0c0c0d]/80    backdrop-blur-md border-t border-[#484848] sm:hidden h-16 z-50 `}>
+    <div className={`fixed grid ${isAuthenticated ? 'grid-cols-4' : 'grid-cols-3'} bottom-0 left-0 right-0 bg-[#0c0c0d]/80    backdrop-blur-md border-t border-[#484848] sm:hidden h-16 z-50`}>
+
       <NavLink
         to={'/'}
-        className={({ isActive }) => `${isActive ? 'font-medium text-[#70b8ff]' : ''} col-span-1 flex flex-col items-center  justify-center p-2 rounded-lg  transition-all focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b]`}
+        className={({ isActive }) => `${isActive ? ' font-medium text-[#70b8ff]' : ''} col-span-1 flex flex-col items-center  justify-center p-2 rounded-lg  transition-all focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b] `}
       >
-        <HomeIcon height={'24px'} width={'24px'} />
+        <Home strokeWidth={1.5} size={22} />
         <Text
-          size={'1'}
           mt={'1'}
           align={'center'}
+          className='text-[10px]'
         >
           Home
         </Text>
@@ -26,11 +27,11 @@ function BottomBar() {
         to={isAuthenticated ? '/dashboard' : '/login'}
         className={({ isActive }) => `${isActive ? 'font-medium text-[#70b8ff]' : ''} col-span-1 flex flex-col items-center  justify-center p-2 rounded-lg  transition-all focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b]`}
       >
-        <PlusCircledIcon height={'24px'} width={'24px'} />
+        <CirclePlus strokeWidth={1.5} size={22} />
         <Text
-          size={'1'}
           mt={'1'}
           align={'center'}
+          className='text-[10px]'
         >
           Create
         </Text>
@@ -39,11 +40,11 @@ function BottomBar() {
         to={'/subscriptions'}
         className={({ isActive }) => `${isActive ? 'font-medium text-[#70b8ff]' : ''} col-span-1 flex flex-col items-center  justify-center p-2 rounded-lg  transition-all focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b]`}
       >
-        <AvatarIcon height={'24px'} width={'24px'} />
+        <TvMinimalPlay strokeWidth={1.5} size={22} />
         <Text
-          size={'1'}
           mt={'1'}
           align={'center'}
+          className='text-[10px]'
         >
           Subscriptions
         </Text>
@@ -66,9 +67,9 @@ function BottomBar() {
             />
           </IconButton>
           <Text
-            size={'1'}
             mt={'1'}
             align={'center'}
+            className='text-[10px]'
           >
             You
           </Text>

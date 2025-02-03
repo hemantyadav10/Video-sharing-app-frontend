@@ -11,7 +11,7 @@ function Home() {
   const [showMenu] = useOutletContext()
   const { data, isFetching, error, fetchNextPage, hasNextPage, isFetchingNextPage, isError, refetch } = useFetchAllVideos(12)
   const { ref, inView } = useInView({
-    rootMargin: '50px'
+    rootMargin: '350px'
   })
 
   useEffect(() => {

@@ -89,7 +89,7 @@ function ChannelTweets() {
       }
 
       {/* tweet cards */}
-      <div className='flex flex-col w-full max-w-4xl gap-6 p-4 py-4 mb-16'>
+      <div className='flex flex-col w-full max-w-4xl mb-16 sm:gap-6 sm:p-4 '>
 
         {isError && (
           <div className='border border-[#484848] rounded-xl p-6 pt-0'>

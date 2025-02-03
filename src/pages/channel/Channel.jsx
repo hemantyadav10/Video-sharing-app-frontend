@@ -1,12 +1,11 @@
-import { Pencil1Icon } from '@radix-ui/react-icons'
-import { AspectRatio, Button, Flex, Heading, Popover, Skeleton, Spinner, TabNav, Text } from '@radix-ui/themes'
-import React, { useEffect, useState } from 'react'
+import { Button, Flex, Popover, Skeleton, Text } from '@radix-ui/themes'
+import React, { useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useParams } from 'react-router-dom'
-import { useFetchUserChannelInfo, useFetchUserVideos } from '../../lib/queries/userQueries'
-import { useAuth } from '../../context/authContext'
-import SubscriptionButton from '../../components/SubscriptionButton'
 import AboutChannelDialog from '../../components/AboutChannelDialog'
 import QueryErrorHandler from '../../components/QueryErrorHandler'
+import SubscriptionButton from '../../components/SubscriptionButton'
+import { useAuth } from '../../context/authContext'
+import { useFetchUserChannelInfo, useFetchUserVideos } from '../../lib/queries/userQueries'
 
 function Channel() {
   const { userId } = useParams()
@@ -25,13 +24,13 @@ function Channel() {
       {isError && <QueryErrorHandler error={error} onRetry={refetch} />}
       {!isError &&
         <>
-        <div className={`aspect-[6/1] mx-4 rounded-xl xl:mx-20 lg:mx-10 ${data?.data?.coverImage === '' && "hidden"}`}>
+        <div className={`sm:aspect-[6/1] aspect-[7/2] mx-4 rounded-xl xl:mx-20 lg:mx-10 ${data?.data?.coverImage === '' && "hidden"}`}>
             <Skeleton loading={loadingProfileInfo} className='w-full h-full rounded-xl'>
 
               {data?.data?.coverImage && <img
                 src={data?.data?.coverImage}
                 alt="A house in a forest"
-                className='object-cover object-center w-full h-full rounded-xl aspect-[6/1]'
+                className='object-cover object-center w-full h-full rounded-xl sm:aspect-[6/1] aspect-[7/2]'
               />}
               {/* "https://yt3.googleusercontent.com/OK1WrCB-Mv4iUly3zcdbhKbE6bwJ4gDVF70hRvLcc56UQlHQN77oRrXSPFnyO6pyIqI2f7_R8w=w2120-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj" || */}
               {/* || 'https://storage.googleapis.com/support-kms-prod/Ch5HG5RGzGnfHhvVSD93gdoEvWm5IPGUkOnS' */}

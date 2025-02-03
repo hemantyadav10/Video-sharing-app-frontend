@@ -45,7 +45,7 @@ function VideoCard({
         </Link>
       </Skeleton>
       <Flex
-        className={`relative ${list ? "sm:col-span-7" : ""} p-1 sm:p-0`}
+        className={`relative ${list ? "sm:col-span-7" : ""} px-2 sm:p-0`}
       >
         {/* hidden={loading || !isAuthenticated} */}
 

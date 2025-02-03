@@ -10,8 +10,8 @@ const getUserSubscribedChannels = (subscriberId) => asyncHandler(async () => {
 });
 
 // Fetches videos from the channels the user is subscribed to
-const getVideosFromSubscribedChannels = () => asyncHandler(async () => {
-  const res = await apiClient.get(`${SUBSCRIPTIONS_BASE_URL}/videos`);
+const getVideosFromSubscribedChannels = (limit = 12, page = 1) => asyncHandler(async () => {
+  const res = await apiClient.get(`${SUBSCRIPTIONS_BASE_URL}/videos?limit=${limit}&page=${page}`);
   return res.data;
 });
 

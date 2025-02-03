@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query"
 import { getUserSubscribedChannels, getVideosFromSubscribedChannels, toggleSubscription } from "../../api/subscription"
 import { queryClient } from "../../main"
 
@@ -10,10 +10,12 @@ const useFetchSubcribedChannels = (subscriberId) => {
   })
 }
 
-const useFetchSubscribedChannelVideos = (userId) => {
-  return useQuery({
+const useFetchSubscribedChannelVideos = (userId, limit = 12) => {
+  return useInfiniteQuery({
     queryKey: ['videos', 'subscriptionVideos', userId],
-    queryFn: getVideosFromSubscribedChannels,
+    queryFn: ({ pageParam = 1 }) => getVideosFromSubscribedChannels(limit, pageParam),
+    getNextPageParam: (lastPage) => lastPage?.data?.nextPage || null,
+    keepPreviousData: true,
     enabled: !!userId
   })
 }
