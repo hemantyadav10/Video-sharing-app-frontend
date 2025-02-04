@@ -29,7 +29,7 @@ function VideoPage() {
     rootMargin: '50px',
     triggerOnce: true
   })
-  const { data: videoData, isLoading: loadingVideos, isFetchingNextPage, hasNextPage, fetchNextPage } = useFetchUserVideos(video?.data?.owner._id, '', 6);
+  const { data: videoData, isLoading: loadingVideos, isFetchingNextPage, hasNextPage, fetchNextPage } = useFetchUserVideos(video?.data?.owner._id, '', 7);
   const {
     contentRef,
     isExpanded,

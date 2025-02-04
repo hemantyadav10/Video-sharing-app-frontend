@@ -24,7 +24,7 @@ function Channel() {
       {isError && <QueryErrorHandler error={error} onRetry={refetch} />}
       {!isError &&
         <>
-        <div className={`sm:aspect-[6/1] aspect-[7/2] mx-4 rounded-xl xl:mx-20 lg:mx-10 ${data?.data?.coverImage === '' && "hidden"}`}>
+          <div className={`sm:aspect-[6/1] aspect-[7/2] mx-4 rounded-xl xl:mx-20 lg:mx-10 ${data?.data?.coverImage === '' && "hidden"}`}>
             <Skeleton loading={loadingProfileInfo} className='w-full h-full rounded-xl'>
 
               {data?.data?.coverImage && <img
@@ -246,25 +246,30 @@ function Channel() {
 
       <div className=' grid grid-cols-3 sm:flex px-4 text-sm border-b border-[#484848] mt-2 border-t border-t-[#111113] xl:px-20 sticky top-[63px] z-30 bg-[#111113] lg:px-10 gap-x-1'>
         <NavLink
+          preventScrollReset={true}
           to={`/channel/${userId}/videos`}
           className={() => `tabNav ${isVideosActive ? "tabNav_active" : "tabNav_inactive"}`}
         >
           Videos
         </NavLink>
         <NavLink
+          preventScrollReset={true}
           to={`/channel/${userId}/playlists`}
           className={({ isActive }) => `tabNav ${isActive ? "tabNav_active" : "tabNav_inactive"} `}
         >
           Playlists
         </NavLink>
         <NavLink
+          preventScrollReset={true}
           to={`/channel/${userId}/tweets`}
           className={({ isActive }) => `tabNav ${isActive ? "tabNav_active" : "tabNav_inactive"} `}
         >
           Tweets
         </NavLink>
       </div>
-      <div className='flex-1 py-4 mb-16 sm:mb-0 sm:px-4 lg:px-10 xl:px-20'>
+      <div
+        style={{ minHeight: 'calc(100vh - 102px)' }}
+        className='flex-1 py-4 mb-16 sm:mb-0 sm:px-4 lg:px-10 xl:px-20'>
         <Outlet
           context={{ userId }}
         />

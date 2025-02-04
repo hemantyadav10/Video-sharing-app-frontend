@@ -1,11 +1,11 @@
 import { Spinner } from '@radix-ui/themes'
+import { ListVideo } from 'lucide-react'
 import React from 'react'
 import { useOutletContext } from 'react-router-dom'
-import VideoIcon from '../../assets/VideoIcon'
 import EmptyLibrary from '../../components/EmptyLibrary'
 import PlaylistCard from '../../components/PlaylistCard'
-import { useFetchUserPlaylists } from '../../lib/queries/playlistQueries'
 import QueryErrorHandler from '../../components/QueryErrorHandler'
+import { useFetchUserPlaylists } from '../../lib/queries/playlistQueries'
 
 function ChannelPlaylists() {
   const { userId } = useOutletContext()
@@ -17,26 +17,29 @@ function ChannelPlaylists() {
   </div>
 
   return (
-    <>
-      <div className='flex flex-col px-4 py-6 gap-y-8 gap-x-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:px-0'>
-        {playlists?.data.map((playlist) => (
-          <PlaylistCard
-            key={playlist._id}
-            playlistData={playlist}
-            loading={isLoading}
-          />
-        ))}
-      </div>
-      {playlists?.data.length === 0 &&
-        <div className='-mt-12 '>
-          <EmptyLibrary
-            Icon={VideoIcon}
-            title='No playlists created'
-            description='There are no playlists in this library'
-          />
-        </div>
+    <div>
+      {playlists?.data.length > 0
+        ? (
+          <div className='flex flex-col px-4 py-6 gap-y-8 gap-x-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:px-0'>
+            {playlists?.data.map((playlist) => (
+              <PlaylistCard
+                key={playlist._id}
+                playlistData={playlist}
+                loading={isLoading}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className='sm:mt-4'>
+            <EmptyLibrary
+              Icon={ListVideo}
+              title='No playlists created'
+              description='There are no playlists in this library'
+            />
+          </div>
+        )
       }
-    </>
+    </div>
   )
 }
 

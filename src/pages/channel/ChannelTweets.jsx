@@ -1,5 +1,5 @@
-import { Pencil2Icon } from '@radix-ui/react-icons'
 import { Button, Spinner, TextArea } from '@radix-ui/themes'
+import { SquarePen } from 'lucide-react'
 import React, { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useOutletContext } from 'react-router-dom'
@@ -44,7 +44,7 @@ function ChannelTweets() {
     <div>
       {/* Text area to write a tweet */}
       {(isAuthenticated && user?._id === userId) &&
-        <div className='flex-1 max-w-4xl px-4 mb-6'>
+        <div className='flex-1 max-w-4xl px-4 mx-auto mb-6'>
           <TextArea
             ref={textareaRef}
             size={'3'}
@@ -89,7 +89,7 @@ function ChannelTweets() {
       }
 
       {/* tweet cards */}
-      <div className='flex flex-col w-full max-w-4xl mb-16 sm:gap-6 sm:p-4 '>
+      <div className='flex flex-col w-full max-w-4xl mx-auto sm:gap-6 sm:p-4 '>
 
         {isError && (
           <div className='border border-[#484848] rounded-xl p-6 pt-0'>
@@ -107,7 +107,7 @@ function ChannelTweets() {
         ))}
         {!isLoading && !isError && userTweets?.data.length === 0 &&
           <EmptyLibrary
-            Icon={Pencil2Icon}
+            Icon={SquarePen}
             title='Publish Tweet'
             description='Tweets appear here after you publish'
           />

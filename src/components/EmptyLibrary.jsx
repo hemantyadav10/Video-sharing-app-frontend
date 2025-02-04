@@ -8,19 +8,13 @@ function EmptyLibrary({
   description = 'There are no videos in this playlist yet',
   bgColor = 'bg-[#d3edf812]',
   iconBgColor = 'bg-[#d3edf812]',
-  iconSize = '28px',
-  iconFill = '#edeef0'
+  iconSize = 24,
 }) {
   return (
     <div className='flex flex-col items-center justify-center gap-3 text-sm '>
       <div className={`flex items-center justify-center p-3 rounded-full w-max ${bgColor}`}>
         <div className={`p-2 rounded-full flex justify-center items-center ${iconBgColor}`}>
-          <Icon
-            width={iconSize}
-            height={iconSize}
-            className='text-[#edeef0]'
-            fill={iconFill}
-          />
+          <Icon size={iconSize} strokeWidth={1.5} />
         </div>
       </div>
       <Text size={'5'} weight={'medium'}

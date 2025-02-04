@@ -11,12 +11,14 @@ function TagInputComponent({
   className = ''
 }) {
   const handleAddTag = () => {
-    if (tagName?.trim() !== '' && !tags.includes(tagName.trim().toLowerCase())) {
+    const trimmedTag = tagName?.trim();
+
+    if (trimmedTag !== '' && !tags.some(tag => tag.toLowerCase() === trimmedTag.toLowerCase())) {
       setTags(prevTags => {
         if (Array.isArray(prevTags)) {
-          return [...prevTags, tagName.trim().toLowerCase()];
+          return [...prevTags, trimmedTag];
         }
-        return [tagName.trim().toLowerCase()];
+        return [trimmedTag];
       });
       setTagName('');
     }

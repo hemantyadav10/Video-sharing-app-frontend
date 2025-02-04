@@ -28,9 +28,8 @@ function TagsPage() {
           size={'8'}
           as='p'
           weight={'bold'}
-          className='capitalize'
         >
-          {tag?.split('-').join(' ')}
+          {tag}
         </Text>
         <Text
           weight={'medium'}

@@ -88,12 +88,13 @@ function TweetCard({
 
       window.scrollTo({
         top: elementTop - offset,
+        behavior:"smooth"
       });
     }
   }, [isEditable]);
 
   return (
-    <div ref={cardRef} className='flex gap-3 pb-4 border-b sm:border border-[#484848] p-4 sm:rounded-xl hover:shadow-lg hover:shadow-black/30 transition-shadow'>
+    <div ref={cardRef} className='flex gap-3 pb-4 border-b sm:border border-[#484848] p-4 sm:rounded-xl hover:shadow-lg hover:shadow-black/30 transition-shadow '>
       <Avatar
         radius='full'
         src={tweetData?.owner.avatar}

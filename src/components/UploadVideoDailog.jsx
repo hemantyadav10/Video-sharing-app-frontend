@@ -76,6 +76,10 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
       onSuccess: () => {
         toast.success('Video uploaded sucessfully')
         setDialogOpen(false)
+        reset()
+        setCategoryError(null)
+        setCategory('')
+        setTags([])
       },
       onError: (error) => {
         const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';

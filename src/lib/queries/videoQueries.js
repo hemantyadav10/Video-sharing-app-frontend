@@ -26,7 +26,7 @@ const useFetchVideos = (searchParams, limit = 10) => {
 };
 
 
-const useFetchAllVideos = (limit = 2) => {
+const useFetchAllVideos = (limit = 12) => {
   return useInfiniteQuery({
     queryKey: ['videos'],
     queryFn: ({ pageParam = 1 }) => fetchAllVideos(`limit=${limit}&page=${pageParam}`),
@@ -52,7 +52,6 @@ const useTogglePublishStatus = (userId) => {
   return useMutation({
     mutationFn: (videoId) => togglePublishStatus(videoId),
     onSuccess: (response) => {
-      console.log(response)
       queryClient.setQueryData(['channel_videos'], (prev) => {
         return {
           ...prev,
@@ -87,7 +86,13 @@ const useUpdateVideo = (userId) => {
         }
       })
 
-      queryClient.invalidateQueries({ queryKey: ['video', userId] })
+      const queries = queryClient.getQueryCache().getAll();
+
+      queries.forEach(query => {
+        if (!query.queryKey[0].startsWith('stats')) {
+          queryClient.invalidateQueries({queryKey: query.queryKey});
+        }
+      });
     }
   })
 }
@@ -102,7 +107,7 @@ const usePublishVideo = (userId) => {
           data: [{ ...res.data, likes: 0 }, ...prev.data]
         }
       })
-      queryClient.setQueryData(['stats', userId], prev => {
+      queryClient.setQueryData(['stats', { channelId: userId, allVideos: true }], prev => {
         if (!prev) return;
         return {
           ...prev,
@@ -120,7 +125,6 @@ const useDeleteVideo = (userId) => {
     mutationFn: deleteVideo,
     onSuccess: ({ data }) => {
       const videoId = data.videoId
-      console.log(data)
       queryClient.setQueryData(['channel_videos'], prev => {
         return {
           ...prev,
@@ -141,7 +145,7 @@ const useGetVideosByCategories = (category) => {
 
 const useGetVideoByTag = (tag) => {
   return useQuery({
-    queryKey: ['videos', { tag }],
+    queryKey: ['videos', { tag: tag.toLowerCase() }],
     queryFn: () => getVideosByTag(tag)
   })
 }

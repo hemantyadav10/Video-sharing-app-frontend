@@ -1,12 +1,13 @@
-import { ChevronDownIcon, PlayIcon, PlusIcon } from '@radix-ui/react-icons';
+import { ChevronDownIcon, PlusIcon } from '@radix-ui/react-icons';
 import { Button, SegmentedControl, Separator, Spinner } from '@radix-ui/themes';
+import { Play } from 'lucide-react';
 import React, { useState } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
 import EmptyLibrary from '../../components/EmptyLibrary';
-import VideoCard from '../../components/VideoCard';
-import { useFetchUserVideos } from '../../lib/queries/userQueries';
-import { useAuth } from '../../context/authContext';
 import QueryErrorHandler from '../../components/QueryErrorHandler';
+import VideoCard from '../../components/VideoCard';
+import { useAuth } from '../../context/authContext';
+import { useFetchUserVideos } from '../../lib/queries/userQueries';
 
 function ChannelVideos() {
   const [filters, setFilters] = useState('sortBy=createdAt&sortType=desc'); // Initial filter query
@@ -60,9 +61,9 @@ function ChannelVideos() {
         </div>
       }
       {!loadingVideos && !isError && videoData?.pages[0]?.data.totalDocs === 0 &&
-        <div className='flex flex-col items-center justify-center gap-6'>
+        <div className='flex flex-col items-center justify-center gap-6 sm:mt-4'>
           <EmptyLibrary
-            Icon={PlayIcon}
+            Icon={Play}
             title='No videos uploaded'
             description={user?._id === userId ? "You haven't uploaded any videos yet. Click here to upload your first video!" : 'This page is yet to upload a video. Search another page in order to find more videos.'}
           />
@@ -105,7 +106,7 @@ function ChannelVideos() {
       </div>}
       {isFetchingNextPage && <div className='flex items-center h-8 my-4'><Spinner className='h-6 mx-auto' /></div>}
       {/* Load More Button */}
-      {(hasNextPage && !isFetchingNextPage) ?
+      {(hasNextPage && !isFetchingNextPage) &&
         < div className='flex items-center my-4'>
           <Separator className='flex-1' />
           <Button
@@ -119,8 +120,7 @@ function ChannelVideos() {
             Show more<ChevronDownIcon className='size-5' />
           </Button>
           <Separator className='flex-1' />
-        </div> : <div className='h-8 my-4'></div>
-      }
+        </div>}
     </div >
   )
 }
