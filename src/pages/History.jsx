@@ -147,18 +147,24 @@ function History() {
                 </Text>
                 <Separator className='flex-1' />
               </div>
-
-              <div className='flex flex-col sm:gap-4'>
-                {list.videos.map((video) => (
-                  <VideoCard
-                    key={video._id}
-                    list
-                    videoData={video}
-                    loading={isLoading}
-                  />
-
-                ))}
-              </div>
+              {list?.videos.length > 0
+                ? (
+                  <div className='flex flex-col sm:gap-4'>
+                    {list.videos.map((video) => (
+                      <VideoCard
+                        key={video._id}
+                        list
+                        videoData={video}
+                        loading={isLoading}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <Text as='p' size={'2'} align={'center'}>
+                    No videos for this date
+                  </Text>
+                )
+              }
             </div>
           )
           )

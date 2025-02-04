@@ -22,7 +22,7 @@ const SearchResults = () => {
 
 	const { data: result, isLoading: loadingResults, hasNextPage, fetchNextPage, isFetchingNextPage, error: errorFetchingVideos, isError: isErrorFetchingVideos, refetch: refetchVideos } = useFetchVideos(searchParams)
 	const { ref, inView } = useInView({
-		rootMargin: '100px'
+		rootMargin: '400px'
 	})
 
 	const { data, isLoading: loadingChannelResults, isError, isFetching, error, refetch } = useSearchUser(query, searchType, user?._id)

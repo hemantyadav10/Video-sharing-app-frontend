@@ -45,8 +45,8 @@ const deleteVideo = (videoId) => asyncHandler(async () => {
 });
 
 // Fetches videos with a specific tag
-const getVideosByTag = (tag) => asyncHandler(async () => {
-  const res = await apiClient.get(`${VIDEO_BASE_URL}/tags/${tag}`);
+const getVideosByTag = (tag, limit = 12, page = 1) => asyncHandler(async () => {
+  const res = await apiClient.get(`${VIDEO_BASE_URL}/tags/${tag}?limit=${limit}&page=${page}`);
   return res.data;
 });
 

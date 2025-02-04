@@ -12,19 +12,19 @@ function SubscribedChannelCard({
   return (
     <div className='flex items-center justify-between w-full max-w-3xl gap-4 mx-auto '>
       <Link to={`/channel/${channel?._id}`} className='flex items-center flex-1 gap-4 group' >
-        <Skeleton className='w-32 min-w-16 aspect-square' loading={loading}>
-          <div className='transition-all rounded-full max-w-32 min-w-16 group-hover:brightness-75 group-active:brightness-100'>
-            <img src={channel?.avatar} alt="" className='object-cover object-center w-full rounded-full aspect-square' />
+        <Skeleton  loading={loading}>
+          <div className='w-16 transition-all rounded-full sm:w-20 md:w-28 group-hover:brightness-75 group-active:brightness-100 aspect-square'>
+            <img src={channel?.avatar} alt="" className='object-cover object-center w-full h-full rounded-full' />
           </div>
         </Skeleton>
         <div className='flex-1 space-y-2'>
           <p className='text-lg font-medium break-words line-clamp-2'>
-            <Skeleton height={'28px'} className='w-1/2' loading={loading}>
+            <Skeleton height={'20px'} className='w-1/2' loading={loading}>
               {channel?.fullName}
             </Skeleton>
           </p>
-          <Skeleton loading={loading}>
-            <span className='text-xs text-[#f1f7feb5]'>@{channel?.username} • {channel?.subscribersCount} subscribers</span>
+          <Skeleton loading={loading} className='w-40'>
+            <p className='text-xs text-[#f1f7feb5]'>@{channel?.username} • {channel?.subscribersCount} subscribers</p>
           </Skeleton>
         </div>
       </Link>

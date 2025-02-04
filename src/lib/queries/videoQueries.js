@@ -90,7 +90,7 @@ const useUpdateVideo = (userId) => {
 
       queries.forEach(query => {
         if (!query.queryKey[0].startsWith('stats')) {
-          queryClient.invalidateQueries({queryKey: query.queryKey});
+          queryClient.invalidateQueries({ queryKey: query.queryKey });
         }
       });
     }
@@ -136,17 +136,21 @@ const useDeleteVideo = (userId) => {
   })
 }
 
-const useGetVideosByCategories = (category) => {
-  return useQuery({
+const useGetVideosByCategories = (category, limit = 12) => {
+  return useInfiniteQuery({
     queryKey: ['videos', { category }],
-    queryFn: () => fetchAllVideos(`category=${category}`)
+    queryFn: ({ pageParam = 1 }) => fetchAllVideos(`category=${category}&limit=${limit}&page=${pageParam}`),
+    getNextPageParam: (lastPage) => lastPage?.data?.nextPage || null,
+    keepPreviousData: true,
   })
 }
 
-const useGetVideoByTag = (tag) => {
-  return useQuery({
+const useGetVideoByTag = (tag, limit = 12) => {
+  return useInfiniteQuery({
     queryKey: ['videos', { tag: tag.toLowerCase() }],
-    queryFn: () => getVideosByTag(tag)
+    queryFn: ({ pageParam = 1 }) => getVideosByTag(tag, limit, pageParam),
+    getNextPageParam: (lastPage) => lastPage?.data?.nextPage || null,
+    keepPreviousData: true,
   })
 }
 

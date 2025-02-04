@@ -4,8 +4,8 @@ import apiClient from "./apiClient";
 const SUBSCRIPTIONS_BASE_URL = '/subscriptions'
 
 // Fetches a list of channels the user is subscribed to
-const getUserSubscribedChannels = (subscriberId) => asyncHandler(async () => {
-  const res = await apiClient.get(`${SUBSCRIPTIONS_BASE_URL}/u/${subscriberId}`);
+const getUserSubscribedChannels = (subscriberId, limit = 6, page = 1) => asyncHandler(async () => {
+  const res = await apiClient.get(`${SUBSCRIPTIONS_BASE_URL}/u/${subscriberId}?limit=${limit}&page=${page}`);
   return res.data;
 });
 
