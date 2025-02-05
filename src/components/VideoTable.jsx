@@ -197,7 +197,7 @@ function VideoTable({
                       </AlertDialog.Trigger>
                     </Tooltip>
                     <AlertDialog.Content maxWidth="550px" className='relative'>
-                      <AlertDialog.Title>
+                      <AlertDialog.Title size={'4'}>
                         Permanently delete this video?
                       </AlertDialog.Title>
                       <div className='absolute top-0 left-6 right-6 '>

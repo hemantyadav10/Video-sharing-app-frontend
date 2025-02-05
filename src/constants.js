@@ -1,0 +1,7 @@
+const MAX_IMAGE_SIZE = 3
+const MAX_VIDEO_SIZE = 30
+
+export {
+  MAX_IMAGE_SIZE,
+  MAX_VIDEO_SIZE, 
+}

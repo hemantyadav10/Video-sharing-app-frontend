@@ -1,15 +1,16 @@
-import { Button, Dialog, Flex, ScrollArea, Select, Text, TextArea, TextField, Tooltip } from '@radix-ui/themes'
+import { Button, Callout, Dialog, Flex, ScrollArea, Select, Text, TextArea, Tooltip } from '@radix-ui/themes'
 import React, { useState } from 'react'
-import CloseButton from './CloseButton'
-import { UploadIcon } from '@radix-ui/react-icons'
-import { set, useForm } from 'react-hook-form'
-import { useUpdateVideo } from '../lib/queries/videoQueries'
+import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { useAuth } from '../context/authContext'
-import { categories } from '../utils/categories'
-import TagInputComponent from './TagInputComponent'
 import { BarLoader } from 'react-spinners'
 import uploadImg from '../assets/uploadImg.png'
+import { useAuth } from '../context/authContext'
+import { useUpdateVideo } from '../lib/queries/videoQueries'
+import { categories } from '../utils/categories'
+import CloseButton from './CloseButton'
+import TagInputComponent from './TagInputComponent'
+import { MAX_IMAGE_SIZE } from '../constants'
+import { InfoCircledIcon } from '@radix-ui/react-icons'
 
 
 
@@ -17,12 +18,13 @@ function EditVideoDailog({ children, video }) {
   const { _id: videoId } = video
   const { user } = useAuth()
 
-  const { register, handleSubmit, reset, watch, resetField } = useForm({
+  const { register, handleSubmit, reset, watch, resetField, formState: { errors } } = useForm({
     defaultValues: {
       title: video.title || '',
       description: video.description || '',
       videoThumbnail: ''
-    }
+    },
+    mode: "onChange"
   })
   const [category, setCategory] = useState(video.category || '')
   const [tags, setTags] = useState(video.tags || [])
@@ -30,7 +32,7 @@ function EditVideoDailog({ children, video }) {
 
   const [open, setOpen] = useState(false)
 
-  const { mutate: updateVideo, isPending: updatingVideo } = useUpdateVideo(user?._id)
+  const { mutate: updateVideo, isPending: updatingVideo, error, reset: resetError } = useUpdateVideo(user?._id)
 
   const data = watch(['title', 'description', 'videoThumbnail'])
   const thumbnail = data[2] ? URL.createObjectURL(data[2][0]) : null;
@@ -72,10 +74,6 @@ function EditVideoDailog({ children, video }) {
           toast.success('Video updated')
           setOpen(false)
         },
-        onError: (error) => {
-          const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
-          toast.error(errorMessage);
-        }
       })
     } else {
       toast('No changes to save')
@@ -93,6 +91,7 @@ function EditVideoDailog({ children, video }) {
         } else {
           setOpen(o)
           resetField('videoThumbnail')
+          resetError()
           setCategory(video?.category)
           setTags(video?.tags)
         }
@@ -124,8 +123,22 @@ function EditVideoDailog({ children, video }) {
           />
         </div>
         {updatingVideo && <div className='absolute inset-0 bg-black/30 top-14 rounded-b-xl z-[100]'></div>}
+        {/* Error Callout */}
+        {error && (
+          <Callout.Root
+            m={'2'}
+            color='red'
+            variant='surface'
+          >
+            <Callout.Icon>
+              <InfoCircledIcon />
+            </Callout.Icon>
+            <Callout.Text className='flex items-center justify-between w-full'>
+              {error?.response?.data?.message || 'Something went wrong. Please try again later'}
+            </Callout.Text>
+          </Callout.Root>
+        )}
 
-        {updatingVideo && <div className='absolute inset-0 bg-black/30 top-14 rounded-b-xl z-[100]'></div>}
         <ScrollArea type="auto" scrollbars="vertical" style={{ height: 448 }} className='p-0'>
           <Flex direction="column" gap="5" p={'4'}>
             <div>
@@ -158,30 +171,40 @@ function EditVideoDailog({ children, video }) {
                   </div>
                 </div>
               }
-              {
-                !thumbnail && <>
-                  <label htmlFor="upload_thumbnail" className='hover:cursor-pointer'>
-                    <div
-                      tabIndex={1}
-                      className='w-full p-4 border-2 border-dashed rounded-xl border-[#484848] hover:opacity-85 transition-opacity space-y-2 focus-within:border-[#2870bd]'>
-                      <div className='flex items-center justify-center p-8 mx-auto rounded-full w-max bg-[#00000040] mb-2'>
-                        <img src={uploadImg} alt="" className='size-14 brightness-75' />
-                      </div>
-                      <Text align={'center'} as='p' size={'2'} highContrast color='blue'>
-                        Click to upload image
-                      </Text>
-                      <Text align={'center'} as='p' size={'1'} color='gray'>
-                        JPEG, JPG, PNG, SVG
-                      </Text>
-                    </div>
-                    <input
-                      {...register('videoThumbnail')}
-                      type="file"
-                      id='upload_thumbnail'
-                      hidden
-                    />
-                  </label>
-                </>
+
+              <label htmlFor="upload_thumbnail" className='hover:cursor-pointer' hidden={thumbnail}>
+                <div
+                  tabIndex={1}
+                  className='w-full p-4 border-2 border-dashed rounded-xl border-[#484848] hover:opacity-85 transition-opacity space-y-2 focus-within:border-[#2870bd]'>
+                  <div className='flex items-center justify-center p-8 mx-auto rounded-full w-max bg-[#00000040] mb-2'>
+                    <img src={uploadImg} alt="" className='size-14 brightness-75' />
+                  </div>
+                  <Text align={'center'} as='p' size={'2'}  color='blue'>
+                    Click to upload image
+                  </Text>
+                  <Text align={'center'} as='p' size={'1'} color='gray'>
+                  JPEG, JPG, PNG, WEBP (Max. {MAX_IMAGE_SIZE}MB)
+                  </Text>
+                </div>
+                <input
+                  {...register('videoThumbnail', {
+                    validate: {
+                      acceptedFormats: files =>
+                        ['image/jpeg', 'image/png', 'image/webp'].includes(
+                          files[0]?.type
+                        ) || 'Only JPEG, PNG, and WEBP formats are supported.',
+                      maxThumbnailSize: files => files[0]?.size < MAX_IMAGE_SIZE * 1024 * 1024 || `The thumbnail size must not exceed ${MAX_IMAGE_SIZE}MB.`,
+                    }
+                  })}
+                  accept=".jpg, .jpeg, .png, .webp"
+                  type="file"
+                  id='upload_thumbnail'
+                  hidden
+                />
+              </label>
+              {errors.videoThumbnail && <Text as='p' size={'1'} mt={'2'} color='red' className='flex items-center gap-1 '>
+                <InfoCircledIcon height={"16"} width={"16"} />{errors.videoThumbnail.message}
+              </Text>
               }
             </div>
             <label>

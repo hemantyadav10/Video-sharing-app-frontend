@@ -1,5 +1,5 @@
-import { Cross1Icon } from '@radix-ui/react-icons'
-import { Box, Button, Dialog, Flex, IconButton, Text } from '@radix-ui/themes'
+import { Cross1Icon, InfoCircledIcon } from '@radix-ui/react-icons'
+import { Box, Button, Callout, Dialog, Flex, IconButton, Text } from '@radix-ui/themes'
 import React from 'react'
 import toast from 'react-hot-toast'
 import { BarLoader } from 'react-spinners'
@@ -16,8 +16,8 @@ function UpdatePictureDialog({
   imageFile
 }) {
   const { setUser } = useAuth()
-  const { mutate: updateAvatar, isPending: updateAvatarLoading } = useUpdateAvatar()
-  const { mutate: updateCoverImage, isPending: updateCoverLoading } = useUpdateCoverImage()
+  const { mutate: updateAvatar, isPending: updateAvatarLoading, error, reset } = useUpdateAvatar()
+  const { mutate: updateCoverImage, isPending: updateCoverLoading, error: coverImageError, reset: resetCoverImageError } = useUpdateCoverImage()
 
   const handleUpdateImage = async () => {
     if (!imageFile) {
@@ -41,6 +41,9 @@ function UpdatePictureDialog({
             avatar: res.data.avatar
           }))
           setOpenDialog(false)
+          reset()
+          resetCoverImageError()
+
         },
         onError: (error) => {
           const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
@@ -58,6 +61,9 @@ function UpdatePictureDialog({
             coverImage: res.data.coverImage
           }))
           setOpenDialog(false)
+          reset()
+          resetCoverImageError()
+
         },
         onError: (error) => {
           const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
@@ -76,6 +82,8 @@ function UpdatePictureDialog({
             setOpenDialog(true)
           } else {
             if (!isOpen) clearImages();
+            reset()
+            resetCoverImageError()
             setOpenDialog(isOpen)
           }
         }}
@@ -106,7 +114,7 @@ function UpdatePictureDialog({
               </IconButton>
             </Dialog.Close>
           </Dialog.Title>
-          <Flex align={'center'} justify={'center'} position={'relative'}>
+          <Flex align={'center'} justify={'center'} position={'relative'} direction={'column'}>
             <div className='absolute top-0 left-0 right-0'>
               <BarLoader
                 color='#70b8ff'
@@ -115,6 +123,20 @@ function UpdatePictureDialog({
                 loading={updateAvatarLoading || updateCoverLoading}
               />
             </div>
+            {(error || coverImageError) && (
+              <Callout.Root
+                m={'2'}
+                color='red'
+                variant='surface'
+              >
+                <Callout.Icon>
+                  <InfoCircledIcon />
+                </Callout.Icon>
+                <Callout.Text className='flex items-center justify-between w-full'>
+                  {error?.response?.data?.message || coverImageError?.response?.data?.message || 'Something went wrong. Please try again later'}
+                </Callout.Text>
+              </Callout.Root>
+            )}
             <Box className={`flex items-center  justify-center flex-1 m-6  ${type === 'avatar' ? "aspect-square max-w-sm rounded-full" : "rounded-lg aspect-[6/1]"}  overflow-hidden`}>
               {image &&
                 <img

@@ -1,19 +1,20 @@
+import { Cross1Icon, EyeNoneIcon, EyeOpenIcon, InfoCircledIcon } from '@radix-ui/react-icons';
 import { Button, Callout, IconButton, Spinner, Text, TextField } from '@radix-ui/themes';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/authContext';
-import { AvatarIcon, Cross1Icon, EyeNoneIcon, EyeOpenIcon, InfoCircledIcon } from '@radix-ui/react-icons';
-import { BarLoader } from 'react-spinners';
-import placeholderProfile from '../../assets/profileImage.jpg'
-import noThumbnail from '../../assets/noThumbnail.webp'
-import CameraIcon from '../../assets/CameraIcon';
-import CloseButton from '../../components/CloseButton';
 import toast from 'react-hot-toast';
+import { Link, useNavigate } from 'react-router-dom';
+import { BarLoader } from 'react-spinners';
+import noThumbnail from '../../assets/noThumbnail.webp';
+import placeholderProfile from '../../assets/profileImage.jpg';
 import Logo from '../../components/Logo';
+import { useAuth } from '../../context/authContext';
+import { MAX_IMAGE_SIZE } from '../../constants';
 
 function Signup() {
-  const { register, handleSubmit, formState: { errors }, watch, resetField } = useForm()
+  const { register, handleSubmit, formState: { errors }, watch, resetField } = useForm({
+    mode: "onChange"
+  })
   const [showPassword, setShowPassword] = useState(false)
   const { register: registerUser, isLoading } = useAuth()
   const navigate = useNavigate()
@@ -87,13 +88,26 @@ function Signup() {
               <Text as="div" size="2" mb="2" weight={'medium'}>
                 Banner Image
               </Text>
-              <div className='h-32 border hover:cursor-pointer border-[#d9edff40] rounded-lg relative hover:brightness-90 transition-all'>
+              <div className={`h-32 border hover:cursor-pointer ${errors.coverImage ? "border-[#b54548]" : "border-[#d9edff40]"} rounded-lg relative hover:brightness-90 transition-all`}>
                 <input
-                  {...register("coverImage")}
+                  {...register("coverImage", {
+                    validate: {
+                      acceptedFormats: files => {
+                        if (files.length === 0) return true
+                        return ['image/jpeg', 'image/png', 'image/webp'].includes(
+                          files[0]?.type
+                        ) || 'Only JPEG, PNG, and WEBP formats are supported.'
+                      },
+                      maxThumbnailSize: files => {
+                        if (files.length === 0) return true
+                        return files[0]?.size < MAX_IMAGE_SIZE * 1024 * 1024 || `The image size must not exceed ${MAX_IMAGE_SIZE}MB.`
+                      },
+                    }
+                  })}
                   id='cover_image'
                   type="file"
                   hidden
-                  accept='image/*'
+                  accept=".jpg, .jpeg, .png, .webp"
                 />
                 {
                   coverImgUrl ? (
@@ -134,6 +148,11 @@ function Signup() {
               <Text as='p' size={'1'} color='gray' mt={'1'}>
                 This image will appear across the top of your channel.
               </Text>
+              {errors.coverImage &&
+                <Text as='p' size={'1'} mt={'2'} color='red' className='flex items-center gap-1 '>
+                  <InfoCircledIcon height={"16"} width={"16"} />{errors.coverImage.message}
+                </Text>
+              }
 
             </label>
             <label>
@@ -145,13 +164,18 @@ function Signup() {
                   <input
                     {...register("avatar", {
                       required: "Avatar is required",
-                      validate: (files) =>
-                        files[0]?.size <= 2048 * 1024 || "File size should be less than 2MB",
+                      validate: {
+                        acceptedFormats: files =>
+                          ['image/jpeg', 'image/png', 'image/webp'].includes(
+                            files[0]?.type
+                          ) || '"Only JPEG, PNG, and WEBP formats are supported.',
+                        maxThumbnailSize: files => files[0]?.size < MAX_IMAGE_SIZE * 1024 * 1024 || `The image size must not exceed ${MAX_IMAGE_SIZE}MB.`,
+                      }
                     })}
                     id='profile_image'
                     type="file"
                     hidden
-                    accept='image/*'
+                    accept=".jpg, .jpeg, .png, .webp"
                   />
                   {
                     profileImgUrl

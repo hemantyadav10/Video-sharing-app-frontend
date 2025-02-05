@@ -1,16 +1,17 @@
-import { Cross1Icon, InfoCircledIcon, UploadIcon } from '@radix-ui/react-icons'
-import { Button, Callout, Dialog, Flex, IconButton, ScrollArea, Select, Separator, Text, TextArea, TextField } from '@radix-ui/themes'
-import CloseButton from './CloseButton'
-import { set, useForm } from 'react-hook-form'
-import { usePublishVideo } from '../lib/queries/videoQueries'
-import toast from 'react-hot-toast'
-import { BarLoader } from 'react-spinners'
-import { useAuth } from '../context/authContext'
-import { categories } from '../utils/categories'
+import { InfoCircledIcon } from '@radix-ui/react-icons'
+import { Button, Callout, Dialog, Flex, ScrollArea, Select, Separator, Text, TextArea } from '@radix-ui/themes'
+import { Info } from 'lucide-react'
 import { useState } from 'react'
-import TagInputComponent from './TagInputComponent'
-import { X } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { BarLoader } from 'react-spinners'
 import uploadImg from '../assets/uploadImg.png'
+import { useAuth } from '../context/authContext'
+import { usePublishVideo } from '../lib/queries/videoQueries'
+import { categories } from '../utils/categories'
+import CloseButton from './CloseButton'
+import TagInputComponent from './TagInputComponent'
+import toast from 'react-hot-toast'
+import { MAX_IMAGE_SIZE, MAX_VIDEO_SIZE } from '../constants'
 
 const ErrorLine = ({ errors }) => {
   return (
@@ -38,19 +39,22 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
       thumbnail: '',
       title: '',
       description: ''
-    }
+    },
+    mode: "onChange"
   })
+
+
+
   const { user } = useAuth()
   const imageFile = watch('thumbnail')
   const video = watch('videoFile')
-  const image = imageFile ? URL.createObjectURL(imageFile[0]) : null;
-  const videoUrl = video ? URL.createObjectURL(video[0]) : null;
-  const { mutate: publishVideo, isPending: publishingVideo } = usePublishVideo(user?._id)
+  const image = imageFile ? URL.createObjectURL(imageFile?.[0]) : null;
+  const videoUrl = video ? URL.createObjectURL(video?.[0]) : null;
+  const { mutate: publishVideo, isPending: publishingVideo, error, reset: resetError } = usePublishVideo(user?._id)
   const [category, setCategory] = useState('')
   const [categoryError, setCategoryError] = useState(null)
   const [tagName, setTagName] = useState('')
   const [tags, setTags] = useState([])
-  const [hideCallout, setHideCallout] = useState(false)
 
 
   // Function to handle video upload
@@ -77,14 +81,11 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
         toast.success('Video uploaded sucessfully')
         setDialogOpen(false)
         reset()
+        resetError()
         setCategoryError(null)
         setCategory('')
         setTags([])
       },
-      onError: (error) => {
-        const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
-        toast.error(errorMessage);
-      }
     })
   }
 
@@ -97,13 +98,12 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
           setDialogOpen(true)
         } else {
           reset()
+          resetError()
           setCategoryError(null)
           setCategory('')
           setTags([])
           setDialogOpen(open)
         }
-
-        if (!isDialogOpen) setHideCallout(false)
       }}
     >
       <Dialog.Trigger>
@@ -115,7 +115,7 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
       >
         <Dialog.Title
           weight={'medium'}
-          size={'4'}
+          size={'5'}
           className='flex justify-between p-4 mb-0 border-b border-[#484848]'
         >
           <Text className='mr-auto '>
@@ -136,25 +136,26 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
           />
         </div>
         {publishingVideo && <div className='absolute inset-0 bg-black/30 top-14 rounded-b-xl z-[100]'></div>}
-        {/* Callout- info */}
-        <Callout.Root className={`flex items-center rounded-none ${hideCallout && "hidden"}`}>
-          <Callout.Icon>
-            <InfoCircledIcon />
-          </Callout.Icon>
-          <Callout.Text className='flex items-center justify-between w-full'>
-            Your videos will be private untill you publish them.
-            <IconButton
-              variant='ghost'
-              radius='full'
-              highContrast
-              onClick={() => setHideCallout(true)}
-            >
-              <X size={16} />
-            </IconButton>
-          </Callout.Text>
-        </Callout.Root>
+        {/* Error Callout */}
+        {error && (
+          <Callout.Root
+            m={'2'}
+            color='red'
+            variant='surface'
+          >
+            <Callout.Icon>
+              <InfoCircledIcon />
+            </Callout.Icon>
+            <Callout.Text className='flex items-center justify-between w-full'>
+              {error?.response?.data?.message || 'Something went wrong. Please try again later'}
+            </Callout.Text>
+          </Callout.Root>
+        )}
         {/* Video Details section */}
         <ScrollArea type="auto" scrollbars="vertical" style={{ height: 448 }}>
+          <Flex as='div' gap='1' align={'center'} px={'5'} pt={'4'}>
+            <Info size={16} strokeWidth={'1.5'} /> <Text color='gray' highContrast size={'1'}>Your videos will be private until you publish them.</Text>
+          </Flex>
           <Flex gap={'6'} className='flex-col p-4 md:flex-row md:p-6'>
             <Flex direction="column" gap="6">
               {/* Title */}
@@ -176,7 +177,7 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
                     validate: value => value.trim() !== "" || "Please enter some text.",
                   })}
                   placeholder='Add a title that describes your video...'
-                  className={`${errors.title && 'shadow-inset-custom'}`}
+                  className={`${errors.title && 'shadow-inset-textarea'}`}
                   disabled={publishingVideo}
                 />
                 <ErrorLine errors={errors.title} />
@@ -228,7 +229,7 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
                           Click to upload image
                         </Text>
                         <Text align={'center'} as='p' size={'1'} color='gray'>
-                          JPEG, JPG, PNG, SVG
+                          JPEG, JPG, PNG, WEBP (Max. {MAX_IMAGE_SIZE}MB)
                         </Text>
                       </>
                       : <img src={image} alt="" className='object-cover object-center w-full rounded-md aspect-video' />
@@ -236,7 +237,14 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
                   </div>
                   <input
                     {...register('thumbnail', {
-                      required: 'Thumbanil is required.'
+                      required: 'Thumbanil is required.',
+                      validate: {
+                        acceptedFormats: files =>
+                          ['image/jpeg', 'image/png', 'image/webp'].includes(
+                            files[0]?.type
+                          ) || 'Only JPEG, PNG, and WEBP formats are supported.',
+                        maxThumbnailSize: files => files[0]?.size < MAX_IMAGE_SIZE * 1024 * 1024 || `The thumbnail size must not exceed ${MAX_IMAGE_SIZE}MB.`,
+                      }
                     })}
                     accept=".jpg, .jpeg, .png, .webp"
                     type="file"
@@ -259,40 +267,47 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
                 >
                   Video <Text as='span' color='red' weight={'medium'}>*</Text>
                 </Text>
-                {!videoUrl && <>
-                  <label htmlFor="upload_video" className='hover:cursor-pointer'>
-                    <div className={`w-full  border-2 border-dashed rounded-xl hover:opacity-85 transition-opacity gap-4 flex flex-col items-center justify-center p-6 ${errors.videoFile ? 'border-[#b54548]' : 'border-[#484848]'} `}>
-                      <div>
-                        <div className='flex items-center justify-center p-8 mx-auto rounded-full w-max bg-[#00000040] mb-2'>
-                          <img src={uploadImg} alt="" className='size-14 brightness-75' />
-                        </div>
-                        <Text align={'center'} as='p' mb={'1'} size={'2'} color='blue'>
-                          Click to upload video
-                        </Text>
+                <label htmlFor="upload_video" className='hover:cursor-pointer' hidden={videoUrl}>
+                  <div className={`w-full  border-2 border-dashed rounded-xl hover:opacity-85 transition-opacity gap-4 flex flex-col items-center justify-center p-6 ${errors.videoFile ? 'border-[#b54548]' : 'border-[#484848]'} `}>
+                    <div>
+                      <div className='flex items-center justify-center p-8 mx-auto rounded-full w-max bg-[#00000040] mb-2'>
+                        <img src={uploadImg} alt="" className='size-14 brightness-75' />
                       </div>
-                      <Button
-                        highContrast
-                        radius='full'
-                        tabIndex={-1}
-                        className='pointer-events-none'
-                      >
-                        Select File
-                      </Button>
+                      <Text align={'center'} as='p' mb={'1'} size={'2'} color='blue'>
+                        Click to upload video
+                      </Text>
+                      <Text align={'center'} as='p' size={'1'} color='gray'>
+                        MP4, WEBM (Max. {MAX_VIDEO_SIZE}MB)
+                      </Text>
                     </div>
-                    <input
-                      {...register('videoFile', {
-                        required: 'Video file is required.'
-                      })}
-                      accept=".mp4, .webm, .mov, .avi, .mkv"
-                      type="file"
-                      id='upload_video'
-                      hidden
-                      disabled={publishingVideo}
-                    />
-                  </label>
-                  <ErrorLine errors={errors.videoFile} />
+                    <Button
+                      highContrast
+                      radius='full'
+                      tabIndex={-1}
+                      className='pointer-events-none'
+                    >
+                      Select File
+                    </Button>
+                  </div>
+                  <input
+                    {...register('videoFile', {
+                      required: 'Video file is required.',
+                      validate: {
+                        acceptedFormats: files =>
+                          ["video/webm", "video/mp4"].includes(
+                            files[0]?.type
+                          ) || 'Only MP4 and WEBM formats are supported.',
+                        maxVideoSize: files => files[0]?.size < MAX_VIDEO_SIZE * 1024 * 1024 || `The video size must not exceed ${MAX_VIDEO_SIZE}MB.`,
+                      }
+                    })}
+                    accept=".mp4, .webm"
+                    type="file"
+                    id='upload_video'
+                    hidden
+                    disabled={publishingVideo}
+                  />
+                </label>
 
-                </>}
                 {videoUrl && <div className='flex flex-col items-center '>
                   <div className='w-full rounded-t-md aspect-video'>
                     <video controls className='object-cover object-center w-full h-full rounded-t-md aspect-video'>
@@ -322,6 +337,7 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
                     </Text>
                   </div>
                 </div>}
+                <ErrorLine errors={errors.videoFile} />
               </div>
               {/* Category Section */}
               <label>
