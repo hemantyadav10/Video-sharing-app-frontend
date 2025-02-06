@@ -48,18 +48,22 @@ const useFetchVideoById = (videoId, userId, ownerId) => {
   })
 }
 
-const useTogglePublishStatus = (userId) => {
+const useTogglePublishStatus = ({ limit, page }) => {
   return useMutation({
     mutationFn: (videoId) => togglePublishStatus(videoId),
     onSuccess: (response) => {
-      queryClient.setQueryData(['channel_videos'], (prev) => {
+      queryClient.setQueryData(['channel_videos', { limit, page }], (prev) => {
+        if (!prev) return;
         return {
           ...prev,
-          data: prev.data.map(video => (
-            video._id === response.data._id
-              ? { ...video, isPublished: !video.isPublished }
-              : video
-          ))
+          data: {
+            ...prev.data,
+            docs: prev.data.docs.map(video => {
+              return video._id === response.data._id
+                ? { ...video, isPublished: response.data.isPublished }
+                : video
+            }),
+          }
         }
       })
       queryClient.invalidateQueries({ queryKey: ['videos'] })
@@ -69,20 +73,23 @@ const useTogglePublishStatus = (userId) => {
   })
 }
 
-const useUpdateVideo = (userId) => {
+const useUpdateVideo = ({ limit, page }) => {
   return useMutation({
     mutationFn: ({ videoId, formData }) => updateVideo(videoId, formData),
     onSuccess: (res) => {
-      queryClient.setQueryData(['channel_videos'], prev => {
+      queryClient.setQueryData(['channel_videos', { limit, page }], prev => {
         if (!prev) return;
 
         return {
           ...prev,
-          data: prev.data.map(video => {
-            return video._id === res.data._id
-              ? { ...video, ...res.data }
-              : video
-          })
+          data: {
+            ...prev.data,
+            docs: prev.data.docs.map(video => {
+              return video._id === res.data._id
+                ? { ...video, ...res.data }
+                : video
+            })
+          }
         }
       })
 
@@ -97,14 +104,20 @@ const useUpdateVideo = (userId) => {
   })
 }
 
-const usePublishVideo = (userId) => {
+const usePublishVideo = (userId, { limit, page }) => {
   return useMutation({
     mutationFn: (formData) => publishVideo(formData),
     onSuccess: (res) => {
-      queryClient.setQueryData(['channel_videos'], prev => {
+      queryClient.setQueryData(['channel_videos', { limit, page: 1 }], prev => {
+        if (!prev) return;
+
         return {
           ...prev,
-          data: [{ ...res.data, likes: 0 }, ...prev.data]
+          data: {
+            ...prev.data,
+            docs: [{ ...res.data, likes: 0 }, ...prev.data.docs],
+            totalDocs: prev.data.totalDocs + 1
+          }
         }
       })
       queryClient.setQueryData(['stats', { channelId: userId, allVideos: true }], prev => {
@@ -116,22 +129,37 @@ const usePublishVideo = (userId) => {
           }
         }
       })
+
     }
   })
 }
 
-const useDeleteVideo = (userId) => {
+const useDeleteVideo = ({ limit, page }) => {
   return useMutation({
     mutationFn: deleteVideo,
     onSuccess: ({ data }) => {
       const videoId = data.videoId
-      queryClient.setQueryData(['channel_videos'], prev => {
+      queryClient.setQueryData(['channel_videos', { limit, page }], prev => {
+        if (!prev) return;
+
         return {
           ...prev,
-          data: prev.data.filter(video => video._id !== videoId)
+          data: {
+            ...prev.data,
+            docs: prev.data.docs.filter(video => video._id !== videoId),
+            totalDocs: prev.data.totalDocs - 1
+          }
         }
       })
-      queryClient.invalidateQueries()
+
+      const queries = queryClient.getQueryCache().getAll();
+
+      queries.forEach(query => {
+        if (!query.queryKey[0].startsWith('channel_videos')) {
+          queryClient.invalidateQueries({ queryKey: query.queryKey });
+        }
+      });
+
     }
   })
 }

@@ -4,8 +4,8 @@ import apiClient from "./apiClient";
 const DASHBOARD_BASE_URL = '/dashboard';
 
 // Fetches videos for the channel
-const getChannelVideos = () => asyncHandler(async () => {
-  const res = await apiClient.get(`${DASHBOARD_BASE_URL}/videos`);
+const getChannelVideos = (limit = 3, page = 1) => asyncHandler(async () => {
+  const res = await apiClient.get(`${DASHBOARD_BASE_URL}/videos?limit=${limit}&page=${page}`);
   return res.data;
 });
 

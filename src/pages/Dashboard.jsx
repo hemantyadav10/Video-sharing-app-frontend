@@ -1,33 +1,41 @@
 import { Button, Heading, Separator, Text } from '@radix-ui/themes'
 import { Eye, ThumbsUp, TvMinimalPlay, Upload, UsersRound } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import toast from 'react-hot-toast'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import no_content from '../assets/no_content.svg'
 import ChannelStatsCard from '../components/ChannelStatsCard'
+import PaginationComponent from '../components/PaginationComponent'
+import QueryErrorHandler from '../components/QueryErrorHandler'
 import UploadVideoDialog from '../components/UploadVideoDailog'
 import VideoTable from '../components/VideoTable'
 import { useAuth } from '../context/authContext'
 import { useGetChannelStats, useGetChannleVideos } from '../lib/queries/dashboardQueries'
-import { useTogglePublishStatus } from '../lib/queries/videoQueries'
-import QueryErrorHandler from '../components/QueryErrorHandler'
 
 function Dashboard() {
   const { user, isAuthenticated } = useAuth()
-  const { data: videoData, isLoading: loadingVideos, error, isError, refetch } = useGetChannleVideos(isAuthenticated)
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(5)
+  const {
+    data: videoData,
+    isPending: loadingVideos,
+    error,
+    isError,
+    refetch,
+    isFetching
+  } = useGetChannleVideos(isAuthenticated, limit, page)
+  const paginationInfo = {
+    hasNextPage: videoData?.data?.hasNextPage ?? false,
+    hasPrevPage: videoData?.data?.hasPrevPage ?? false,
+    totalDocs: videoData?.data?.totalDocs ?? 0,
+    totalPages: videoData?.data?.totalPages ?? 1
+  }
+
   const { data: stats, isFetching: loadingStats, error: errorfetchingStats, refetch: retryFetchStats, isError: isFetchStatsError } = useGetChannelStats(user?._id)
   const location = useLocation();
   const navigate = useNavigate()
   const [isDialogOpen, setDialogOpen] = useState(false);
 
-  const [publishedVideos, setPublishedVideos] = useState(() => {
-    if (!loadingVideos && videoData) {
-      return videoData?.data.filter((video) => video.isPublished).map((video) => video._id);
-    }
-    return null;
-  })
 
-  const { mutateAsync: toggleStatus, isPending } = useTogglePublishStatus(user?._id)
   const statsData = [
     {
       statType: "Videos",
@@ -52,51 +60,15 @@ function Dashboard() {
   ];
 
   useEffect(() => {
-
-    if (!loadingVideos) {
-      const published = videoData?.data.filter((video) => video.isPublished).map((video) => video._id)
-
-      setPublishedVideos(published)
-    }
-  }, [loadingVideos, videoData])
-
-  useEffect(() => {
     if (location.state?.openDialog) {
       setDialogOpen(true); // Set dialog open first
-      
+
     }
 
     if (location.state) {
       navigate(location.pathname, { replace: true }); // Clear state from history after using it
     }
   }, [location.state, navigate]);
-
-
-  const handleTogglePublish = async (videoId, checked) => {
-    const updatedList = checked
-      ? [...publishedVideos, videoId]
-      : publishedVideos.filter(id => id !== videoId)
-
-    setPublishedVideos(updatedList)
-
-    toast.promise(
-      toggleStatus(videoId, {
-        onError: () => {
-          const updatedList = checked
-            ? publishedVideos.filter(id => id !== videoId)
-            : [...publishedVideos, videoId]
-
-          setPublishedVideos(updatedList)
-        }
-      }),
-      {
-        loading: checked ? 'Publishing...' : 'Unpublishing...',
-        success: checked ? 'Video published' : 'Video unpublished',
-        error: (error) => error?.response?.data?.message || 'Something went wrong, please try again.',
-      }
-    );
-  }
-
 
   return (
     <div className='flex flex-col w-full gap-6 p-6 py-12 lg:px-20'>
@@ -122,6 +94,8 @@ function Dashboard() {
         <UploadVideoDialog
           isDialogOpen={isDialogOpen}
           setDialogOpen={setDialogOpen}
+          limit={limit}
+          page={page}
         >
           <Button
             highContrast
@@ -133,9 +107,6 @@ function Dashboard() {
         </UploadVideoDialog>
 
       </section>
-
-      {/*Section Separator */}
-      {/* <Separator size={'4'} /> */}
 
       {/* Stats cards section */}
       {isFetchStatsError &&
@@ -163,14 +134,15 @@ function Dashboard() {
           </div>
         }
 
-        {!isError && <VideoTable
-          videos={videoData}
-          publishedVideos={publishedVideos}
-          onTogglePublish={handleTogglePublish}
-          loadingVideos={loadingVideos}
-          togglePublishingLoading={isPending}
-        />}
-        {(videoData?.data.length === 0) &&
+        {!isError && (
+          <VideoTable
+            videos={videoData?.data}
+            loadingVideos={loadingVideos}
+            limit={limit}
+            page={page}
+          />
+        )}
+        {!loadingVideos && (paginationInfo.totalDocs === 0) &&
           <>
             <section className='flex flex-col items-center justify-center'>
               <img
@@ -186,6 +158,22 @@ function Dashboard() {
           </>
         }
       </section>
+
+      {/* pagination for videos */}
+      {!loadingVideos && (paginationInfo.totalDocs > 0) &&
+        <PaginationComponent
+          page={page}
+          limit={limit}
+          setLimit={setLimit}
+          setPage={setPage}
+          hasNextPage={paginationInfo.hasNextPage}
+          hasPrevPage={paginationInfo.hasPrevPage}
+          totalDocs={paginationInfo.totalDocs}
+          totalPages={paginationInfo.totalPages}
+          isFetching={isFetching}
+        />
+      }
+
       <div className='flex flex-wrap-reverse items-center justify-center w-full gap-4 pt-12 mt-auto'>
         <Text as='span' color='gray' size={'1'} className='text-nowrap'>
           © 2024 ViewTube. All rights reserved.

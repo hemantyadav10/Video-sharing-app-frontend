@@ -26,7 +26,13 @@ const ErrorLine = ({ errors }) => {
   )
 }
 
-function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
+function UploadVideoDialog({
+  children,
+  isDialogOpen,
+  setDialogOpen,
+  limit,
+  page,
+}) {
   const {
     handleSubmit,
     register,
@@ -50,7 +56,7 @@ function UploadVideoDialog({ children, isDialogOpen, setDialogOpen }) {
   const video = watch('videoFile')
   const image = imageFile ? URL.createObjectURL(imageFile?.[0]) : null;
   const videoUrl = video ? URL.createObjectURL(video?.[0]) : null;
-  const { mutate: publishVideo, isPending: publishingVideo, error, reset: resetError } = usePublishVideo(user?._id)
+  const { mutate: publishVideo, isPending: publishingVideo, error, reset: resetError } = usePublishVideo(user?._id, { limit, page })
   const [category, setCategory] = useState('')
   const [categoryError, setCategoryError] = useState(null)
   const [tagName, setTagName] = useState('')

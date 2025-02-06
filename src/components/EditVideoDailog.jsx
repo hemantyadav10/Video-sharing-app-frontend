@@ -14,7 +14,12 @@ import { InfoCircledIcon } from '@radix-ui/react-icons'
 
 
 
-function EditVideoDailog({ children, video }) {
+function EditVideoDailog({
+  children,
+  video,
+  limit,
+  page
+}) {
   const { _id: videoId } = video
   const { user } = useAuth()
 
@@ -32,7 +37,7 @@ function EditVideoDailog({ children, video }) {
 
   const [open, setOpen] = useState(false)
 
-  const { mutate: updateVideo, isPending: updatingVideo, error, reset: resetError } = useUpdateVideo(user?._id)
+  const { mutate: updateVideo, isPending: updatingVideo, error, reset: resetError } = useUpdateVideo({ limit, page })
 
   const data = watch(['title', 'description', 'videoThumbnail'])
   const thumbnail = data[2] ? URL.createObjectURL(data[2][0]) : null;
@@ -179,21 +184,26 @@ function EditVideoDailog({ children, video }) {
                   <div className='flex items-center justify-center p-8 mx-auto rounded-full w-max bg-[#00000040] mb-2'>
                     <img src={uploadImg} alt="" className='size-14 brightness-75' />
                   </div>
-                  <Text align={'center'} as='p' size={'2'}  color='blue'>
+                  <Text align={'center'} as='p' size={'2'} color='blue'>
                     Click to upload image
                   </Text>
                   <Text align={'center'} as='p' size={'1'} color='gray'>
-                  JPEG, JPG, PNG, WEBP (Max. {MAX_IMAGE_SIZE}MB)
+                    JPEG, JPG, PNG, WEBP (Max. {MAX_IMAGE_SIZE}MB)
                   </Text>
                 </div>
                 <input
                   {...register('videoThumbnail', {
                     validate: {
-                      acceptedFormats: files =>
-                        ['image/jpeg', 'image/png', 'image/webp'].includes(
-                          files[0]?.type
-                        ) || 'Only JPEG, PNG, and WEBP formats are supported.',
-                      maxThumbnailSize: files => files[0]?.size < MAX_IMAGE_SIZE * 1024 * 1024 || `The thumbnail size must not exceed ${MAX_IMAGE_SIZE}MB.`,
+                      acceptedFormats: (files) => {
+                        if (files.length === 0) return true; // No file selected, pass validation
+                        return ['image/jpeg', 'image/png', 'image/webp'].includes(files[0]?.type)
+                          || 'Only JPEG, PNG, and WEBP formats are supported.';
+                      },
+                      maxThumbnailSize: (files) => {
+                        if (files.length === 0) return true; // No file selected, pass validation
+                        return files[0]?.size < MAX_IMAGE_SIZE * 1024 * 1024
+                          || `The thumbnail size must not exceed ${MAX_IMAGE_SIZE}MB.`;
+                      },
                     }
                   })}
                   accept=".jpg, .jpeg, .png, .webp"

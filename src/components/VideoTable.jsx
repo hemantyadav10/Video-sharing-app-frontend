@@ -1,20 +1,20 @@
-import React, { useState } from 'react'
-import { toIndianDateFormat } from '../utils/utils'
-import { AlertDialog, Badge, Button, Flex, IconButton, Skeleton, Switch, Table, Text, Tooltip } from '@radix-ui/themes'
-import { Link } from 'react-router-dom'
 import { Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
-import EditVideoDailog from './EditVideoDailog'
-import { formatVideoDuration } from '../utils/formatVideoDuration'
-import { useDeleteVideo } from '../lib/queries/videoQueries'
+import { AlertDialog, Badge, Button, Flex, IconButton, Skeleton, Switch, Table, Text, Tooltip } from '@radix-ui/themes'
+import React from 'react'
 import toast from 'react-hot-toast'
+import { Link } from 'react-router-dom'
 import { BarLoader } from 'react-spinners'
 import { useAuth } from '../context/authContext'
+import { useDeleteVideo, useTogglePublishStatus } from '../lib/queries/videoQueries'
+import { formatVideoDuration } from '../utils/formatVideoDuration'
+import { toIndianDateFormat } from '../utils/utils'
+import EditVideoDailog from './EditVideoDailog'
 
 function VideoTable({
   videos,
-  publishedVideos,
-  onTogglePublish,
   loadingVideos,
+  limit,
+  page,
 }) {
 
   const tableHeaders = [
@@ -29,9 +29,10 @@ function VideoTable({
 
   const { user } = useAuth()
   const { _id: userId } = user
-  const [open, setOpen] = useState(false)
 
-  const { mutate: deleteVideo, isPending: deletingVideo } = useDeleteVideo(userId);
+  const { mutate: deleteVideo, isPending: deletingVideo } = useDeleteVideo({ limit, page });
+
+  const { mutateAsync: toggleStatus, isPending } = useTogglePublishStatus({ limit, page })
 
   const handleDeleteVideo = async (videoId) => {
     deleteVideo(videoId, {
@@ -45,12 +46,31 @@ function VideoTable({
     })
   }
 
+  const handleTogglePublish = async (videoId, checked) => {
+    toast.promise(
+      toggleStatus(videoId), {
+      loading: checked ? "Publishing..." : "Unpublishing...",
+      success: checked ? "Video published" : "Video unpublished",
+      error: (error) => error?.response?.data?.message || 'Something went wrong, please try again.',
+    })
+
+  }
+
+
   return (
     <>
-      {/* <EditVideoDailog video={video} /> */}
-      <Table.Root variant="surface" className='shadow-lg'>
+
+      <Table.Root variant="surface" className='relative shadow-lg'>
+        <div className='absolute top-0 right-2 left-2'>
+          <BarLoader
+            color='#70b8ff'
+            width={'100%'}
+            height={'3px'}
+            loading={isPending}
+          />
+        </div>
         <Table.Header>
-          <Skeleton loading={loadingVideos || !publishedVideos}>
+          <Skeleton loading={loadingVideos}>
             <Table.Row >
               {tableHeaders.map(header => (
                 <Table.Cell key={header.key} minWidth={header.minWidth || undefined}>
@@ -64,8 +84,8 @@ function VideoTable({
         </Table.Header>
         <Table.Body >
           {/* Skeleton loader for video table  */}
-          {loadingVideos || !publishedVideos ?
-            Array.from({ length: 3 }).map((_, i) =>
+          {loadingVideos ?
+            Array.from({ length: 4 }).map((_, i) =>
               <Table.Row key={i} className='h-12 bg-[#111113]'>
                 <Table.Cell >
                   <Skeleton>
@@ -106,14 +126,15 @@ function VideoTable({
                   </Flex>
                 </Table.Cell>
               </Table.Row>) :
-            (videos?.data.map((video) => (
+            (videos?.docs?.map((video) => (
 
               <Table.Row key={video._id} className='bg-[#111113] hover:bg-[#d8f4f601] transition-all'>
                 <Table.Cell>
                   <Switch
                     color='sky'
-                    checked={publishedVideos?.includes(video._id)}
-                    onCheckedChange={(checked) => onTogglePublish(video._id, checked)}
+                    checked={video.isPublished}
+                    onCheckedChange={(checked) => handleTogglePublish(video._id, checked)}
+                    className='transition-none'
                   />
                 </Table.Cell>
                 <Table.Cell minWidth={'122px'}>
@@ -125,9 +146,6 @@ function VideoTable({
                     }
                     size={'2'}
                     radius='full'
-                  // variant='outline'
-                  // highContrast
-                  // className='font-normal'
                   >
                     {video.isPublished
                       ? 'Published'
@@ -269,7 +287,11 @@ function VideoTable({
                     </AlertDialog.Content>
                   </AlertDialog.Root>
                   {/* Edit video button that triggers a dialog open to edit video details */}
-                  <EditVideoDailog video={video} >
+                  <EditVideoDailog
+                    video={video}
+                    limit={limit}
+                    page={page}
+                  >
                     <IconButton
                       variant='ghost'
                       color='gray'
@@ -282,6 +304,7 @@ function VideoTable({
                 </Table.Cell>
               </Table.Row>
             )))
+
           }
         </Table.Body>
       </Table.Root >
