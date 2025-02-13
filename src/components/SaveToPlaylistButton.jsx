@@ -1,11 +1,11 @@
-import { BookmarkIcon, DotsVerticalIcon, PlusIcon } from '@radix-ui/react-icons'
-import { Button, Checkbox, Dialog, DropdownMenu, Flex, IconButton, Separator, Spinner, Text } from '@radix-ui/themes'
+import { DotsVerticalIcon, PlusIcon } from '@radix-ui/react-icons'
+import { Button, Checkbox, Dialog, DropdownMenu, Flex, IconButton, Spinner, Text } from '@radix-ui/themes'
+import { Link, ListPlus, Share } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import CloseButton from './CloseButton'
-import { useAddVideoToPlaylist, useFetchUserPlaylists, useRemoveVideoFromPlaylist } from '../lib/queries/playlistQueries'
-import { useAuth } from '../context/authContext'
-import CreatePlaylistDialog from './CreatePlaylistDialog'
 import toast from 'react-hot-toast'
+import { useAuth } from '../context/authContext'
+import { useAddVideoToPlaylist, useFetchUserPlaylists, useRemoveVideoFromPlaylist } from '../lib/queries/playlistQueries'
+import CreatePlaylistDialog from './CreatePlaylistDialog'
 
 function SaveToPlaylistButton({ videoData }) {
   const [openDialog, setOpenDialog] = useState(false)
@@ -19,6 +19,13 @@ function SaveToPlaylistButton({ videoData }) {
 
   const handleClick = () => {
     setOpenDialog(true)
+  }
+
+  const handleCopyLink = () => {
+    const videoLink = `${window.location.origin}/watch/${videoId}`
+
+    navigator.clipboard.writeText(videoLink);
+    toast.success('Link copied')
   }
 
   useEffect(() => {
@@ -97,10 +104,22 @@ function SaveToPlaylistButton({ videoData }) {
           </IconButton>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content variant='soft'>
+          <DropdownMenu.Sub>
+            <DropdownMenu.SubTrigger>
+              <Share size={18} strokeWidth={1.5} /> Share
+            </DropdownMenu.SubTrigger>
+            <DropdownMenu.SubContent className='min-w-40'>
+              <DropdownMenu.Item
+                onClick={handleCopyLink}
+              >
+                <Link size={16} strokeWidth={1.5} /> Copy Link
+              </DropdownMenu.Item>
+            </DropdownMenu.SubContent>
+          </DropdownMenu.Sub>
           <DropdownMenu.Item
             onClick={handleClick}
           >
-            <BookmarkIcon /> Save to Playlist
+            <ListPlus size={18} strokeWidth={1.5} /> Add to Playlist
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Root>

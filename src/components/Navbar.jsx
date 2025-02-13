@@ -189,26 +189,31 @@ function Navbar({ toggleMenu }) {
                 </DropdownMenu.Item>
                 <DropdownMenu.Separator />
                 <Link to='/settings'>
-                  <DropdownMenu.Item >
+                  <DropdownMenu.Item>
                     <GearIcon /> Settings
                   </DropdownMenu.Item>
                 </Link>
                 <DropdownMenu.Separator />
-                <Link to='/help'>
-                  <DropdownMenu.Item >
-                    <QuestionMarkCircledIcon /> Help
-                  </DropdownMenu.Item>
-                </Link>
-                <Link to={`/terms-of-services`}>
-                  <DropdownMenu.Item >
-                    <FileTextIcon /> Terms of Service
-                  </DropdownMenu.Item>
-                </Link>
-                <Link to={`/privacy`}>
-                  <DropdownMenu.Item >
-                    <LockClosedIcon /> Privacy
-                  </DropdownMenu.Item>
-                </Link>
+                <DropdownMenu.Sub>
+                  <DropdownMenu.SubTrigger>More options...</DropdownMenu.SubTrigger>
+                  <DropdownMenu.SubContent className='min-w-48'>
+                    <Link to='/help'>
+                      <DropdownMenu.Item >
+                        <QuestionMarkCircledIcon /> Help
+                      </DropdownMenu.Item>
+                    </Link>
+                    <Link to={`/terms-of-services`}>
+                      <DropdownMenu.Item >
+                        <FileTextIcon /> Terms of Service
+                      </DropdownMenu.Item>
+                    </Link>
+                    <Link to={`/privacy`}>
+                      <DropdownMenu.Item >
+                        <LockClosedIcon /> Privacy
+                      </DropdownMenu.Item>
+                    </Link>
+                  </DropdownMenu.SubContent>
+                </DropdownMenu.Sub>
               </div>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
