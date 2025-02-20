@@ -3,15 +3,15 @@ import { Button, Callout, Dialog, Flex, ScrollArea, Select, Separator, Text, Tex
 import { Info } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
 import { BarLoader } from 'react-spinners'
 import uploadImg from '../assets/uploadImg.png'
+import { MAX_IMAGE_SIZE, MAX_VIDEO_SIZE } from '../constants'
 import { useAuth } from '../context/authContext'
 import { usePublishVideo } from '../lib/queries/videoQueries'
 import { categories } from '../utils/categories'
 import CloseButton from './CloseButton'
 import TagInputComponent from './TagInputComponent'
-import toast from 'react-hot-toast'
-import { MAX_IMAGE_SIZE, MAX_VIDEO_SIZE } from '../constants'
 
 const ErrorLine = ({ errors }) => {
   return (
@@ -122,7 +122,7 @@ function UploadVideoDialog({
         <Dialog.Title
           weight={'medium'}
           size={'5'}
-          className='flex justify-between p-4 mb-0 border-b border-[#484848]'
+          className='flex justify-between p-4 mb-0 border-b border-[--gray-a6]'
         >
           <Text className='mr-auto '>
             Upload Video
@@ -141,7 +141,7 @@ function UploadVideoDialog({
             className='z-[101]'
           />
         </div>
-        {publishingVideo && <div className='absolute inset-0 bg-black/30 top-14 rounded-b-xl z-[100]'></div>}
+        {publishingVideo && <div className='absolute inset-0 bg-[--color-overlay] top-14 rounded-b-xl z-[100]'></div>}
         {/* Error Callout */}
         {error && (
           <Callout.Root
@@ -225,10 +225,10 @@ function UploadVideoDialog({
                   Set a thumbnail that stands out and draws viewers' attention.
                 </Text>
                 <label htmlFor="upload_thumbnail" className='hover:cursor-pointer'>
-                  <div className={`w-full min-h-40 flex flex-col justify-center items-center  border-2 border-dashed rounded-md  hover:opacity-85 transition-opacity gap-2 ${!errors.thumbnail ? "border-[#484848]" : "border-[#b54548]"} p-4 md:w-[384px]`}>
+                  <div className={`w-full min-h-40 flex flex-col justify-center items-center  border-2 border-dashed rounded-md  hover:opacity-85 transition-opacity gap-2 ${!errors.thumbnail ? "border-[--gray-a7]" : "border-[#b54548]"} p-4 md:w-[384px]`}>
                     {!image
                       ? <>
-                        <div className='flex items-center justify-center p-8 mx-auto rounded-full w-max bg-[#00000040]'>
+                        <div className='flex items-center justify-center p-8 mx-auto rounded-full w-max bg-[--color-background]'>
                           <img src={uploadImg} alt="" className='size-14 brightness-75' />
                         </div>
                         <Text align={'center'} as='p' size={'2'} color='blue'>
@@ -274,9 +274,9 @@ function UploadVideoDialog({
                   Video <Text as='span' color='red' weight={'medium'}>*</Text>
                 </Text>
                 <label htmlFor="upload_video" className='hover:cursor-pointer' hidden={videoUrl}>
-                  <div className={`w-full  border-2 border-dashed rounded-xl hover:opacity-85 transition-opacity gap-4 flex flex-col items-center justify-center p-6 ${errors.videoFile ? 'border-[#b54548]' : 'border-[#484848]'} `}>
+                  <div className={`w-full  border-2 border-dashed rounded-xl hover:opacity-85 transition-opacity gap-4 flex flex-col items-center justify-center p-6 ${errors.videoFile ? 'border-[#b54548]' : 'border-[--gray-a7]'} `}>
                     <div>
-                      <div className='flex items-center justify-center p-8 mx-auto rounded-full w-max bg-[#00000040] mb-2'>
+                      <div className='flex items-center justify-center p-8 mx-auto rounded-full w-max bg-[--color-background] mb-2'>
                         <img src={uploadImg} alt="" className='size-14 brightness-75' />
                       </div>
                       <Text align={'center'} as='p' mb={'1'} size={'2'} color='blue'>
@@ -325,7 +325,7 @@ function UploadVideoDialog({
                     className='object-cover object-center w-full h-full rounded-t-xl'
                   /> */}
                   </div>
-                  <div className='p-4 rounded-b-md bg-[#00000040]  w-full'>
+                  <div className='p-4 rounded-b-md bg-[--gray-a2]  w-full'>
                     <Text
                       color='gray'
                       as='span'
@@ -416,7 +416,6 @@ function UploadVideoDialog({
           <Dialog.Close>
             <Button
               variant='surface'
-              highContrast
               color='gray'
               radius='full'
               className='px-4'

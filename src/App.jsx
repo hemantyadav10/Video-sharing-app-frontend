@@ -43,7 +43,7 @@ function App() {
             toggleMenu={toggleMenu}
           />
         }
-        {showMenu && (!isDashboardRoute && !isVideoRoute) && <div onClick={() => toggleMenu()} className='fixed md:hidden inset-0  bg-black/80 z-[90]'></div>}
+        {showMenu && (!isDashboardRoute && !isVideoRoute) && <div onClick={() => toggleMenu()} className='fixed md:hidden inset-0  bg-[--color-overlay] z-[90]'></div>}
 
         <Outlet context={[showMenu]} />
 

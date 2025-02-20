@@ -1,12 +1,13 @@
 import { Skeleton } from '@radix-ui/themes'
-import React, { useState } from 'react'
+import { FileVideo } from 'lucide-react'
+import React from 'react'
 import NoContent from '../components/NoContent'
+import QueryErrorHandler from '../components/QueryErrorHandler'
 import SignInPrompt from '../components/SignInPrompt '
 import VideoCard2 from '../components/VideoCard2'
 import { useAuth } from '../context/authContext'
 import { useGetUserLikedVideos } from '../lib/queries/likeQueries'
 import { timeAgo } from '../utils/formatTimeAgo'
-import QueryErrorHandler from '../components/QueryErrorHandler'
 
 function LikedVideos() {
   const { user, isAuthenticated } = useAuth()
@@ -27,7 +28,7 @@ function LikedVideos() {
               backgroundRepeat: 'no-repeat',
               backgroundSize: "cover",
             }}>
-            <div className=" absolute inset-0 z-0 bg-gradient-to-b from-white/20 to-[#111113] backdrop-blur-xl"></div>
+            <div className=" absolute inset-0 z-0 bg-gradient-to-b from-[--gray-a6] to-[--gray-1] backdrop-blur-xl"></div>
             <div className="relative z-10 flex flex-col w-full gap-6 text-xs md:flex-row md:items-center lg:flex-col lg:w-80">
               {
                 data?.data.length > 0 &&
@@ -41,13 +42,13 @@ function LikedVideos() {
                 </div>
               }
 
-              <div className='flex flex-col w-full gap-6 text-white '>
-                <p className='text-2xl font-bold '>
+              <div className='flex flex-col w-full gap-6 '>
+                <p className='text-2xl font-bold drop-shadow-lg'>
                   Liked Videos
                 </p>
                 <div className='space-y-2'>
-                  <p className='text-sm font-medium capitalize'>{user?.fullName}</p>
-                  <p className=''>
+                  <p className='text-sm font-medium capitalize drop-shadow-lg'>{user?.fullName}</p>
+                  <p className='drop-shadow-lg'>
                     {data?.data.length} videos {data?.data.length > 0 ? `• Updated ${timeAgo(data?.data[0]?.createdAt)}` : ''}
                   </p>
                 </div>
@@ -74,13 +75,15 @@ function LikedVideos() {
               loading={isLoading}
             />
           ))}
-          <hr hidden={data?.data.length === 0 || isLoading} className="border-t border-[#484848]" />
+          <hr hidden={data?.data.length === 0 || isLoading} className="border-t border-[--gray-a6]" />
 
         </div>
       </>
       }
       {!isAuthenticated && <>
-        <SignInPrompt />
+        <SignInPrompt
+          Icon={FileVideo}
+        />
       </>}
     </div>
   )

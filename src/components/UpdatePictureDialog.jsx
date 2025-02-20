@@ -96,7 +96,7 @@ function UpdatePictureDialog({
           <Dialog.Title
             weight={'medium'}
             size={'4'}
-            className='flex justify-between p-4 border-b border-[#484848]  mb-0'
+            className='flex justify-between p-4 border-b border-[--gray-a6] mb-0'
           >
             <Text className='mr-auto '>
               {title}
@@ -146,9 +146,9 @@ function UpdatePictureDialog({
               }
             </Box>
           </Flex>
-          <div className='flex justify-end gap-4 p-4 border-t border-[#484848]'>
+          <div className='flex justify-end gap-4 p-4 border-t border-[--gray-a6]'>
             <Dialog.Close>
-              <Button variant='surface' radius='full' highContrast color='gray'>
+              <Button variant='surface' radius='full' color='gray'>
                 Cancel
               </Button>
             </Dialog.Close>

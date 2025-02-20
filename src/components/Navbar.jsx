@@ -1,6 +1,7 @@
-import { ArrowLeftIcon, AvatarIcon, Cross1Icon, ExitIcon, FileTextIcon, GearIcon, HamburgerMenuIcon, LockClosedIcon, MagicWandIcon, MagnifyingGlassIcon, PersonIcon, PlusIcon, QuestionMarkCircledIcon } from '@radix-ui/react-icons'
+import { ArrowLeftIcon, AvatarIcon, Cross1Icon, DesktopIcon, ExitIcon, FileTextIcon, GearIcon, HamburgerMenuIcon, LockClosedIcon, MagicWandIcon, MagnifyingGlassIcon, MoonIcon, PersonIcon, PlusIcon, QuestionMarkCircledIcon, SunIcon } from '@radix-ui/react-icons'
 import { Avatar, Button, DropdownMenu, Flex, IconButton, Text, TextField, Tooltip } from '@radix-ui/themes'
-import { ListVideo, PlayIcon, SquarePen, SquarePlay, TvMinimal, TvMinimalPlay } from 'lucide-react'
+import { ListVideo, SquarePen, SquarePlay } from 'lucide-react'
+import { useTheme } from 'next-themes'
 import React, { useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { BarLoader } from 'react-spinners'
@@ -21,7 +22,14 @@ function Navbar({ toggleMenu }) {
   const { isFetching } = useFetchVideos(searchParams)
   const [openCreatePlaylist, setOpenCreatePlaylist] = useState(false)
   const isVideoRoute = pathname.startsWith('/watch')
+  const { theme, setTheme } = useTheme()
 
+  const themeIcon = {
+    "light": SunIcon,
+    "dark": MoonIcon,
+    "system": DesktopIcon
+  }
+  const ThemeIcon = themeIcon[theme]
 
 
   const handleSearch = (e) => {
@@ -39,8 +47,8 @@ function Navbar({ toggleMenu }) {
 
 
   return (
-    <div className='fixed top-0 right-0 z-40 grid w-full grid-cols-2 sm:grid-cols-3 px-6 py-3 border-[#484848] border-b bg-[#111113]/80 backdrop-blur-md h-16'>
-      <div className='absolute top-0 left-0 right-0 '>
+    <div className='fixed top-0 right-0 z-40 grid w-full h-16 grid-cols-2 px-6 py-3 bg-opacity-50 border-b sm:grid-cols-3 bg-[--color-background] border-b-[--gray-a6]'>
+      <div className='absolute top-0 left-0 right-0'>
         <BarLoader
           color='#70b8ff'
           width={'100%'}
@@ -114,29 +122,31 @@ function Navbar({ toggleMenu }) {
               </Button>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content
-              variant='soft' sideOffset={"1"} align='end'
+              variant='soft'
+              sideOffset={"1"}
+              align='end'
               className='min-w-40'
             >
-              <Link
-                to={'/dashboard'}
-                state={{ openDialog: true }}
-                replace:true
-              >
-                <DropdownMenu.Item >
-                  <SquarePlay strokeWidth={1} size={22} /> Upload video
-                </DropdownMenu.Item>
-              </Link>
-              <Link to={`/channel/${user?._id}/tweets`}>
-                <DropdownMenu.Item >
-                  <SquarePen strokeWidth={1} size={22} />Create tweet
-                </DropdownMenu.Item>
-              </Link>
+              <DropdownMenu.Item asChild>
+                <Link
+                  to={'/dashboard'}
+                  state={{ openDialog: true }}
+                  replace:true
+                >
+                  <SquarePlay strokeWidth={1.25} size={18} /> Upload video
+                </Link>
+              </DropdownMenu.Item>
+              <DropdownMenu.Item asChild>
+                <Link to={`/channel/${user?._id}/tweets`}>
+                  <SquarePen strokeWidth={1.25} size={18} />Create tweet
+                </Link>
+              </DropdownMenu.Item>
               <DropdownMenu.Item
                 onClick={() => {
                   setOpenCreatePlaylist(true)
                 }}
               >
-                <ListVideo strokeWidth={1} size={22} /> Create new playlist
+                <ListVideo strokeWidth={1.25} size={18} /> Create new playlist
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
@@ -174,44 +184,66 @@ function Navbar({ toggleMenu }) {
                   </Flex>
                 </Flex>
                 <DropdownMenu.Separator />
-                <Link to={`/channel/${user?._id}`}>
-                  <DropdownMenu.Item >
+                <DropdownMenu.Item asChild>
+                  <Link to={`/channel/${user?._id}`}>
                     <PersonIcon /> View Profile
-                  </DropdownMenu.Item>
-                </Link>
-                <Link to={`/dashboard`}>
-                  <DropdownMenu.Item >
+                  </Link>
+                </DropdownMenu.Item>
+                <DropdownMenu.Item asChild>
+                  <Link to={`/dashboard`}>
                     <MagicWandIcon /> Creator Studio
-                  </DropdownMenu.Item>
-                </Link>
+                  </Link>
+                </DropdownMenu.Item>
                 <DropdownMenu.Item onClick={handleLogout}>
                   <ExitIcon /> Logout
                 </DropdownMenu.Item>
                 <DropdownMenu.Separator />
-                <Link to='/settings'>
-                  <DropdownMenu.Item>
+                <DropdownMenu.Sub>
+                  <DropdownMenu.SubTrigger>
+                    < ThemeIcon /> Theme
+                  </DropdownMenu.SubTrigger>
+                  <DropdownMenu.SubContent className='min-w-48'>
+                    <DropdownMenu.Label>
+                      Theme
+                    </DropdownMenu.Label>
+                    <DropdownMenu.RadioGroup value={theme} onValueChange={t => setTheme(t)}>
+                      <DropdownMenu.RadioItem value='light'>
+                        <SunIcon /> Light
+                      </DropdownMenu.RadioItem>
+                      <DropdownMenu.RadioItem value='dark'>
+                        <MoonIcon /> Dark
+                      </DropdownMenu.RadioItem>
+                      <DropdownMenu.RadioItem value='system'>
+                        <DesktopIcon /> System
+                      </DropdownMenu.RadioItem>
+                    </DropdownMenu.RadioGroup>
+                  </DropdownMenu.SubContent>
+                </DropdownMenu.Sub>
+
+                <DropdownMenu.Item asChild>
+                  <Link to='/settings'>
                     <GearIcon /> Settings
-                  </DropdownMenu.Item>
-                </Link>
+                  </Link>
+                </DropdownMenu.Item>
                 <DropdownMenu.Separator />
                 <DropdownMenu.Sub>
                   <DropdownMenu.SubTrigger>More options...</DropdownMenu.SubTrigger>
                   <DropdownMenu.SubContent className='min-w-48'>
-                    <Link to='/help'>
-                      <DropdownMenu.Item >
+                    <DropdownMenu.Item asChild>
+                      <Link to='/help'>
                         <QuestionMarkCircledIcon /> Help
-                      </DropdownMenu.Item>
-                    </Link>
-                    <Link to={`/terms-of-services`}>
-                      <DropdownMenu.Item >
+                      </Link>
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item asChild>
+                      <Link to={`/terms-of-services`}>
                         <FileTextIcon /> Terms of Service
-                      </DropdownMenu.Item>
-                    </Link>
-                    <Link to={`/privacy`}>
-                      <DropdownMenu.Item >
+                      </Link>
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item asChild>
+                      <Link to={`/privacy`}>
                         <LockClosedIcon /> Privacy
-                      </DropdownMenu.Item>
-                    </Link>
+                      </Link>
+                    </DropdownMenu.Item>
                   </DropdownMenu.SubContent>
                 </DropdownMenu.Sub>
               </div>
@@ -243,9 +275,9 @@ function Navbar({ toggleMenu }) {
         </Tooltip>
       </div>
       {
-        showSearchBar && <div className='absolute left-0 right-0 flex items-center justify-center h-16 border-b bg-[#0c0c0d]  sm:hidden border-[#484848] gap-4 px-6'>
+        showSearchBar && <div className='absolute left-0 right-0 flex items-center justify-center h-16 border-b bg-[var(--color-background)]  sm:hidden border-[--gray-a6] gap-4 px-6'>
           <Tooltip content='Back'>
-            <IconButton size={'3'} radius='full' highContrast variant='ghost' onClick={() => setShowSearchBar(false)}>
+            <IconButton size={'3'} radius='full' color='gray' highContrast variant='ghost' onClick={() => setShowSearchBar(false)}>
               <ArrowLeftIcon height={'24'} width={'24'} />
             </IconButton>
           </Tooltip>

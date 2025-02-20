@@ -1,7 +1,7 @@
 import { ScrollArea, Separator, Spinner, Text } from '@radix-ui/themes'
 import React, { useEffect } from 'react'
-import RelatedVideoCard from './RelatedVideoCard'
 import { useInView } from 'react-intersection-observer'
+import RelatedVideoCard from './RelatedVideoCard'
 
 function MoreVideosFromChannelSection({ channelName, videoData, isFetchingNextPage, hasNextPage, fetchNextPage }) {
   const { inView, ref } = useInView({
@@ -16,8 +16,8 @@ function MoreVideosFromChannelSection({ channelName, videoData, isFetchingNextPa
 
   return (
     <div>
-      <section className='border-y sm:border lg:w-[384px] xl:w-[408px] sm:rounded-xl border-[#484848] overflow-hidden'>
-        <div className='bg-[#ddeaf814] p-4 sm:rounded-t-xl border-b border-[#484848]'>
+      <section className='border-y sm:border lg:w-[384px] xl:w-[408px] sm:rounded-xl border-[--gray-a6] overflow-hidden'>
+        <div className='bg-[--gray-a3] p-4 sm:rounded-t-xl border-b border-[--gray-a6]'>
           <Text size={'5'} weight={'medium'} className='line-clamp-1'>
             More from {channelName}
           </Text>

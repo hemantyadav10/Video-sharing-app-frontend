@@ -1,21 +1,21 @@
 import { Separator, Spinner, Text } from '@radix-ui/themes'
 import React, { useEffect } from 'react'
+import { useInView } from 'react-intersection-observer'
 import { useOutletContext, useParams } from 'react-router-dom'
-import trendingImg from '../assets/animatedTrending.webp'
-import shoppingImg from '../assets/animatedShopping.webp'
-import musicImg from '../assets/animatedMusic.jpg'
-import moviesImg from '../assets/animatedMovies.webp'
-import gamingImg from '../assets/animatedGaming.webp'
-import sportsImg from '../assets/animatedSports.jpg'
 import coursesImg from '../assets/animatedCourse.webp'
 import fashionImg from '../assets/animatedFashion.webp'
+import gamingImg from '../assets/animatedGaming.webp'
+import moviesImg from '../assets/animatedMovies.webp'
+import musicImg from '../assets/animatedMusic.jpg'
 import podcastImg from '../assets/animatedPodcast.webp'
-import { useGetVideosByCategories } from '../lib/queries/videoQueries'
-import VideoCard from '../components/VideoCard'
-import Container from '../components/Container'
+import shoppingImg from '../assets/animatedShopping.webp'
+import sportsImg from '../assets/animatedSports.jpg'
+import trendingImg from '../assets/animatedTrending.webp'
 import no_content from '../assets/no_content.svg'
+import Container from '../components/Container'
 import QueryErrorHandler from '../components/QueryErrorHandler'
-import { useInView } from 'react-intersection-observer'
+import VideoCard from '../components/VideoCard'
+import { useGetVideosByCategories } from '../lib/queries/videoQueries'
 
 
 function CategoryPage() {
@@ -57,7 +57,7 @@ function CategoryPage() {
     <div className='w-full mb-16 sm:mb-0'>
       <div className='flex items-center gap-4 p-6'>
         {categories[category] &&
-          <div className='size-[72px] rounded-full overflow-hidden border border-[#484848]'>
+          <div className='size-[72px] rounded-full overflow-hidden border border-[--gray-a6]'>
             <img
               src={categories[category]}
               alt="category"
@@ -76,7 +76,7 @@ function CategoryPage() {
       </div>
       <Separator size={'4'} />
       {isError && (
-        <div className='border rounded-xl border-[#484848] p-6 pt-0 m-6'>
+        <div className='border rounded-xl border-[--gray-a6] p-6 pt-0 m-6'>
           <QueryErrorHandler error={error} onRetry={refetch} />
         </div>
       )}

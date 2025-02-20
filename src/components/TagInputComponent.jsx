@@ -1,7 +1,6 @@
-import { Cross1Icon } from '@radix-ui/react-icons';
-import { IconButton, Text, TextField } from '@radix-ui/themes';
+import { Button, IconButton, Text, TextField } from '@radix-ui/themes';
 import { X } from 'lucide-react';
-import React from 'react'
+import React from 'react';
 
 function TagInputComponent({
   tags = [],
@@ -32,30 +31,33 @@ function TagInputComponent({
   return (
     <label
       htmlFor='tag_input'
-      className={`flex flex-wrap w-full rounded bg-[#00000040]  focus-within:shadow-input-focus focus-within:rounded-[5px] focus-within:outline-none shadow-input-border mt-1 p-2 cursor-text items-center gap-2 ${className}`}
+      className={`flex flex-wrap w-full rounded bg-[--color-surface]  focus-within:ring-[--focus-8] focus-within:outline-none mt-1 p-2 cursor-text items-center gap-2 ${className} ring-1 ring-[--gray-a7] focus-within:ring-[1.5px]`}
     >
       {tags?.map((tag, i) => (
-        <Text
-          as='span'
+        <Button
+          variant='surface'
+          asChild
           key={i}
-          color='blue'
-          className='flex items-center justify-between gap-3 py-1 pr-2 pl-3 text-sm shadow-md rounded bg-[#388bfd1a] transition hover:bg-[#3e63dd] hover:text-white group'
         >
-          {tag}
-          <IconButton
-            type='button'
-            variant='ghost'
-            color='blue'
-            size={'1'}
-            radius='full'
-            onClick={() => {
-              removeTag(tag); // Remove the tag
-            }}
-            className='group-hover:text-white'
+          <Text
+            as='span'
+            key={i}
+            weight={'regular'}
           >
-            <X size={16} />
-          </IconButton>
-        </Text>
+            {tag}
+            <IconButton
+              type='button'
+              variant='ghost'
+              size={'1'}
+              radius='full'
+              onClick={() => {
+                removeTag(tag); // Remove the tag
+              }}
+            >
+              <X size={16} />
+            </IconButton>
+          </Text>
+        </Button>
       ))}
       {tags.length < 5 && <TextField.Root
         id='tag_input'

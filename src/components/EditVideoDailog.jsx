@@ -1,16 +1,16 @@
+import { InfoCircledIcon } from '@radix-ui/react-icons'
 import { Button, Callout, Dialog, Flex, ScrollArea, Select, Text, TextArea, Tooltip } from '@radix-ui/themes'
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { BarLoader } from 'react-spinners'
 import uploadImg from '../assets/uploadImg.png'
+import { MAX_IMAGE_SIZE } from '../constants'
 import { useAuth } from '../context/authContext'
 import { useUpdateVideo } from '../lib/queries/videoQueries'
 import { categories } from '../utils/categories'
 import CloseButton from './CloseButton'
 import TagInputComponent from './TagInputComponent'
-import { MAX_IMAGE_SIZE } from '../constants'
-import { InfoCircledIcon } from '@radix-ui/react-icons'
 
 
 
@@ -115,7 +115,7 @@ function EditVideoDailog({
           </Text>
           <CloseButton />
         </Dialog.Title>
-        <Dialog.Description size="1" color='gray' className='px-4 pb-4  border-[#484848] border-b'>
+        <Dialog.Description size="1" color='gray' className='px-4 pb-4  border-[--gray-a6] border-b'>
           Make your video stand out with a fresh thumbnail, title, and description!
         </Dialog.Description>
         <div className='absolute top-0 left-0 right-0'>
@@ -127,7 +127,7 @@ function EditVideoDailog({
             className='z-[101]'
           />
         </div>
-        {updatingVideo && <div className='absolute inset-0 bg-black/30 top-14 rounded-b-xl z-[100]'></div>}
+        {updatingVideo && <div className='absolute inset-0 bg-[--color-overlay] top-14 rounded-b-xl z-[100]'></div>}
         {/* Error Callout */}
         {error && (
           <Callout.Root
@@ -154,7 +154,7 @@ function EditVideoDailog({
                 Set a thumbnail that stands out and draws viewers' attention.
               </Text>
               {thumbnail &&
-                <div className='w-full min-h-40 border-2 border-dashed rounded-xl border-[#484848]  space-y-2 p-2'>
+                <div className='w-full min-h-40 border-2 border-dashed rounded-xl border-[--gray-a7]  space-y-2 p-2'>
                   <img
                     src={thumbnail || video.thumbnail}
                     alt="thumbnail"
@@ -180,8 +180,8 @@ function EditVideoDailog({
               <label htmlFor="upload_thumbnail" className='hover:cursor-pointer' hidden={thumbnail}>
                 <div
                   tabIndex={1}
-                  className='w-full p-4 border-2 border-dashed rounded-xl border-[#484848] hover:opacity-85 transition-opacity space-y-2 focus-within:border-[#2870bd]'>
-                  <div className='flex items-center justify-center p-8 mx-auto rounded-full w-max bg-[#00000040] mb-2'>
+                  className='w-full p-4 border-2 border-dashed rounded-xl border-[--gray-a7] hover:opacity-85 transition-opacity space-y-2 focus-within:border-[--focus-8]'>
+                  <div className='flex items-center justify-center p-8 mx-auto rounded-full w-max bg-[--color-background] mb-2'>
                     <img src={uploadImg} alt="" className='size-14 brightness-75' />
                   </div>
                   <Text align={'center'} as='p' size={'2'} color='blue'>
@@ -297,7 +297,7 @@ function EditVideoDailog({
           </Flex>
         </ScrollArea>
 
-        <Flex gap="3" justify={'end'} p={'4'} className='border-t border-[#484848]'>
+        <Flex gap="3" justify={'end'} p={'4'} className='border-t border-[--gray-a6]'>
           <Dialog.Close>
             <Button
               onClick={() => reset()}
@@ -305,7 +305,6 @@ function EditVideoDailog({
               variant="surface"
               color="gray"
               disabled={updatingVideo}
-              highContrast
               className='px-4'
             >
               Cancel

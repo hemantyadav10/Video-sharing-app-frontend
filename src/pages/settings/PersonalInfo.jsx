@@ -58,7 +58,7 @@ function PersonalInfo() {
           Update your photo and personal details.
         </Text>
       </div>
-      <form onSubmit={handleSubmit(handleUpdateInfo)} className='flex flex-col gap-6 p-6 mt-4 border rounded-xl border-[#484848] max-w-lg lg:max-w-xl w-full lg:mt-0 '>
+      <form onSubmit={handleSubmit(handleUpdateInfo)} className='flex flex-col gap-6 p-6 mt-4 border rounded-xl border-[--gray-a6] max-w-lg lg:max-w-xl w-full lg:mt-0 '>
         {error && <Callout.Root variant='surface' color="red">
           <Callout.Icon>
             <InfoCircledIcon />

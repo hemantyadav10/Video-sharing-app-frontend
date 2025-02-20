@@ -8,11 +8,11 @@ function SignInPrompt({
   Icon = VideoIcon,
   title = "Enjoy your favorite videos",
   description = "Sign in to access videos that you've liked",
-  size = '120px'
+  size = 120
 }) {
   return (
     <div className='flex flex-col items-center justify-center gap-8 mx-auto mt-24 h-max w-max'>
-      {Icon && <Icon height={size} width={size} />}
+      {Icon && <Icon size={size} strokeWidth={1.25} />}
       <div className='flex flex-col items-center gap-4'>
         <Text size={'6'} as='p'>
           {title}

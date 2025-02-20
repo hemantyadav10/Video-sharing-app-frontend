@@ -34,7 +34,6 @@ function SaveToPlaylistButton({ videoData }) {
       const videoInPlaylists = playlist?.data.filter(playlistData =>
         playlistData.videos.includes(videoId)
       ).map(playlistData => playlistData._id)
-      // console.log(videoInPlaylists)
 
       setCheckedPlaylists(videoInPlaylists)
     }
@@ -85,20 +84,23 @@ function SaveToPlaylistButton({ videoData }) {
     }
   }
 
-
+  if (!isAuthenticated) return null;
 
   return (
     <div className='z-10 flex items-center'
       title='More Options'
     >
-      {/* dropdown menu - save to playlist button */}
+      {/* ====== Dropdown menu - save to playlist button ====== */}
       <DropdownMenu.Root>
-        <DropdownMenu.Trigger hidden={!isAuthenticated}>
+        <DropdownMenu.Trigger>
           <IconButton
+            variant='ghost'
+            mx={1}
+            size={'3'}
             aria-label="More options"
-            className='bg-transparent hover:bg-[#ddeaf814] active:bg-[#d3edf81d] '
             color='gray'
             radius='full'
+            highContrast
           >
             <DotsVerticalIcon width="18" height="18" />
           </IconButton>
@@ -106,30 +108,28 @@ function SaveToPlaylistButton({ videoData }) {
         <DropdownMenu.Content variant='soft'>
           <DropdownMenu.Sub>
             <DropdownMenu.SubTrigger>
-              <Share size={18} strokeWidth={1.5} /> Share
+              <Share size={18} strokeWidth={1.25} /> Share
             </DropdownMenu.SubTrigger>
             <DropdownMenu.SubContent className='min-w-40'>
               <DropdownMenu.Item
                 onClick={handleCopyLink}
               >
-                <Link size={16} strokeWidth={1.5} /> Copy Link
+                <Link size={16} strokeWidth={1.25} /> Copy Link
               </DropdownMenu.Item>
             </DropdownMenu.SubContent>
           </DropdownMenu.Sub>
           <DropdownMenu.Item
             onClick={handleClick}
           >
-            <ListPlus size={18} strokeWidth={1.5} /> Add to Playlist
+            <ListPlus size={18} strokeWidth={1.25} /> Add to Playlist
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Root>
 
-      {/* save to playlist dialog - all playlist listed */}
+      {/* ====== Save to playlist dialog - all playlist listed ====== */}
       <Dialog.Root
         open={openDialog}
-        onOpenChange={(open) => {
-          setOpenDialog(open)
-        }}
+        onOpenChange={setOpenDialog}
       >
         <Dialog.Content
           aria-describedby={undefined}
@@ -164,12 +164,12 @@ function SaveToPlaylistButton({ videoData }) {
                   py={'2'}
                   px={'5'}
                   align={'center'}
-                  className='hover:bg-[#0c0c0dcc] transition-all'
+                  className='hover:bg-[--gray-a3] transition-all'
                 >
                   <Checkbox
                     highContrast
                     size={'3'}
-                    variant='classic'
+                    variant='surface'
                     checked={checkedPlaylists?.includes(data._id)}
                     onCheckedChange={(checked) => handleCheckboxChange(data._id, checked, data.name)}
                   />
@@ -207,7 +207,7 @@ function SaveToPlaylistButton({ videoData }) {
         </Dialog.Content>
       </Dialog.Root>
 
-      {/* Create new playlist */}
+      {/* ====== Create new playlist ====== */}
       <CreatePlaylistDialog
         open={openCreatePlaylist}
         toggleOpen={setOpenCreatePlaylist}

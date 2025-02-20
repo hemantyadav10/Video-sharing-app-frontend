@@ -1,14 +1,13 @@
-import { Cross1Icon } from '@radix-ui/react-icons'
-import { Avatar, Box, Button, Flex, Grid, Heading, HoverCard, IconButton, Skeleton, Text, Tooltip } from '@radix-ui/themes'
+import { Avatar, Box, Button, Flex, HoverCard, Skeleton, Text } from '@radix-ui/themes'
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { useAuth } from '../context/authContext'
+import { useFetchUserChannelInfo } from '../lib/queries/userQueries'
 import { timeAgo } from '../utils/formatTimeAgo'
 import { formatVideoDuration } from '../utils/formatVideoDuration'
-import { useAuth } from '../context/authContext'
+import { getInitials } from '../utils/utils'
 import SaveToPlaylistButton from './SaveToPlaylistButton'
 import SubscriptionButton from './SubscriptionButton'
-import { useFetchUserChannelInfo } from '../lib/queries/userQueries'
-import { getInitials } from '../utils/utils'
 
 function VideoCard({
   hideAvatar = false,
@@ -37,7 +36,7 @@ function VideoCard({
             className={`object-cover object-center w-full sm:rounded-xl aspect-video hover:scale-105 transition-transform duration-300`}
           />
           <Text
-            className='absolute bottom-2 right-2 p-[2px] px-1 text-xs bg-black/70 font-medium rounded-md'
+            className='absolute bottom-2 right-2 p-[2px] px-1 text-xs bg-black/70 font-medium rounded-md text-white'
             as='span'
           >
             {formatVideoDuration(videoData?.duration)}
@@ -154,7 +153,7 @@ function VideoCard({
                 as='p'
                 size={'1'}
                 color='gray'
-                className={`${list && "sm:order-2 flex items-center gap-3"} hover:text-white`}
+                className={`${list && "sm:order-2 flex items-center gap-3"} hover:text-[--gray-12]`}
               >
                 {list &&
                   <Skeleton loading={loading}>

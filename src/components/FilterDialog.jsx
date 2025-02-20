@@ -5,7 +5,7 @@ import CloseButton from './CloseButton'
 import { SlidersHorizontal } from 'lucide-react'
 
 const FilterDialog = ({ filters, currentSortBy, currentSortType, setSearchParams, loading, }) => {
-  const getButtonClass = (isActive) => isActive && 'text-white font-semibold';
+  const getButtonClass = (isActive) => isActive && 'text-[--gray-12] font-semibold';
 
   return (
     <Dialog.Root>
@@ -30,10 +30,10 @@ const FilterDialog = ({ filters, currentSortBy, currentSortType, setSearchParams
         <div className='grid w-full grid-cols-2 gap-8 mb-10 sm:grid-cols-3 '>
           {filters.map(({ title, options }) => (
             <div key={title} className='space-y-4 text-xs'>
-              <h3 className='pb-4 font-medium border-b border-[#484848]'>
+              <h3 className='pb-4 font-medium border-b border-[--gray-a6]'>
                 {title}
               </h3>
-              <div className='flex flex-col text-[#f1f7feb5] gap-4 text-sm'>
+              <Text as='div' color='gray' className='flex flex-col gap-4 text-sm'>
                 {options.map(({ label, sortBy, sortType }) => (
                   <Dialog.Close key={label}>
                     <button
@@ -49,7 +49,7 @@ const FilterDialog = ({ filters, currentSortBy, currentSortType, setSearchParams
                           return params
                         })
                       }}
-                      className={`transition-all hover:text-white active:text-opacity-80 ${getButtonClass(
+                      className={`transition-all hover:text-[--gray-12] active:text-opacity-80 ${getButtonClass(
                         currentSortBy === sortBy && currentSortType === sortType
                       )} flex items-center gap-4 `}
                     >
@@ -60,7 +60,7 @@ const FilterDialog = ({ filters, currentSortBy, currentSortType, setSearchParams
                     </button>
                   </Dialog.Close>
                 ))}
-              </div>
+              </Text>
             </div>
           ))}
         </div>

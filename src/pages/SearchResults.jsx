@@ -1,16 +1,15 @@
-import React, { useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import VideoCard from '../components/VideoCard'
-import FilterDialog from '../components/FilterDialog'
-import { useFetchVideos } from '../lib/queries/videoQueries'
-import NoContent from '../components/NoContent'
 import { Button, Spinner } from '@radix-ui/themes'
+import React, { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
-import { useSearchUser } from '../lib/queries/userQueries'
-import SubscribedChannelCard from '../components/SubscribedChannelCard'
+import { useSearchParams } from 'react-router-dom'
 import ChannelCard from '../components/ChannelCard'
-import { useAuth } from '../context/authContext'
+import FilterDialog from '../components/FilterDialog'
+import NoContent from '../components/NoContent'
 import QueryErrorHandler from '../components/QueryErrorHandler'
+import VideoCard from '../components/VideoCard'
+import { useAuth } from '../context/authContext'
+import { useSearchUser } from '../lib/queries/userQueries'
+import { useFetchVideos } from '../lib/queries/videoQueries'
 
 const SearchResults = () => {
 	const [searchParams, setSearchParams] = useSearchParams()
@@ -73,7 +72,7 @@ const SearchResults = () => {
 							searchParams.set('type', 'videos')
 							setSearchParams(searchParams)
 						}}
-						variant={searchType ? searchType === "videos" ? "classic" : "soft" : "classic"}
+						variant={searchType ? searchType === "videos" ? "solid" : "soft" : "solid"}
 						color='gray'
 						highContrast
 						radius='large'
@@ -85,7 +84,7 @@ const SearchResults = () => {
 							searchParams.set('type', 'channels')
 							setSearchParams(searchParams)
 						}}
-						variant={searchType === "channels" ? "classic" : "soft"}
+						variant={searchType === "channels" ? "solid" : "soft"}
 						color='gray'
 						highContrast
 						radius='large'
@@ -109,7 +108,7 @@ const SearchResults = () => {
 					Array.from({ length: 4 }).map((_, i) => <VideoCard key={i} list loading={loadingResults} />)
 				)}
 				{isErrorFetchingVideos && (
-					<div className='border border-[#484848] rounded-xl p-6 pt-0 w-full'>
+					<div className='border border-[--gray-a6] rounded-xl p-6 pt-0 w-full'>
 						<QueryErrorHandler error={errorFetchingVideos} onRetry={refetchVideos} />
 					</div>
 				)}
@@ -147,7 +146,7 @@ const SearchResults = () => {
 							))
 						}
 						{isError && (
-							<div className='border border-[#484848] rounded-xl p-6 pt-0'>
+							<div className='border border-[--gray-a6] rounded-xl p-6 pt-0'>
 								<QueryErrorHandler error={error} onRetry={refetch} />
 							</div>
 						)}

@@ -8,8 +8,9 @@ import { BarLoader } from 'react-spinners';
 import noThumbnail from '../../assets/noThumbnail.webp';
 import placeholderProfile from '../../assets/profileImage.jpg';
 import Logo from '../../components/Logo';
+import { MAX_IMAGE_SIZE, SITE_NAME } from '../../constants';
 import { useAuth } from '../../context/authContext';
-import { MAX_IMAGE_SIZE } from '../../constants';
+import { useTheme } from 'next-themes';
 
 function Signup() {
   const { register, handleSubmit, formState: { errors }, watch, resetField } = useForm({
@@ -24,6 +25,7 @@ function Signup() {
   const avatar = watch("avatar");
   console.log(avatar?.[0])
   const profileImgUrl = avatar?.[0] ? URL.createObjectURL(avatar[0]) : null;
+  const { theme } = useTheme()
 
 
   const handleCreateAccount = async (data) => {
@@ -69,7 +71,7 @@ function Signup() {
         </p>
         <form
           onSubmit={handleSubmit(handleCreateAccount)}
-          className="relative w-full max-w-5xl md:p-6  md:bg-[#d8f4f609] md:shadow-lg shadow-black/30 rounded-xl flex gap-6 flex-col-reverse md:flex-row pt-6 "
+          className="relative w-full max-w-5xl md:p-6  md:bg-[#d8f4f609] md:shadow-lg rounded-xl flex gap-6 flex-col-reverse md:flex-row pt-6 "
         >
           <div className='absolute top-0 mb-6 -left-4 -right-4 md:left-6 md:right-6 '>
             <BarLoader
@@ -88,7 +90,7 @@ function Signup() {
               <Text as="div" size="2" mb="2" weight={'medium'}>
                 Banner Image
               </Text>
-              <div className={`h-32 border hover:cursor-pointer ${errors.coverImage ? "border-[#b54548]" : "border-[#d9edff40]"} rounded-lg relative hover:brightness-90 transition-all`}>
+              <div className={`h-32 border hover:cursor-pointer ${errors.coverImage ? "border-[#b54548]" : "border-[--gray-a6]"} rounded-lg relative hover:brightness-90 transition-all`}>
                 <input
                   {...register("coverImage", {
                     validate: {
@@ -120,7 +122,7 @@ function Signup() {
                     <img
                       src={noThumbnail}
                       alt=""
-                      className="object-cover object-center w-full h-full rounded-lg filter grayscale brightness-[.06] md:brightness-[0.09]"
+                      className={`${theme === "dark" ? "brightness-[.06] md:brightness-[0.09]" : ""} object-cover object-center w-full h-full rounded-lg filter grayscale`}
                     />
                   )
                 }
@@ -159,8 +161,8 @@ function Signup() {
               <Text as="div" size="2" mb="2" weight={'medium'}>
                 Avatar <Text as='span' color='red' weight={'medium'}>*</Text>
               </Text>
-              <div className={`flex justify-center p-2 border ${errors.avatar ? "border-[#b54548]" : "border-[#d9edff40]"} rounded-lg bg-[#00000040]`}>
-                <div className='rounded-full size-32 border border-[#d9edff40] hover:brightness-90 hover:cursor-pointer transition-all'>
+              <div className={`flex justify-center p-2 border ${errors.avatar ? "border-[#b54548]" : "border-[--gray-a6]"} rounded-lg bg-[--color-surface]`}>
+                <div className='rounded-full size-32 border border-[--gray-a6] hover:brightness-90 hover:cursor-pointer transition-all'>
                   <input
                     {...register("avatar", {
                       required: "Avatar is required",
@@ -187,7 +189,7 @@ function Signup() {
                       : <img
                         src={placeholderProfile}
                         alt="profile image"
-                        className={`object-cover object-center w-full h-full rounded-full filter grayscale brightness-[.20]`}
+                        className={`${theme === 'dark' ? "brightness-[.20]" : "brightness-150"} object-cover object-center w-full h-full rounded-full filter grayscale `}
                       />
                   }
 
@@ -360,7 +362,7 @@ function Signup() {
         </Text>
         <div className='flex flex-col items-center w-full mt-12 sm:flex-row sm:justify-between'>
           <Text as='span' color='gray' size={'2'} className='min-w-min'>
-            © 2024 VidNova. All rights reserved.
+            © 2025 {SITE_NAME}. All rights reserved.
           </Text>
           <div className='flex gap-2'>
             <Link to={'/privacy'} >

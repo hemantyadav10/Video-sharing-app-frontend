@@ -1,6 +1,6 @@
 import { Button, Separator, Skeleton, Text } from '@radix-ui/themes'
+import { BellRing } from 'lucide-react'
 import React from 'react'
-import { Bell, BellRing } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/authContext'
 
@@ -12,11 +12,7 @@ function ChannelCard({ channel, loading, isFetching }) {
       {loading ? (
         // Render a non-clickable container when loading
         <div className="flex items-center gap-6 p-4 transition-colors rounded-xl">
-          <Skeleton loading={loading}>
-            <div className="rounded-full size-24 md:size-32 w-max aspect-square">
-              <div className="w-full h-full bg-gray-200 rounded-full"></div>
-            </div>
-          </Skeleton>
+          <Skeleton loading={loading} className="rounded-full size-24 md:size-32 w-max aspect-square" />
           <div className="flex-1">
             <Skeleton loading={loading} className="w-32 h-5">
               <Text as="span" size="5" mb="2"></Text>
@@ -35,7 +31,7 @@ function ChannelCard({ channel, loading, isFetching }) {
         // Render the clickable Link component when not loading
         <Link
           to={`/channel/${channel?._id}`}
-          className="flex items-center gap-6 hover:bg-[#ddeaf814] active:bg-[#d9edfe25] p-4 rounded-xl transition-colors"
+          className="flex items-center gap-6 hover:bg-[--gray-a3] active:bg-[--gray-a4] p-4 rounded-xl transition-colors"
         >
           <div className="rounded-full size-24 md:size-32 w-max aspect-square">
             <img

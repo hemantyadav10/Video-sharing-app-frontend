@@ -1,41 +1,56 @@
-import { createRoot } from 'react-dom/client'
-import App from './App.jsx'
-import "@radix-ui/themes/styles.css";
-import './index.css'
 import { Spinner, Theme } from '@radix-ui/themes';
-import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom';
-import Home from './pages/Home.jsx';
-import Channel from './pages/channel/Channel.jsx';
-import ChannelVideos from './pages/channel/ChannelVideos.jsx';
-import ChannelPlaylists from './pages/channel/ChannelPlaylists.jsx';
-import ChannelTweets from './pages/channel/ChannelTweets.jsx';
-import ChangePassword from './pages/settings/ChangePassword.jsx'
-import PersonalInfo from './pages/settings/PersonalInfo.jsx'
-import Settings from './pages/settings/Settings.jsx';
-import Login from './pages/auth/Login.jsx';
-import Signup from './pages/auth/Signup.jsx';
-import Playlist from './pages/Playlist.jsx';
-import LikedVideos from './pages/LikedVideos.jsx';
-import AllPlaylists from './pages/AllPlaylists.jsx';
-import SubscriptionVideos from './pages/SubscriptionVideos.jsx';
-import SubscribedChannels from './pages/SubscribedChannels.jsx';
-import SearchResults from './pages/SearchResults.jsx';
-import History from './pages/History.jsx';
+import "@radix-ui/themes/styles.css";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import VideoPage from './pages/VideoPage.jsx';
-import AuthProvider from './context/authContext.jsx';
-import PublicRoute from './components/PublicRoute.jsx';
-import ProtectedRoute from './components/ProtectedRoute.jsx';
+import { ThemeProvider } from 'next-themes';
+import { createRoot } from 'react-dom/client';
 import { Toaster } from 'react-hot-toast';
-import Dashboard from './pages/Dashboard.jsx';
-import Privacy from './pages/Privacy.jsx';
-import TermsOfService from './pages/TermsOfService.jsx';
-import Help from './pages/Help.jsx';
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom';
+import App from './App.jsx';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
+import PublicRoute from './components/PublicRoute.jsx';
+import AuthProvider from './context/authContext.jsx';
+import './index.css';
+import AllPlaylists from './pages/AllPlaylists.jsx';
+import Login from './pages/auth/Login.jsx';
+import Signup from './pages/auth/Signup.jsx';
 import CategoryPage from './pages/CategoryPage.jsx';
-import TagsPage from './pages/TagsPage.jsx';
+import Channel from './pages/channel/Channel.jsx';
+import ChannelPlaylists from './pages/channel/ChannelPlaylists.jsx';
+import ChannelTweets from './pages/channel/ChannelTweets.jsx';
+import ChannelVideos from './pages/channel/ChannelVideos.jsx';
+import Dashboard from './pages/Dashboard.jsx';
+import Help from './pages/Help.jsx';
+import History from './pages/History.jsx';
+import Home from './pages/Home.jsx';
+import LikedVideos from './pages/LikedVideos.jsx';
 import NotFound from './pages/NotFound.jsx';
+import Playlist from './pages/Playlist.jsx';
+import Privacy from './pages/Privacy.jsx';
+import SearchResults from './pages/SearchResults.jsx';
+import ChangePassword from './pages/settings/ChangePassword.jsx';
+import PersonalInfo from './pages/settings/PersonalInfo.jsx';
+import Settings from './pages/settings/Settings.jsx';
+import SubscribedChannels from './pages/SubscribedChannels.jsx';
+import SubscriptionVideos from './pages/SubscriptionVideos.jsx';
+import TagsPage from './pages/TagsPage.jsx';
+import TermsOfService from './pages/TermsOfService.jsx';
+import VideoPage from './pages/VideoPage.jsx';
 
+const toastStyles = {
+  backgroundColor: "#09090b",
+  minWidth: "240px",
+  fontSize: "14px",
+  color: "#fafafa",
+  border: "1px solid #484848",
+  padding: "12px",
+  boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)"
+}
+
+const toastErrorStyles = {
+  backgroundColor: "#7f1d1d",
+  border: "1px solid #7f1d1d",
+}
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -96,19 +111,30 @@ const router = createBrowserRouter(
 createRoot(document.getElementById('root')).render(
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <Theme appearance='dark' accentColor='blue'>
-        <RouterProvider router={router} />
-        <Toaster
-          position='bottom-left'
-          toastOptions={{
-            className: 'toast',
-            error: { icon: false, className: "toast_error" },
-            success: { icon: false },
-            loading: { icon: <Spinner size={'3'} /> }
-          }}
-        />
-        <ReactQueryDevtools initialIsOpen={false} />
-      </Theme>
+      <ThemeProvider
+        attribute={'class'}
+        disableTransitionOnChange
+        defaultTheme='dark'
+      >
+        <Theme
+          accentColor='blue'
+        >
+          <RouterProvider router={router} />
+          <Toaster
+            position='bottom-left'
+            toastOptions={{
+              style: toastStyles,
+              error: {
+                icon: false,
+                style: toastErrorStyles
+              },
+              success: { icon: false },
+              loading: { icon: <Spinner size={'3'} /> }
+            }}
+          />
+          <ReactQueryDevtools initialIsOpen={false} />
+        </Theme>
+      </ThemeProvider>
     </AuthProvider>
   </QueryClientProvider>
 )

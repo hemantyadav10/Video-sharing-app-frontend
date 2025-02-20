@@ -1,12 +1,12 @@
-import { Separator, Skeleton, Spinner, Text } from '@radix-ui/themes'
+import { Button, Separator, Skeleton, Spinner, Text } from '@radix-ui/themes'
 import React, { useEffect } from 'react'
+import { useInView } from 'react-intersection-observer'
 import { useOutletContext, useParams } from 'react-router-dom'
 import no_content from '../assets/no_content.svg'
 import Container from '../components/Container'
 import QueryErrorHandler from '../components/QueryErrorHandler'
 import VideoCard from '../components/VideoCard'
 import { useGetVideoByTag } from '../lib/queries/videoQueries'
-import { useInView } from 'react-intersection-observer'
 
 
 function TagsPage() {
@@ -36,7 +36,7 @@ function TagsPage() {
 
   return (
     <div className='w-full mb-16 sm:mb-0'>
-      <div className='p-6 px-4 sm:px-6 lg:px-10 bg-gradient-to-t from-[#111111] from-40%  to-[rgba(0,119,255,0.1)]'>
+      <div className='p-6 px-4 sm:px-6 lg:px-10 bg-gradient-to-t from-[--gray-1] from-30%  to-[--blue-a3] flex flex-col'>
         <Text
           weight={'medium'}
           color='gray'
@@ -52,29 +52,35 @@ function TagsPage() {
         >
           {tag}
         </Text>
-        <Text
-          weight={'medium'}
-          color='blue'
-          as='span'
-          my={'2'}
-          size={'4'}
-          className='flex items-center justify-between gap-3 py-1 pr-2 pl-3 text-sm  rounded bg-[#388bfd1a] transition w-max hover:bg-[#3e63dd] hover:text-white'
+        <Button
+          asChild
+          className='w-max'
+          variant='soft'
         >
-          #{tag}
-        </Text>
+          <Text
+            weight={'medium'}
+            color='blue'
+            as='span'
+            my={'2'}
+          >
+            #{tag}
+          </Text>
+        </Button>
         <Skeleton loading={isFetching}>
           <Text
+            as='span'
             color='gray'
             size={'2'}
+            className='w-max'
           >
-            {data?.data?.totalDocs} videos
+            {data?.pages[0]?.data?.totalDocs} videos
           </Text>
         </Skeleton>
       </div>
       <Separator size={'4'} />
 
       {isError && (
-        <div className='border rounded-xl border-[#484848] p-6 pt-0 m-6'>
+        <div className='border rounded-xl border-[--gray-a6] p-6 pt-0 m-6'>
           <QueryErrorHandler error={error} onRetry={refetch} />
         </div>
       )}

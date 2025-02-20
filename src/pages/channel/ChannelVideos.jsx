@@ -33,7 +33,7 @@ function ChannelVideos() {
   return (
     <div
       tabIndex={isFetching ? -1 : 0}
-      className={`${(isFetching && !loadingVideos && !isFetchingNextPage) ? 'pointer-events-none opacity-30 ' : ''}`}
+      className={`${(isFetching && !loadingVideos && !isFetchingNextPage) ? 'pointer-events-none opacity-60 ' : ''}`}
     >
 
       {/* Filter Section */}
@@ -56,7 +56,7 @@ function ChannelVideos() {
 
       {loadingVideos && <Spinner className='mx-auto my-4 size-6' />}
       {isError &&
-        <div className='border rounded-xl border-[#484848] pt-0 p-6 mt-6'>
+        <div className='border rounded-xl border-[--gray-a6] pt-0 p-6 mt-6'>
           <QueryErrorHandler error={error} onRetry={refetch} />
         </div>
       }

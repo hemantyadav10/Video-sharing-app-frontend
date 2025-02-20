@@ -74,8 +74,8 @@ function Dashboard() {
     <div className='flex flex-col w-full gap-6 p-6 py-12 lg:px-20'>
 
       {/* Top section */}
-      <section className={`flex flex-col gap-6 p-6 border rounded-lg sm:justify-between border-[#484848] relative bg-dashboard_bg`}>
-        <div className='absolute inset-0 bg-gradient-to-r from-[#111111] to-[rgba(17,17,17,0.75)] rounded-lg'></div>
+      <section className={`flex flex-col gap-6 p-6  rounded-r-lg sm:justify-between border-[--gray-6] relative bg-dashboard_bg `}>
+        <div className='absolute inset-0 bg-gradient-to-r from-[--color-background] to-[--gray-a6] rounded-r-lg'></div>
         <div className='z-10'>
           <Heading mb={'1'}>
             Welcome back, {user?.fullName}
@@ -110,7 +110,7 @@ function Dashboard() {
 
       {/* Stats cards section */}
       {isFetchStatsError &&
-        <div className='border rounded-lg border-[#484848] p-4'>
+        <div className='border rounded-lg border-[--gray-a6] p-4'>
           <QueryErrorHandler error={errorfetchingStats} onRetry={retryFetchStats} className='mt-0' />
         </div>
       }
@@ -129,7 +129,7 @@ function Dashboard() {
       {/* video details table */}
       <section>
         {isError &&
-          <div className='border rounded-lg border-[#484848] p-4 '>
+          <div className='border rounded-lg border-[--gray-a6] p-4 '>
             <QueryErrorHandler error={error} onRetry={refetch} className='mt-0' />
           </div>
         }
@@ -176,20 +176,20 @@ function Dashboard() {
 
       <div className='flex flex-wrap-reverse items-center justify-center w-full gap-4 pt-12 mt-auto'>
         <Text as='span' color='gray' size={'1'} className='text-nowrap'>
-          © 2024 ViewTube. All rights reserved.
+          © 2024 VidNova. All rights reserved.
         </Text>
         <div className='flex items-center gap-4'>
-          <Text as='span' color='gray' size={'1'} className='hover:underline'>
+          <Text asChild color='gray' size={'1'} className='hover:underline'>
             <Link to={'/privacy'} >
               Privacy
             </Link>
           </Text>
-          <Text as='span' color='gray' size={'1'} className='hover:underline'>
+          <Text asChild color='gray' size={'1'} className='hover:underline'>
             <Link to={'/help'} >
               Help
             </Link>
           </Text>
-          <Text as='span' color='gray' size={'1'} className='hover:underline'>
+          <Text asChild color='gray' size={'1'} className='hover:underline'>
             <Link to={'/terms-of-services'} >
               Terms
             </Link>

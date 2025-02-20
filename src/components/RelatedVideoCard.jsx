@@ -1,18 +1,18 @@
-import { DotsVerticalIcon, PlayIcon, TriangleRightIcon } from '@radix-ui/react-icons'
-import { IconButton, Text } from '@radix-ui/themes'
+import { PlayIcon } from '@radix-ui/react-icons'
+import { Text } from '@radix-ui/themes'
 import React from 'react'
-import SaveToPlaylistButton from './SaveToPlaylistButton'
 import { Link, useLocation } from 'react-router-dom'
 import { formatVideoDuration } from '../utils/formatVideoDuration'
+import SaveToPlaylistButton from './SaveToPlaylistButton'
 
 function RelatedVideoCard({ videoData }) {
   const { pathname } = useLocation()
   const currentPlayingVideo = pathname === `/watch/${videoData?._id}`
 
   return (
-    <div className={`flex items-center p-1 transition-all pl-0 group ${currentPlayingVideo ? "bg-[#0077ff1b]" : "hover:bg-[#d3edf81d]"}`}>
+    <div className={`flex items-center p-1 transition-all pl-0 group ${currentPlayingVideo ? "bg-[--accent-a3]" : "hover:bg-[--gray-a3]"}`}>
       <div className={`px-1 ${currentPlayingVideo ? "" : "w-[23px]"}`} >
-        <PlayIcon color='#c2e6ff' className={`${currentPlayingVideo ? "" : "hidden"}`} />
+        <PlayIcon color='var(--accent-12)' className={`${currentPlayingVideo ? "" : "hidden"}`} />
       </div>
       <Link
         to={`/watch/${videoData?._id}`}
@@ -25,7 +25,7 @@ function RelatedVideoCard({ videoData }) {
             className='object-cover object-center w-full h-full rounded-md'
           />
           <Text
-            className='absolute bottom-[2px] right-[2px] p-[2px] px-1 text-xs bg-black/70 font-medium rounded-md'
+            className='absolute bottom-[2px] right-[2px] p-[2px] px-1 text-xs bg-black/70 text-white font-medium rounded-md'
             as='span'
           >
             {formatVideoDuration(videoData?.duration)}

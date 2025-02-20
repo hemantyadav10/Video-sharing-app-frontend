@@ -6,8 +6,8 @@ function EmptyLibrary({
   Icon = VideoIcon,
   title = 'No videos',
   description = 'There are no videos in this playlist yet',
-  bgColor = 'bg-[#d3edf812]',
-  iconBgColor = 'bg-[#d3edf812]',
+  bgColor = 'bg-[--gray-a3]',
+  iconBgColor = 'bg-[--gray-a3]',
   iconSize = 24,
 }) {
   return (

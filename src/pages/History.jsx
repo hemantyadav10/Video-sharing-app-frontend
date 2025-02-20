@@ -1,13 +1,14 @@
+import { TrashIcon, UpdateIcon } from '@radix-ui/react-icons'
+import { AlertDialog, Button, Flex, Separator, Skeleton, Spinner, Text } from '@radix-ui/themes'
+import { HistoryIcon } from 'lucide-react'
 import React, { useEffect } from 'react'
-import VideoCard from '../components/VideoCard'
-import { AlertDialog, Button, Flex, IconButton, Separator, Skeleton, Spinner, Text } from '@radix-ui/themes'
-import { CounterClockwiseClockIcon, TrashIcon, UpdateIcon } from '@radix-ui/react-icons'
-import { useClearWatchHistory, useFetchUserWatchHistory } from '../lib/queries/userQueries'
-import { useAuth } from '../context/authContext'
-import SignInPrompt from '../components/SignInPrompt '
 import toast from 'react-hot-toast'
 import { useInView } from 'react-intersection-observer'
 import QueryErrorHandler from '../components/QueryErrorHandler'
+import SignInPrompt from '../components/SignInPrompt '
+import VideoCard from '../components/VideoCard'
+import { useAuth } from '../context/authContext'
+import { useClearWatchHistory, useFetchUserWatchHistory } from '../lib/queries/userQueries'
 
 function History() {
   const { user, isAuthenticated } = useAuth()
@@ -41,7 +42,7 @@ function History() {
     <div className={`w-full px-4 py-6 sm:px-10 mb-16 sm:mb-0`}>
       {!isAuthenticated &&
         <SignInPrompt
-          Icon={CounterClockwiseClockIcon}
+          Icon={HistoryIcon}
           title='Keep track of what you watch'
           description="Watch history isn't viewable when signed out."
         />
@@ -81,9 +82,8 @@ function History() {
               <Flex gap="3" mt="4" justify="end">
                 <AlertDialog.Cancel>
                   <Button
-                    variant="soft"
+                    variant="surface"
                     color="gray"
-                    highContrast
                     radius='full'
                   >
                     Cancel
@@ -105,7 +105,7 @@ function History() {
         </h1>
       }
       {isError && (
-        <div className='border rounded-xl border-[#484848] p-6 pt-0'>
+        <div className='border rounded-xl border-[--gray-a6] p-6 pt-0'>
           <QueryErrorHandler error={error} onRetry={refetch} />
         </div>
       )}

@@ -92,7 +92,7 @@ function PlaylistVideos() {
           className={`relative p-4 bg-cover bg-center sm:p-6  lg:rounded-t-2xl lg:h-[calc(100vh-122px)] lg:sticky lg:top-[88px] sm:px-24 md:px-6 overflow-hidden bg-fixed`}
           style={{ backgroundImage: `url(${playlist?.data?.videos[0]?.thumbnail})` }}
         >
-          <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/20 to-[#111113] backdrop-blur-xl"></div>
+          <div className="absolute inset-0 z-0 bg-gradient-to-b from-[--gray-a6] to-[--gray-1] backdrop-blur-xl"></div>
           <div className="relative z-10 flex flex-col w-full gap-6 text-xs md:flex-row md:items-center lg:flex-col lg:w-80">
             {playlist?.data?.videos.length > 0 && <div className='w-full'>
               <img
@@ -101,8 +101,8 @@ function PlaylistVideos() {
                 className="object-cover object-center w-full rounded-xl aspect-video"
               />
             </div>}
-            <div className='flex flex-col w-full gap-4 text-white'>
-              <p className='text-xl font-bold sm:text-2xl line-clamp-2'>
+            <div className='flex flex-col w-full gap-4 '>
+              <p className='text-xl font-bold sm:text-2xl line-clamp-2 drop-shadow-lg'>
                 {playlist?.data?.name}
               </p>
               <div>
@@ -114,21 +114,21 @@ function PlaylistVideos() {
                     alt='avatar'
                     fallback="A"
                   />
-                  <p className='font-medium '>
+                  <p className='font-medium drop-shadow-lg'>
                     by {playlist?.data?.owner.fullName}
                   </p>
                 </Link>
-                <Text as='p'>
+                <Text as='p' className='drop-shadow-lg'>
                   Playlist • {playlist?.data?.totalVideos} videos • {`Updated ${timeAgo(playlist?.data?.updatedAt)}`}
                 </Text>
               </div>
               <Dialog.Root >
                 <Dialog.Trigger className='cursor-pointer'>
                   <Text as='p' className='relative'>
-                    <span className='line-clamp-2 '>
+                    <span className='line-clamp-2 drop-shadow-lg'>
                       {playlist?.data?.description}
                     </span>
-                    <button className='absolute w-full font-semibold text-left'>...more</button>
+                    <button className='absolute w-full font-semibold text-left drop-shadow-lg'>...more</button>
                   </Text>
                 </Dialog.Trigger>
                 <Dialog.Content>
@@ -158,20 +158,21 @@ function PlaylistVideos() {
               {user?._id === playlist?.data?.owner._id &&
                 <div className='flex justify-end gap-2 '>
                   {/* Add videos to playlist */}
-                  <Link to={`/channel/${user?._id}/videos`}>
-                    <Tooltip content='Add videos' side='bottom'>
-                      <IconButton
-                        radius='full'
-                        highContrast
-                        variant='soft'
-                        color='gray'
-                        className='shadow-lg hover:shadow-black/30'
-                        size={'3'}
-                      >
+                  <Tooltip content='Add videos' side='bottom'>
+                    <IconButton
+                      radius='full'
+                      highContrast
+                      variant='soft'
+                      color='gray'
+                      className='shadow-lg hover:shadow-black/30'
+                      size={'3'}
+                      asChild
+                    >
+                      <Link to={`/channel/${user?._id}/videos`}>
                         <PlusIcon width={'24'} height={'24'} />
-                      </IconButton>
-                    </Tooltip>
-                  </Link>
+                      </Link>
+                    </IconButton>
+                  </Tooltip>
                   {/* Edit playlist button and edit dialog */}
                   <Dialog.Root
                     open={isDialogOpen}
@@ -297,7 +298,6 @@ function PlaylistVideos() {
                         >
                           <Button
                             color="gray"
-                            highContrast
                             radius='full'
                             variant="surface"
                           >
@@ -348,7 +348,7 @@ function PlaylistVideos() {
             playlistName={playlist?.data?.name}
           />
         ))}
-        <hr hidden={!playlist?.data?.videos.length} className="border-t border-[#484848]" />
+        <hr hidden={!playlist?.data?.videos.length} className="border-t border-[--gray-a6]" />
 
       </div>
     </div>

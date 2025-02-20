@@ -13,7 +13,7 @@ function NoContent({
         className='size-64'
         alt="no content image"
       />
-      <Text size={'6'}>
+      <Text size={'6'} weight={'medium'}>
         {title}
       </Text>
       <Text

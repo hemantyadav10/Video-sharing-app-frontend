@@ -92,7 +92,7 @@ function ChannelTweets() {
       <div className='flex flex-col w-full max-w-4xl mx-auto sm:gap-6 sm:p-4 '>
 
         {isError && (
-          <div className='border border-[#484848] rounded-xl p-6 pt-0'>
+          <div className='border border-[--gray-a6] rounded-xl p-6 pt-0'>
             <QueryErrorHandler error={error} onRetry={refetch} />
           </div>
         )}

@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { BarLoader } from 'react-spinners';
 import { useAuth } from '../../context/authContext';
 import Logo from '../../components/Logo';
+import { SITE_NAME } from '../../constants';
 
 function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm()
@@ -45,7 +46,7 @@ function Login() {
           <Logo />
         </span>
         <p className="mt-32 mb-4 text-3xl font-semibold text-center capitalize">Sign in to your account</p>
-        <div className="relative w-full max-w-sm p-6  bg-[#d8f4f609]  shadow-lg shadow-black/30 rounded-xl ">
+        <div className="relative w-full max-w-sm p-6  bg-[--color-panel-solid]  shadow-md rounded-xl ">
           <div className='absolute top-0 left-6 right-6 '>
             <BarLoader
               color='#70b8ff'
@@ -157,7 +158,7 @@ function Login() {
         </Text>
         <div className='flex flex-col items-center w-full mt-auto sm:flex-row sm:justify-between'>
           <Text as='span' color='gray' size={'2'} className='min-w-min'>
-            © 2024 VidNova. All rights reserved.
+            © 2025 {SITE_NAME}. All rights reserved.
           </Text>
           <div className='flex gap-2'>
             <Link to={'/privacy'} >

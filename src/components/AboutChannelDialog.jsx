@@ -1,10 +1,9 @@
-import { CheckIcon, CopyIcon, EyeOpenIcon, GlobeIcon, InfoCircledIcon, Link2Icon, PersonIcon, VideoIcon } from '@radix-ui/react-icons';
-import { Dialog, Flex, IconButton, ScrollArea, Spinner, Text } from '@radix-ui/themes';
-import React, { useEffect, useState } from 'react';
+import { CheckIcon, CopyIcon } from '@radix-ui/react-icons';
+import { Dialog, Flex, IconButton, Spinner, Text } from '@radix-ui/themes';
+import { CalendarDays, Earth, Link2, SquarePlay, TrendingUp, UsersRound } from 'lucide-react';
+import React, { useState } from 'react';
 import toast from 'react-hot-toast';
-import { useAuth } from '../context/authContext';
 import { useGetChannelStats } from '../lib/queries/dashboardQueries';
-import { CalendarDays, Earth, Link, Link2, LoaderCircle, SquarePlay, TrendingUp, UsersRound } from 'lucide-react';
 
 function AboutChannelDialog({ isOpen, setOpenDialog, joiningDate, channelId }) {
   const { data: stats, isFetching: loadingStats } = useGetChannelStats(channelId, false);
@@ -57,9 +56,7 @@ function AboutChannelDialog({ isOpen, setOpenDialog, joiningDate, channelId }) {
   return (
     <Dialog.Root
       open={isOpen}
-      onOpenChange={(open) => {
-        setOpenDialog(open);
-      }}
+      onOpenChange={setOpenDialog}
     >
       <Dialog.Content maxWidth={'450px'} aria-describedby={undefined}>
         <Dialog.Title>About</Dialog.Title>

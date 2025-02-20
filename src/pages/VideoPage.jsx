@@ -12,10 +12,10 @@ import RelatedVideoSection from '../components/RelatedVideoSection'
 import SaveToPlaylistButton from '../components/SaveToPlaylistButton'
 import SubscriptionButton from '../components/SubscriptionButton'
 import { useAuth } from '../context/authContext'
+import { useReadMore } from '../hooks/useReadMore'
 import { useToggleVideoLike } from '../lib/queries/likeQueries'
 import { useFetchUserChannelInfo, useFetchUserVideos } from '../lib/queries/userQueries'
 import { useFetchVideoById } from '../lib/queries/videoQueries'
-import { useReadMore } from '../hooks/useReadMore'
 
 function VideoPage() {
   const { videoId } = useParams()
@@ -60,7 +60,7 @@ function VideoPage() {
     <div className='flex flex-col w-full gap-4 mb-32 lg:gap-6 sm:p-6 lg:flex-row lg:justify-center lg:items-start'>
       <div className='flex-1 lg:max-w-4xl'>
         {isError && (
-          <div className='w-full border aspect-video border-[#484848] rounded-xl flex items-center justify-center'>
+          <div className='w-full border aspect-video border-[--gray-a6] rounded-xl flex items-center justify-center'>
             <QueryErrorHandler onRetry={refetch} error={error} />
           </div>
         )}
@@ -72,7 +72,7 @@ function VideoPage() {
               </video>
             </div>
           </Skeleton>
-          <div className='w-full p-3 sm:p-6 sm:mt-4 space-y-3 sm:border rounded-xl border-[#484848]'>
+          <div className='w-full p-3 sm:p-6 sm:mt-4 space-y-3 sm:border rounded-xl border-[--gray-a6]'>
             <Skeleton loading={isLoading} height={'28px'} className='w-3/4'>
               <p className='font-semibold sm:text-xl'>
                 {video?.data.title}
@@ -117,19 +117,18 @@ function VideoPage() {
                 </div>
                 {isAuthenticated ?
                   (user?._id === video?.data.owner._id ?
-                    <Link
-                      to={'/dashboard'}
-                      className='rounded-full outline-none focus-visible:ring-2'
+                    <Button
+                      radius='full'
+                      variant='soft'
+                      highContrast
+                      asChild
                     >
-                      <Button
-                        radius='full'
-                        variant='soft'
-                        highContrast
-                        tabIndex={'-1'}
+                      <Link
+                        to={'/dashboard'}
                       >
                         Edit video
-                      </Button>
-                    </Link> :
+                      </Link>
+                    </Button> :
                     <Skeleton loading={isLoading || loadingProfileInfo}>
                       <SubscriptionButton
                         userId={channelInfo?.data?._id}
@@ -177,11 +176,11 @@ function VideoPage() {
                     highContrast
                     radius='full'
                     disabled={isPending}
-                    className='group tabular-nums'
+                    className='group tabular-nums text-[--gray-12]'
                   >
                     {video?.data.isLiked
-                      ? <ThumbsUpSolidIcon height='20' width='20' />
-                      : <span className='transition-all group-active:scale-125 group-active:-rotate-[15deg]'><ThumbsUp height='20' width='20' /></span>
+                      ? <ThumbsUpSolidIcon className='size-[20px]'/>
+                      : <span className='transition-all group-active:scale-125 group-active:-rotate-[15deg]'><ThumbsUp className='size-[20px]'/></span>
                     } {video?.data.likesCount || 0}
                   </Button>
                 </Skeleton>
@@ -194,7 +193,7 @@ function VideoPage() {
               </div>
             </div>
             <Skeleton loading={isLoading}>
-              <div className='p-3 text-sm  rounded-xl bg-[#ddeaf814] space-y-1 min-h-12'>
+              <div className='p-3 text-sm  rounded-xl bg-[--gray-a3] space-y-1 min-h-12'>
                 <div className='flex gap-2 font-medium'>
                   <p>
                     {video?.data.views} views

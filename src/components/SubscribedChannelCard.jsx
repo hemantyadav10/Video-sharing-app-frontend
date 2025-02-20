@@ -1,4 +1,4 @@
-import { Button, Skeleton } from '@radix-ui/themes'
+import { Skeleton, Text } from '@radix-ui/themes'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import SubscriptionButton from './SubscriptionButton'
@@ -12,7 +12,7 @@ function SubscribedChannelCard({
   return (
     <div className='flex items-center justify-between w-full max-w-3xl gap-4 mx-auto '>
       <Link to={`/channel/${channel?._id}`} className='flex items-center flex-1 gap-4 group' >
-        <Skeleton  loading={loading}>
+        <Skeleton loading={loading}>
           <div className='w-16 transition-all rounded-full sm:w-20 md:w-28 group-hover:brightness-75 group-active:brightness-100 aspect-square'>
             <img src={channel?.avatar} alt="" className='object-cover object-center w-full h-full rounded-full' />
           </div>
@@ -24,7 +24,9 @@ function SubscribedChannelCard({
             </Skeleton>
           </p>
           <Skeleton loading={loading} className='w-40'>
-            <p className='text-xs text-[#f1f7feb5]'>@{channel?.username} • {channel?.subscribersCount} subscribers</p>
+            <Text as='p' size={'1'} color='gray'>
+              @{channel?.username} • {channel?.subscribersCount} subscribers
+            </Text>
           </Skeleton>
         </div>
       </Link>

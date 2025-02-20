@@ -1,21 +1,24 @@
-import { AvatarIcon, ExitIcon, HamburgerMenuIcon } from '@radix-ui/react-icons'
-import { Box, Button, IconButton, ScrollArea, Separator, Spinner, Text } from '@radix-ui/themes'
+import { AvatarIcon, DesktopIcon, ExitIcon, HamburgerMenuIcon, MoonIcon, SunIcon } from '@radix-ui/react-icons'
+import { Box, Button, Flex, IconButton, ScrollArea, Separator, Spinner, Text } from '@radix-ui/themes'
 import { ChevronRight, CircleHelp, Clapperboard, Flame, Gamepad2, GraduationCap, History, Home, ListVideo, LockKeyhole, Music, Newspaper, Podcast, ReceiptText, Settings, Shirt, ShoppingBag, ThumbsUp, Trophy, TvMinimalPlay, WandSparkles } from 'lucide-react'
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/authContext'
 import Logo from './Logo'
+import { useTheme } from 'next-themes'
+import { SITE_NAME } from '../constants'
 
 const SidebarContext = createContext();
 
-
 function Sidebar({ showMenu, toggleMenu }) {
   const { logout, isAuthenticated, logoutLoading } = useAuth()
-  const [showCategories, setShowCategories] = useState(false)
+  const [showCategories, setShowCategories] = useState(true)
   const topTabTrap = useRef(null)
   const bottomTabTrap = useRef(null)
   const firstFocusableElement = useRef(null)
   const lastFocusableElement = useRef(null)
+  const { theme, setTheme } = useTheme()
+
   const sidebarItems = [
     {
       name: 'Home',
@@ -183,7 +186,7 @@ function Sidebar({ showMenu, toggleMenu }) {
 
   return (
     <aside
-      className={`fixed w-64 md:w-auto top-0 md:h-[calc(100vh-64px)] h-screen transition-all ease-in-out duration-[400ms] md:sticky md:top-16 ${showMenu ? ' translate-x-0' : ' md:translate-x-0 -translate-x-full'} z-[100] border-r border-[#484848] bg-[#111113]`}
+      className={`fixed w-64 md:w-auto top-0 md:h-[calc(100vh-64px)] h-screen transition-transform ease-in-out duration-[300ms] md:sticky md:top-16 ${showMenu ? ' translate-x-0' : ' md:translate-x-0 -translate-x-full'} z-[100] border-r border-[--gray-a6] bg-[--color-background]`}
     >
       <span ref={topTabTrap} tabIndex={"0"} />
       <ScrollArea
@@ -193,8 +196,8 @@ function Sidebar({ showMenu, toggleMenu }) {
         draggable={true}
         className='md:h-[calc(100vh-64px)] h-screen'
       >
-        <Box className={`${showMenu ? "pr-2" : "md:pr-0 pr-2"} `}>
-          <div className="flex items-center h-16 gap-2 px-5 md:hidden">
+        <Box>
+          <div className="sticky top-0 flex items-center h-16 gap-3 px-[26px] md:hidden bg-[--color-background] border-b border-[--gray-a6]">
             <IconButton
               autoFocus
               tabIndex={"0"}
@@ -211,119 +214,154 @@ function Sidebar({ showMenu, toggleMenu }) {
             <Logo />
           </div>
           <SidebarContext.Provider value={{ showMenu, toggleMenu }}>
-            <ul className={`flex flex-col p-2  ${showMenu ? "md:p-2 md:mt-3" : "md:p-[2px] md:mt-4"}`}>
+            <ul className={`flex flex-col pt-6 pb-3 mx-6 md:mx-0`}>
               {sidebarItems.map(item => (
                 <SidebarItem
                   item={item}
                   key={item.name}
                   Icon={item.icon}
-                  className={`${showMenu ? "" : item.hidden ? "md:hidden" : ""} ${!isAuthenticated && item.showWhenLoggedIn && 'hidden'}`}
+                  className={`${showMenu ? "" : item.hidden ? "md:hidden" : ""} ${!isAuthenticated && item.showWhenLoggedIn && 'hidden'} `}
                 >
                   {item.name}
                 </SidebarItem>
               ))}
             </ul>
-          </SidebarContext.Provider>
-          <div className={`${showMenu ? "" : "md:hidden"}`}>
-            <Separator size={'4'} />
-            <div className='px-2 py-4'>
-
-              <div className='flex px-3'>
-                <Button
-                  onClick={() => setShowCategories(prev => !prev)}
-                  variant='ghost'
-                  color='gray'
-                  highContrast
-                  className='flex justify-between flex-1 px-5 py-3 rounded-xl'
-                  size={'3'}
-                >
-                  Explore
-                  <ChevronRight
-                    size={'18'}
-                    className={`${showCategories ? "-rotate-90" : ""} transition-all duration-200`}
-                  />
-                </Button>
-              </div>
-              <div className={`overflow-hidden transition-[max-height] duration-300 ease-in-out ${showCategories ? 'max-h-[468px]' : 'max-h-0'
-                } pt-2`}>
-                {categories.map(category => (
-                  <NavLink
-                    tabIndex={showCategories ? "0" : "-1"}
-                    onClick={handleLinkClick}
-                    key={category.name}
-                    title={category.name}
-                    to={category.slug}
-                    className={({ isActive }) => `${isActive ? "bg-[#0077ff3a] text-[#c2e6ff]" : ""} group flex items-center  p-3 rounded-xl active:bg-[#0081fd6b] hover:bg-[rgba(0,119,255,0.18)]  text-white outline-none cursor-pointer focus-visible:ring-[2px] ring-[#2870bd] gap-3 md:gap-0 px-4 `}
+            <div className={`${showMenu ? "" : "md:hidden"}`}>
+              <Separator size={'4'} />
+              <div className='py-3'>
+                <Flex>
+                  <Button
+                    onClick={() => setShowCategories(prev => !prev)}
+                    variant='ghost'
+                    color='gray'
+                    highContrast
+                    className='flex justify-start flex-1 p-3 mx-3 my-0'
+                    size={'3'}
+                    radius='large'
                   >
-                    {category.icon && <category.icon strokeWidth={1.5} size={22} />}
-                    <span
-                      className={`overflow-hidden text-nowrap ${showMenu ? 'md:w-36 md:ml-4' : 'md:w-0'}  text-sm`}
-                    >
-                      {category.name}
-                    </span>
-                  </NavLink>
-                ))}
-
+                    Explore
+                    <ChevronRight
+                      size={'18'}
+                      className={`${showCategories ? "rotate-90" : ""} transition-all duration-200`}
+                    />
+                  </Button>
+                </Flex>
+                {
+                  showCategories && (
+                    <ul className='pt-[6px] mx-6 md:mx-0'>
+                      {categories.map(category => (
+                        <SidebarItem
+                          item={category}
+                          key={category.name}
+                          Icon={category.icon}
+                        >
+                          {category.name}
+                        </SidebarItem>
+                      ))}
+                    </ul>
+                  )
+                }
               </div>
-            </div>
-            <div className=' w-full py-4 px-2 border-t border-[#484848]'>
-              {isAuthenticated
-                ?
-                <Button
-                  ref={lastFocusableElement}
-                  onClick={handleLogout}
-                  variant='soft'
-                  color='gray'
-                  aria-hidden='true'
-                  className='flex justify-start w-full px-4 py-6 rounded-xl'
-                  disabled={logoutLoading}
-                  highContrast
-                >
-                  <Spinner loading={logoutLoading}>
-                    <ExitIcon height={'20'} width={'20'} />
-                  </Spinner>
-
-                  <span>
-                    Logout
-                  </span>
-                </Button>
-                :
-                <>
-                  <div className='mx-auto mb-4 max-w-48'>
-                    <Text
-                      size={'2'}
-                    >
-                      Sign in to like videos, comment, and subscribe.
-                    </Text>
-                  </div>
-                  <Link
+              <Separator size={'4'} />
+              <div className='w-full p-3 mb-2'>
+                {isAuthenticated
+                  ?
+                  <Button
                     ref={lastFocusableElement}
-                    to={'/login'}
-                    className='flex w-full rounded-full outline-none focus:ring-2'
+                    onClick={handleLogout}
+                    variant='soft'
+                    color='gray'
+                    aria-hidden='true'
+                    className='flex justify-start w-full px-4 py-6 rounded-xl'
+                    disabled={logoutLoading}
+                    highContrast
                   >
-                    <Button
-                      variant='outline'
-                      radius={'full'}
-                      tabIndex={-1}
-                      aria-hidden='true'
-                      className='w-full'
+                    <Spinner loading={logoutLoading}>
+                      <ExitIcon height={'20'} width={'20'} />
+                    </Spinner>
+
+                    <span>
+                      Logout
+                    </span>
+                  </Button>
+                  :
+                  <>
+                    <div className='mx-auto mb-4 max-w-48'>
+                      <Text
+                        size={'2'}
+                      >
+                        Sign in to like videos, comment, and subscribe.
+                      </Text>
+                    </div>
+                    <Link
+                      ref={lastFocusableElement}
+                      to={'/login'}
+                      className='flex w-full rounded-full outline-none focus:ring-2'
                     >
-                      <AvatarIcon height={'20'} width={'20'} />
-                      <span>
-                        Sign in
-                      </span>
-                    </Button>
-                  </Link>
-                </>
-              }
+                      <Button
+                        variant='outline'
+                        radius={'full'}
+                        tabIndex={-1}
+                        aria-hidden='true'
+                        className='w-full'
+                      >
+                        <AvatarIcon height={'20'} width={'20'} />
+                        <span>
+                          Sign in
+                        </span>
+                      </Button>
+                    </Link>
+                  </>
+                }
+              </div>
+              <Separator size={'4'} />
+              <div className='flex items-center justify-between p-3 py-6 text-xs'>
+                <Text as='span' color='gray'>
+                  © 2025 {SITE_NAME}.
+                </Text>
+                <div className='flex gap-2 border border-[--gray-a6] rounded-full w-max p-1'>
+                  <IconButton
+                    variant='ghost'
+                    color='gray'
+                    size={'1'}
+                    highContrast
+                    radius='full'
+                    onClick={() => setTheme('light')}
+                    className={`${theme === "light" && "bg-[--gray-a3]"}`}
+                  >
+                    <SunIcon />
+                  </IconButton>
+                  <IconButton
+                    variant='ghost'
+                    color='gray'
+                    size={'1'}
+                    highContrast
+                    radius='full'
+                    onClick={() => setTheme('dark')}
+                    className={`${theme === "dark" && "bg-[--gray-a3]"}`}
+                  >
+                    <MoonIcon />
+                  </IconButton>
+                  <IconButton
+                    variant='ghost'
+                    size={'1'}
+                    color='gray'
+                    highContrast
+                    radius='full'
+                    onClick={() => setTheme('system')}
+                    className={`${theme === "system" && "bg-[--gray-a3]"}`}
+                  >
+                    <DesktopIcon />
+                  </IconButton>
+                </div>
+              </div>
             </div>
-          </div>
+          </SidebarContext.Provider>
         </Box>
       </ScrollArea>
+
       <span ref={bottomTabTrap} tabIndex={"0"} />
-
     </aside>
-
   )
 }
 
@@ -331,6 +369,7 @@ export default Sidebar
 
 export function SidebarItem({ children, Icon, className = '', item }) {
   const { showMenu, toggleMenu } = useContext(SidebarContext);
+  const location = useLocation()
 
   const handleLinkClick = () => {
     if (window.innerWidth < 768) {
@@ -339,18 +378,32 @@ export function SidebarItem({ children, Icon, className = '', item }) {
   }
 
   return (
-    <NavLink
-      onClick={handleLinkClick}
-      title={item.name}
-      to={item.slug}
-      className={({ isActive }) => `${isActive ? "bg-[#0077ff3a] text-[#c2e6ff]" : ""} flex items-center p-3 rounded-xl active:bg-[#0081fd6b] hover:bg-[#0077ff2e] outline-none focus-visible:ring-[2px] ring-[#2870bd] gap-3 md:gap-0 ${className}  ${showMenu ? "md:px-4" : "md:flex-col md:px-1"}`}
-    >
-      <Icon strokeWidth={1.5} size={22} />
-      <span
-        className={`overflow-hidden text-nowrap ${showMenu ? "md:w-36 md:ml-4" : "md:text-[10px] md:mt-2"}  text-sm`}
+    <>
+      <Button
+        size={'3'}
+        className={`p-3 mb-[6px] last:mb-0 ${className}`}
+        variant='ghost'
+        color='gray'
+        highContrast
+        radius='large'
+        asChild
       >
-        {children}
-      </span>
-    </NavLink>
+        <NavLink
+          onClick={handleLinkClick}
+          title={item.name}
+          to={item.slug}
+          className={`${item.slug === location.pathname ? "bg-[--blue-a3] text-[--blue-12]" : ""} gap-4 flex justify-start ${showMenu ? "md:px-[11px] md:mx-3 md:gap-4" : "md:flex-col md:mx-0 md:gap-0 md:px-1"}`}
+        >
+          <Icon strokeWidth={1.25} size={22} />
+          <Text
+            as='span'
+            size={'2'}
+            className={`${showMenu ? "md:w-40 text-left" : "md:text-[10px] md:mt-2 "}`}
+          >
+            {children}
+          </Text>
+        </NavLink>
+      </Button>
+    </>
   );
 }

@@ -1,15 +1,17 @@
 import { FaceIcon } from '@radix-ui/react-icons'
-import { Button, DropdownMenu, IconButton, Popover, Separator, Skeleton, Spinner, TextArea } from '@radix-ui/themes'
-import React, { useEffect, useState } from 'react'
-import SortIcon from '../assets/SortIcon'
-import CommentCard from './CommentCard'
-import { useAddComment, useGetVideoComments } from '../lib/queries/commentQueries'
-import { useAuth } from '../context/authContext'
-import { useNavigate } from 'react-router-dom'
+import { Button, DropdownMenu, IconButton, Popover, Skeleton, Spinner, TextArea } from '@radix-ui/themes'
+import EmojiPicker from 'emoji-picker-react'
+import React, { useState } from 'react'
 import toast from 'react-hot-toast'
-import EmojiPicker from 'emoji-picker-react';
+import { useNavigate } from 'react-router-dom'
+import SortIcon from '../assets/SortIcon'
+import { useAuth } from '../context/authContext'
+import { useAddComment, useGetVideoComments } from '../lib/queries/commentQueries'
 import { queryClient } from '../main'
+import CommentCard from './CommentCard'
 import QueryErrorHandler from './QueryErrorHandler'
+import { useTheme } from 'next-themes'
+import { ListFilter } from 'lucide-react'
 // import { useInView } from 'react-intersection-observer'
 
 function CommentSection({ videoId }) {
@@ -17,6 +19,8 @@ function CommentSection({ videoId }) {
   const [sortBy, setSortBy] = useState('newest')
   const limit = 5
   const { mutate: addComment, isPending: addingComment } = useAddComment(videoId, sortBy, user)
+  const { theme } = useTheme()
+
   // const { ref, inView } = useInView({
   //   rootMargin: '100px'
   // })
@@ -67,7 +71,7 @@ function CommentSection({ videoId }) {
   )
 
   return (
-    <div className='flex flex-col gap-6 p-3 sm:border rounded-xl border-[#484848] sm:p-6 sm:mt-4 '>
+    <div className='flex flex-col gap-6 p-3 sm:border rounded-xl border-[--gray-a6] sm:p-6 sm:mt-4 '>
       <div className='flex items-center font-medium '>
         <span>
           <Skeleton loading={isFetching}>
@@ -85,18 +89,18 @@ function CommentSection({ videoId }) {
               color='gray'
               className='font-medium'
             >
-              <SortIcon /> Sort by
+              <ListFilter size={18}/> Sort by
             </Button>
           </DropdownMenu.Trigger>
           <DropdownMenu.Content variant='soft' className='w-40'>
             <DropdownMenu.Item
-              className={`${sortBy === 'newest' && 'bg-[#0077ff3a]'}`}
+              className={`${sortBy === 'newest' && 'bg-[--accent-a3]'}`}
               onClick={() => handleSortChange('newest')}
             >
               Newest first
             </DropdownMenu.Item>
             <DropdownMenu.Item
-              className={`${sortBy !== 'newest' && 'bg-[#0077ff3a]'}`}
+              className={`${sortBy !== 'newest' && 'bg-[--accent-a3]'}`}
               onClick={() => handleSortChange('oldest')}
             >
               Oldest first
@@ -132,7 +136,7 @@ function CommentSection({ videoId }) {
             </Popover.Trigger>
             <Popover.Content maxHeight={'200'} className='p-0'>
               <EmojiPicker
-                theme='dark'
+                theme={theme}
                 height={300}
                 searchDisabled
                 onEmojiClick={(e) => setCommentText(prev => prev + e.emoji)}
@@ -148,7 +152,6 @@ function CommentSection({ videoId }) {
               hidden={!commentText?.trim() || addingComment}
               variant='surface'
               color='gray'
-              highContrast
               radius='full'
             >
               Cancel
@@ -165,7 +168,7 @@ function CommentSection({ videoId }) {
         </div>
       </div>
       {isError && (
-        <div className='border rounded-xl border-[#484848] p-6 pt-0'>
+        <div className='border rounded-xl border-[--gray-a6] p-6 pt-0'>
           <QueryErrorHandler error={error} onRetry={refetch} className='mt-0' />
         </div>
       )}

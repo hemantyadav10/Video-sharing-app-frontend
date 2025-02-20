@@ -1,6 +1,7 @@
-import { Heading, Text } from '@radix-ui/themes';
+import { Text } from '@radix-ui/themes';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { SITE_NAME } from '../constants';
 
 function TermsOfService() {
   return (
@@ -147,7 +148,7 @@ function TermsOfService() {
       {/* Footer */}
       <div className="flex justify-center mx-10 mt-10 mb-10 sm:mb-0 sm:justify-end">
         <Text as="span" color="gray" size="2">
-          © 2024 copyright VidNova. All rights reserved.
+          © 2025 copyright {SITE_NAME}. All rights reserved.
         </Text>
       </div>
     </div>

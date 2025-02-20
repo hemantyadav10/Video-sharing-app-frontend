@@ -2,8 +2,8 @@ import { InfoCircledIcon } from '@radix-ui/react-icons'
 import { Button, Callout, Flex, Text, TextField } from '@radix-ui/themes'
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useChangePassword } from '../../lib/queries/userQueries'
 import toast from 'react-hot-toast'
+import { useChangePassword } from '../../lib/queries/userQueries'
 
 function ChangePassword() {
   const { register, handleSubmit, watch, reset, formState: { errors } } = useForm()
@@ -39,7 +39,7 @@ function ChangePassword() {
           Please enter your current password to change your password.
         </Text>
       </div>
-      <form onSubmit={handleSubmit(handleChangePassword)} className='flex flex-col gap-6 p-6 mt-4 border rounded-xl border-[#484848] max-w-lg lg:max-w-xl w-full lg:mt-0 '>
+      <form onSubmit={handleSubmit(handleChangePassword)} className='flex flex-col gap-6 p-6 mt-4 border rounded-xl border-[--gray-a6] max-w-lg lg:max-w-xl w-full lg:mt-0 '>
         {error && <Callout.Root variant='surface' color="red">
           <Callout.Icon>
             <InfoCircledIcon />
@@ -126,7 +126,6 @@ function ChangePassword() {
             variant="surface"
             color="gray"
             radius='full'
-            highContrast
           >
             Cancel
           </Button>

@@ -4,9 +4,9 @@ import React, { useState } from 'react'
 import CreatePlaylistDialog from '../components/CreatePlaylistDialog'
 import NoContent from '../components/NoContent'
 import PlaylistCard from '../components/PlaylistCard'
+import QueryErrorHandler from '../components/QueryErrorHandler'
 import { useAuth } from '../context/authContext'
 import { useFetchUserPlaylists } from '../lib/queries/playlistQueries'
-import QueryErrorHandler from '../components/QueryErrorHandler'
 
 function AllPlaylists() {
   const { user } = useAuth()

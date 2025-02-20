@@ -99,7 +99,7 @@ function Channel() {
                       />
                     </Skeleton>
                   ) : (
-                    <Popover.Root >
+                    <Popover.Root>
                       <Skeleton loading={loadingProfileInfo}>
                         <Popover.Trigger>
                           <Button
@@ -119,11 +119,11 @@ function Channel() {
                           <Text size={'2'} color='gray'>
                             Sign in to subscribe to this channel.
                           </Text>
-                          <Link to={'/login'}>
-                            <Button mt={'4'} radius='full' variant='ghost' className='w-max'>
+                          <Button asChild mt={'4'} radius='full' variant='ghost' className='w-max'>
+                            <Link to={'/login'}>
                               Sign in
-                            </Button>
-                          </Link>
+                            </Link>
+                          </Button>
                         </Flex>
                       </Popover.Content>
                     </Popover.Root>
@@ -244,7 +244,7 @@ function Channel() {
         </>
       }
 
-      <div className=' grid grid-cols-3 sm:flex px-4 text-sm border-b border-[#484848] mt-2 border-t border-t-[#111113] xl:px-20 sticky top-[63px] z-30 bg-[#111113] lg:px-10 gap-x-1'>
+      <div className=' grid grid-cols-3 sm:flex px-4 text-sm border-b border-[--gray-a6] font-medium mt-2 border-t border-t-[--color-background] xl:px-20 sticky top-[63px] z-30 bg-[--color-background] lg:px-10 gap-x-1'>
         <NavLink
           preventScrollReset={true}
           to={`/channel/${userId}/videos`}

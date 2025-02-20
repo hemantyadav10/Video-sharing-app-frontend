@@ -1,15 +1,15 @@
-import React, { useEffect } from 'react'
-import VideoCard from '../components/VideoCard'
-import { Link, useOutletContext } from 'react-router-dom'
-import Container from '../components/Container'
 import { Button, Spinner, Text } from '@radix-ui/themes'
-import { useFetchSubscribedChannelVideos } from '../lib/queries/subscriptionQueries'
-import { useAuth } from '../context/authContext'
-import SignInPrompt from '../components/SignInPrompt '
-import SubscriptionIcon from '../assets/SubscriptionIcon'
-import no_content from '../assets/no_content.svg'
-import QueryErrorHandler from '../components/QueryErrorHandler'
+import { TvMinimalPlay } from 'lucide-react'
+import React, { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
+import { Link, useOutletContext } from 'react-router-dom'
+import no_content from '../assets/no_content.svg'
+import Container from '../components/Container'
+import QueryErrorHandler from '../components/QueryErrorHandler'
+import SignInPrompt from '../components/SignInPrompt '
+import VideoCard from '../components/VideoCard'
+import { useAuth } from '../context/authContext'
+import { useFetchSubscribedChannelVideos } from '../lib/queries/subscriptionQueries'
 
 
 function SubscriptionVideos() {
@@ -25,7 +25,7 @@ function SubscriptionVideos() {
     fetchNextPage,
     hasNextPage,
   } = useFetchSubscribedChannelVideos(user?._id)
-  
+
   const { ref, inView } = useInView({
     rootMargin: '350px'
   })
@@ -40,7 +40,7 @@ function SubscriptionVideos() {
     <div className='w-full py-6 mb-16 sm:mb-0'>
       {!isAuthenticated && <>
         <SignInPrompt
-          Icon={SubscriptionIcon}
+          Icon={TvMinimalPlay}
           title="Don't miss new videos"
           description='Sign in to see updates from your favorite channels'
         />
@@ -56,11 +56,11 @@ function SubscriptionVideos() {
           <QueryErrorHandler error={error} onRetry={refetch} />
         )}
         <Container showMenu={showMenu}>
-        {isFetching && !isFetchingNextPage &&
-          Array.from({ length: 12 }).fill(1).map((_, i) => (
-            <VideoCard key={i} loading={isFetching && !isFetchingNextPage} />
-          ))
-        }
+          {isFetching && !isFetchingNextPage &&
+            Array.from({ length: 12 }).fill(1).map((_, i) => (
+              <VideoCard key={i} loading={isFetching && !isFetchingNextPage} />
+            ))
+          }
           {!isError && (
             data?.pages.map((page) => (
               page.data.docs.map(video =>

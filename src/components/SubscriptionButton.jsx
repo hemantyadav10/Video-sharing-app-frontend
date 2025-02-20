@@ -1,10 +1,9 @@
-import { BellIcon } from '@radix-ui/react-icons';
 import { Button } from '@radix-ui/themes';
-import React, { useEffect, useState } from 'react';
+import { BellRing } from 'lucide-react';
+import React from 'react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/authContext';
 import { useToggleSubscription } from '../lib/queries/subscriptionQueries';
-import { BellRing } from 'lucide-react';
 
 function SubscriptionButton({
   subscribed = false,
@@ -39,9 +38,6 @@ function SubscriptionButton({
       color={subscribed ? "gray" : "blue"}
       highContrast
       radius='full'
-      style={{
-        transition: 'width 0.3s ease', // Smooth transition for width changes
-      }}
       className={className}
       disabled={isPending}
     >

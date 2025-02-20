@@ -12,7 +12,7 @@ function ChannelPlaylists() {
   const { data: playlists, isLoading, error, isError, refetch } = useFetchUserPlaylists(userId, true)
 
   if (isLoading) return <div className=''><Spinner className='h-6 mx-auto' /></div>
-  if (isError) return <div className='border rounded-xl border-[#484848] pt-0 p-6 mt-6'>
+  if (isError) return <div className='border rounded-xl border-[--gray-a6] pt-0 p-6 mt-6'>
     <QueryErrorHandler error={error} onRetry={refetch} />
   </div>
 

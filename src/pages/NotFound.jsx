@@ -1,8 +1,8 @@
-import React from 'react'
-import notFound from '../assets/notFound.png'
-import { Button, Heading, Text } from '@radix-ui/themes'
+import { Button, Text } from '@radix-ui/themes'
 import { ArrowLeft } from 'lucide-react'
+import React from 'react'
 import { NavLink } from 'react-router-dom'
+import notFound from '../assets/notFound.png'
 
 function NotFound() {
   return (

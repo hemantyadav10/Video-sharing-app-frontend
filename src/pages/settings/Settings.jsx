@@ -1,12 +1,10 @@
-import { Pencil1Icon } from '@radix-ui/react-icons';
 import { Button, Heading, IconButton, Text } from '@radix-ui/themes';
+import { Camera } from 'lucide-react';
 import React, { useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import CameraIcon from '../../assets/CameraIcon';
+import placeholder from '../../assets/bannerPlaceholder.webp';
 import UpdatePictureDialog from '../../components/UpdatePictureDialog';
 import { useAuth } from '../../context/authContext';
-import placeholder from '../../assets/bannerPlaceholder.webp'
-import { Camera } from 'lucide-react';
 
 function Settings() {
   const location = useLocation();
@@ -63,7 +61,7 @@ function Settings() {
           alt="A house in a forest"
           className='object-cover object-center w-full h-32 cursor-pointer sm:h-40 md:h-48 lg:h-52'
         />
-        <span className='absolute flex items-center gap-2 px-5 py-2 text-sm font-medium rounded-full pointer-events-none bottom-2 right-2 bg-black/70'><CameraIcon /> Edit</span>
+        <span className='absolute flex items-center gap-2 px-5 py-2 text-sm font-medium text-white rounded-full pointer-events-none bottom-2 right-2 bg-black/70'><Camera size={20} /> Edit</span>
 
         {/* profile image */}
         <label
@@ -89,8 +87,8 @@ function Settings() {
             alt="Profile"
             className='object-cover w-full rounded-full aspect-square object-square '
           />
-          <span className='absolute inset-0 flex items-center justify-center transition-opacity duration-200 rounded-full opacity-0 group-hover/avatar:opacity-100 bg-black/40'>
-            <CameraIcon />
+          <span className='absolute inset-0 flex items-center justify-center text-white transition-opacity duration-200 rounded-full opacity-0 group-hover/avatar:opacity-100 bg-black/40'>
+            <Camera size={20} />
           </span>
           <IconButton
             radius='full'
@@ -98,7 +96,7 @@ function Settings() {
             size={'2'}
             className='absolute bottom-0 right-0'
           >
-            <Camera size={'20px'}/>
+            <Camera size={20} />
           </IconButton>
         </label>
       </label>
@@ -125,7 +123,7 @@ function Settings() {
       </div>
 
       {/* Navigation Tabs */}
-      <div className=' grid grid-cols-2 sm:flex px-4 text-sm border-b border-[#484848] font-medium mt-2 border-t border-t-[#111113] xl:px-20 sticky top-[63px] z-30 bg-[#111113] lg:px-10 gap-x-1'>
+      <div className=' grid grid-cols-2 sm:flex px-4 text-sm border-b border-[--gray-a6] font-medium mt-2 border-t border-t-[--color-background] xl:px-20 sticky top-[63px] z-30 bg-[--color-background] lg:px-10 gap-x-1'>
         <NavLink
           to='/settings/personalInfo'
           className={() => `tabNav ${isVideosActive ? "tabNav_active" : "tabNav_inactive"} px-6`}

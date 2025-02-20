@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react'
-import SubscribedChannelCard from '../components/SubscribedChannelCard'
-import { useFetchSubcribedChannels } from '../lib/queries/subscriptionQueries'
-import { useAuth } from '../context/authContext'
-import QueryErrorHandler from '../components/QueryErrorHandler'
-import no_content from '../assets/no_content.svg'
 import { Spinner, Text } from '@radix-ui/themes'
+import React, { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
+import no_content from '../assets/no_content.svg'
+import QueryErrorHandler from '../components/QueryErrorHandler'
+import SubscribedChannelCard from '../components/SubscribedChannelCard'
+import { useAuth } from '../context/authContext'
+import { useFetchSubcribedChannels } from '../lib/queries/subscriptionQueries'
 
 
 function SubscribedChannels() {

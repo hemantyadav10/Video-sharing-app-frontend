@@ -8,51 +8,30 @@ function BottomBar() {
   const { user, isAuthenticated } = useAuth()
 
   return (
-    <div className={`fixed grid ${isAuthenticated ? 'grid-cols-4' : 'grid-cols-3'} bottom-0 left-0 right-0 bg-[#0c0c0d]/80    backdrop-blur-md border-t border-[#484848] sm:hidden h-16 z-50`}>
-
-      <NavLink
+    <div className={`fixed grid ${isAuthenticated ? 'grid-cols-4' : 'grid-cols-3'} bottom-0 left-0 right-0 bg-[--color-background] backdrop-blur-md border-t border-[--gray-a6] sm:hidden h-16 z-50`}>
+      <NavItems
         to={'/'}
-        className={({ isActive }) => `${isActive ? ' font-medium text-[#70b8ff]' : ''} col-span-1 flex flex-col items-center  justify-center p-2 rounded-lg  transition-all focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b] `}
+        label='Home'
       >
         <Home strokeWidth={1.5} size={22} />
-        <Text
-          mt={'1'}
-          align={'center'}
-          className='text-[10px]'
-        >
-          Home
-        </Text>
-      </NavLink>
-      <NavLink
+      </NavItems>
+      <NavItems
         to={isAuthenticated ? '/dashboard' : '/login'}
-        className={({ isActive }) => `${isActive ? 'font-medium text-[#70b8ff]' : ''} col-span-1 flex flex-col items-center  justify-center p-2 rounded-lg  transition-all focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b]`}
+        label='Create'
       >
         <CirclePlus strokeWidth={1.5} size={22} />
-        <Text
-          mt={'1'}
-          align={'center'}
-          className='text-[10px]'
-        >
-          Create
-        </Text>
-      </NavLink>
-      <NavLink
+      </NavItems>
+      <NavItems
         to={'/subscriptions'}
-        className={({ isActive }) => `${isActive ? 'font-medium text-[#70b8ff]' : ''} col-span-1 flex flex-col items-center  justify-center p-2 rounded-lg  transition-all focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b]`}
+        label='Subscriptions'
       >
         <TvMinimalPlay strokeWidth={1.5} size={22} />
-        <Text
-          mt={'1'}
-          align={'center'}
-          className='text-[10px]'
-        >
-          Subscriptions
-        </Text>
-      </NavLink>
+      </NavItems>
+
       {isAuthenticated &&
-        <NavLink
+        <NavItems
           to={`/channel/${user?._id}`}
-          className={({ isActive }) => `${isActive ? 'font-medium text-[#70b8ff]' : ''} col-span-1 flex flex-col items-center  justify-center p-2 rounded-lg  transition-all focus-visible:ring-[2px] ring-[#2870bd] outline-none active:bg-[#0081fd6b]`}
+          label='You'
         >
           <IconButton
             tabIndex={'-1'}
@@ -66,16 +45,33 @@ function BottomBar() {
               size={'1'}
             />
           </IconButton>
-          <Text
-            mt={'1'}
-            align={'center'}
-            className='text-[10px]'
-          >
-            You
-          </Text>
-        </NavLink>}
+        </NavItems>
+      }
     </div>
   )
 }
 
 export default BottomBar
+
+export const NavItems = ({
+  to = '/',
+  children,
+  label=''
+}) => {
+
+  return (
+    <NavLink
+      to={to}
+      className={({ isActive }) => `${isActive ? 'font-medium text-[--blue-12]' : ''} col-span-1 flex flex-col items-center  justify-center p-2 rounded-lg  transition-all focus-visible:ring-[2px] ring-[--focus-8] outline-none active:bg-[--blue-a3]`}
+    >
+      {children}
+      <Text
+        mt={'1'}
+        align={'center'}
+        className='text-[10px]'
+      >
+        {label}
+      </Text>
+    </NavLink>
+  )
+}

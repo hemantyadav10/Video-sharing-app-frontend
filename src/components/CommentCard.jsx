@@ -1,14 +1,14 @@
-import { DotsVerticalIcon, HeartIcon, Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
+import { DotsVerticalIcon, Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
 import { Button, DropdownMenu, IconButton, Spinner, Text, TextArea } from '@radix-ui/themes'
-import React, { useEffect, useState } from 'react'
-import { timeAgo } from '../utils/formatTimeAgo'
-import { useAuth } from '../context/authContext'
-import ThumbsUpSolidIcon from '../assets/ThumbsUpSolidIcon'
-import ThumbsUp from '../assets/ThumbsUpIcon'
-import { useToggleCommentLike } from '../lib/queries/likeQueries'
-import { Link, useNavigate } from 'react-router-dom'
-import { useDeleteComment, useUpdateComment } from '../lib/queries/commentQueries'
+import React, { useState } from 'react'
 import toast from 'react-hot-toast'
+import { Link, useNavigate } from 'react-router-dom'
+import ThumbsUp from '../assets/ThumbsUpIcon'
+import ThumbsUpSolidIcon from '../assets/ThumbsUpSolidIcon'
+import { useAuth } from '../context/authContext'
+import { useDeleteComment, useUpdateComment } from '../lib/queries/commentQueries'
+import { useToggleCommentLike } from '../lib/queries/likeQueries'
+import { timeAgo } from '../utils/formatTimeAgo'
 
 function CommentCard({
   comment,
@@ -105,7 +105,6 @@ function CommentCard({
               radius='full'
               variant='surface'
               color='gray'
-              highContrast
               hidden={updatingComment}
             >
               Cancel
@@ -143,15 +142,15 @@ function CommentCard({
                       highContrast
                       color='gray'
                       radius='full'
-                      size={'2'}
+                      size={'3'}
                       disabled={deletingComment}
                     >
-                      <DotsVerticalIcon />
+                      <DotsVerticalIcon width="18" height="18" />
                     </IconButton>
                   </DropdownMenu.Trigger>
                   <DropdownMenu.Content
                     variant='soft'
-                    className='w-36'
+                    className='w-48'
                   >
                     <DropdownMenu.Item onClick={() => setIsEditable(true)}>
                       <Pencil1Icon /> Edit
@@ -175,10 +174,11 @@ function CommentCard({
               highContrast
               radius='full'
               disabled={deletingComment || isToggleLikePending}
+              className='text-[--gray-11]'
             >
               {isCommentLiked ?
-                <ThumbsUpSolidIcon height='20' width='20' /> :
-                <ThumbsUp height='20' width='20' />
+                <ThumbsUpSolidIcon /> :
+                <ThumbsUp />
               }
             </IconButton>
             <Text as='span' color='gray' size={'1'}>

@@ -1,10 +1,9 @@
-import { Button, Text } from '@radix-ui/themes'
-import React from 'react'
-import { faqData } from '../utils/faqData.js'
 import * as Accordion from "@radix-ui/react-accordion";
 import { ChevronDownIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
-import { Link } from 'react-router-dom';
-import { ExternalLink } from 'lucide-react';
+import { Button, Link, Text } from '@radix-ui/themes';
+import React from 'react';
+import { faqData } from '../utils/faqData.js';
+import { SITE_NAME } from "../constants.js";
 
 function Help() {
 
@@ -27,31 +26,33 @@ function Help() {
         {/*FAQs content */}
         <div>
           <div className='flex w-full '>
-            <a href="https://github.com/hemantyadav10/Video-sharing-app-frontend" className='w-full sm:mx-auto sm:w-max'>
-              <Button
-                className='w-full px-6 transition-opacity bg-[#00000040] border border-[#484848] hover:opacity-70 active:opacity-100'
-                radius='full'
-                mb={'9'}
-              >
+            <Button
+              asChild
+              highContrast
+              radius='full'
+              mb={'9'}
+            >
+              <Link href="https://github.com/hemantyadav10/Video-sharing-app-frontend" className='w-full sm:mx-auto sm:w-max'>
                 <GitHubLogoIcon height={'20'} width={'20'} /> View Project on GitHub
-              </Button>
-            </a>
+              </Link>
+            </Button>
           </div>
 
           <Accordion.Root
             type="single"
             collapsible
-            className=" rounded-md bg-[#d8f4f605] shadow-lg shadow-black/20"
+            className="border rounded-md border-[--gray-a6]"
           >
             {faqData.map((faq, index) => (
               <Accordion.Item
+                tabIndex={0}
                 key={index}
                 value={`faq-${index}`}
-                className=" overflow-hidden  first:mt-0 first:rounded-t last:rounded-b border-b last:border-none border-[rgba(72,72,72,0.3)] focus-within:shadow-[0_0_0_2px] focus-within:shadow-[#2870bd]"
+                className=" overflow-hidden  first:mt-0 first:rounded-t  last:border-none border-[--gray-a6]"
               >
-                <Accordion.Header className="flex shadow-lg shadow-black/30 ">
+                <Accordion.Header className="flex">
                   <Accordion.Trigger
-                    className="group flex py-6 flex-1 items-center justify-between px-5 outline-none hover:bg-[rgba(216,244,246,0.03)] transition-all cursor-pointer active:bg-[#d8f4f60d] "
+                    className="group flex py-6 flex-1 items-center justify-between px-5 outline-none hover:bg-[--gray-2] transition-all cursor-pointer active:bg-[#d8f4f60d] "
                   >
                     <Text highContrast align={'left'}>
                       {faq.question}
@@ -64,7 +65,7 @@ function Help() {
                   </Accordion.Trigger>
                 </Accordion.Header>
                 <Accordion.Content
-                  className="overflow-hidden data-[state=closed]:animate-slideUp data-[state=open]:animate-slideDown   bg-[rgba(216,244,246,0.02)]"
+                  className="overflow-hidden data-[state=closed]:animate-slideUp data-[state=open]:animate-slideDown bg-[--gray-a2]"
                 >
                   <div className='px-5 py-4'>
                     <Text size={'2'} >
@@ -81,7 +82,7 @@ function Help() {
       {/* footer */}
       <div className='flex justify-center mx-10 mt-10 mb-10 sm:mb-0 sm:justify-end '>
         <Text as='span' color='gray' size={'2'} >
-          © 2024 copyright VidNova. All rights reserved.
+          © 2025 copyright {SITE_NAME}. All rights reserved.
         </Text>
       </div>
     </div>

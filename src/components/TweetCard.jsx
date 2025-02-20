@@ -1,15 +1,15 @@
 import { DotsVerticalIcon, Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
-import { Avatar, Button, DropdownMenu, IconButton, Skeleton, Spinner, Text, TextArea } from '@radix-ui/themes'
+import { Avatar, Button, DropdownMenu, IconButton, Text, TextArea } from '@radix-ui/themes'
 import React, { useEffect, useRef, useState } from 'react'
-import { timeAgo } from '../utils/formatTimeAgo'
-import ThumbsUpSolidIcon from '../assets/ThumbsUpSolidIcon'
-import ThumbsUp from '../assets/ThumbsUpIcon'
-import { useDeleteTweet, useUpdateTweet } from '../lib/queries/tweetQueries'
-import { useAuth } from '../context/authContext'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import { useToggleTweetLike } from '../lib/queries/likeQueries'
+import ThumbsUp from '../assets/ThumbsUpIcon'
+import ThumbsUpSolidIcon from '../assets/ThumbsUpSolidIcon'
+import { useAuth } from '../context/authContext'
 import { useReadMore } from '../hooks/useReadMore'
+import { useToggleTweetLike } from '../lib/queries/likeQueries'
+import { useDeleteTweet, useUpdateTweet } from '../lib/queries/tweetQueries'
+import { timeAgo } from '../utils/formatTimeAgo'
 
 function TweetCard({
   tweetData,
@@ -88,13 +88,13 @@ function TweetCard({
 
       window.scrollTo({
         top: elementTop - offset,
-        behavior:"smooth"
+        behavior: "smooth"
       });
     }
   }, [isEditable]);
 
   return (
-    <div ref={cardRef} className='flex gap-3 pb-4 border-b sm:border border-[#484848] p-4 sm:rounded-xl hover:shadow-lg hover:shadow-black/30 transition-shadow '>
+    <div ref={cardRef} className='flex gap-3 pb-4 border-b sm:border border-[--gray-a6] p-4 sm:rounded-xl'>
       <Avatar
         radius='full'
         src={tweetData?.owner.avatar}
@@ -121,7 +121,6 @@ function TweetCard({
             color='gray'
             className='px-4'
             radius='full'
-            highContrast
             disabled={updatingTweet}
           >
             Cancel
@@ -171,11 +170,11 @@ function TweetCard({
                   highContrast
                   color='gray'
                   radius='full'
-                  size={'2'}
+                  size={'3'}
                   title='More options'
                   aria-label='More options'
                 >
-                  <DotsVerticalIcon height={'18px'} width={'18px'} />
+                  <DotsVerticalIcon width="18" height="18" />
                 </IconButton>
               </DropdownMenu.Trigger>
               <DropdownMenu.Content
@@ -208,7 +207,7 @@ function TweetCard({
             onClick={() => {
               toggleExpand()
             }}
-            className='py-0 font-medium transition bg-transparent hover:text-white'
+            className='py-0 font-medium transition bg-transparent hover:text-[--gray-12]'
           >
             {isExpanded ? "Show less" : "Read more"}
           </Button>
@@ -223,10 +222,11 @@ function TweetCard({
             highContrast
             radius='full'
             disabled={deletingComment || likeTweetLoading}
+            className='text-[--gray-11]'
           >
-            {(tweetData?.isLiked) ?
-              <ThumbsUpSolidIcon height='20' width='20' /> :
-              <ThumbsUp height='20' width='20' />
+            {tweetData?.isLiked
+              ? <ThumbsUpSolidIcon />
+              : <ThumbsUp />
             }
           </IconButton>
           <Text as='span' color='gray' size={'1'}>

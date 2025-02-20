@@ -99,12 +99,11 @@ function CreatePlaylistDialog({
           </label>
         </Flex>
 
-        {/* Create and Canel button section */}
+        {/* Create and Cancel button section */}
         <div className='flex w-full gap-4 mt-4 '>
           <Dialog.Close>
             <Button
               variant='surface'
-              highContrast
               radius='full'
               color='gray'
               className='flex-1'

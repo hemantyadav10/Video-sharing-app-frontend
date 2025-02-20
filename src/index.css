@@ -11,19 +11,11 @@
 }
 
 .tabNav_active {
-	@apply border-b-[#2870bd] text-[#edeef0];
+	@apply border-b-[--focus-8];
 }
 
 .tabNav_inactive {
-	@apply border-transparent hover:border-[#484848] active:text-white text-[#f1f7feb5];
-}
-
-.toast {
-	@apply p-3 text-sm text-[#fafafa] shadow-lg bg-[#09090b] border border-[#484848] min-w-60;
-}
-
-.toast_error {
-	@apply p-3 text-sm text-[#fafafa] bg-[#7f1d1d] shadow-lg border border-[#7f1d1d] min-w-60;
+	@apply border-transparent hover:border-[--gray-a6] active:text-[--gray-12] text-[--gray-a11] ;
 }
 
 .radix-themes {

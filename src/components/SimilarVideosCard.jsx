@@ -1,9 +1,8 @@
-import { DotsVerticalIcon } from '@radix-ui/react-icons'
-import { IconButton, Text } from '@radix-ui/themes'
+import { Text } from '@radix-ui/themes'
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { formatVideoDuration } from '../utils/formatVideoDuration'
 import { timeAgo } from '../utils/formatTimeAgo'
+import { formatVideoDuration } from '../utils/formatVideoDuration'
 import SaveToPlaylistButton from './SaveToPlaylistButton'
 
 function SimilarVideosCard({ video }) {
@@ -17,7 +16,7 @@ function SimilarVideosCard({ video }) {
             className='object-cover object-center w-full h-full rounded-lg aspect-video'
           />
           <Text
-            className='absolute bottom-[2px] right-[2px] p-[2px] px-1 text-xs bg-black/70 font-medium rounded-md'
+            className='absolute bottom-[2px] right-[2px] p-[2px] px-1 text-xs bg-black/70 text-white font-medium rounded-md'
             as='span'
           >
             {formatVideoDuration(video?.duration)}
