@@ -8,6 +8,7 @@ import QueryErrorHandler from '../../components/QueryErrorHandler'
 import TweetCard from '../../components/TweetCard'
 import { useAuth } from '../../context/authContext'
 import { useCreateTweet, useFetchUserTweets } from '../../lib/queries/tweetQueries'
+import { useAutoResize } from '../../hooks/useAutoResize'
 
 function ChannelTweets() {
   const { userId } = useOutletContext()
@@ -16,20 +17,14 @@ function ChannelTweets() {
   const { mutate: createTweet, isPending: creatingTweet } = useCreateTweet(user, userId)
   const [content, setContent] = useState('')
   const textareaRef = useRef(null);
+  const autoResizeTextArea = useAutoResize(content, textareaRef)
 
-  const handleInput = () => {
-    const textarea = textareaRef.current;
-    textarea.style.height = "auto"; // Reset the height
-    textarea.style.height = `${textarea.scrollHeight}px`; // Set height based on scroll height
-  };
 
   const handleCreateTweet = async () => {
     createTweet(content, {
       onSuccess: () => {
         setContent('')
         toast('Tweet posted')
-        const textarea = textareaRef.current;
-        textarea.style.height = "auto";
       },
       onError: (error) => {
         const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
@@ -51,23 +46,15 @@ function ChannelTweets() {
             placeholder='Add a tweet...'
             value={content}
             onChange={e => setContent(e.target.value)}
-            onInput={handleInput}
             disabled={creatingTweet}
             autoFocus
             className='peer'
           />
           <div className='flex justify-end gap-2 mt-2 '>
             <Button
-              onClick={() => {
-                setContent('')
-                const textarea = textareaRef.current;
-                textarea.style.height = "auto"; // Set height based on scroll height
-
-              }}
-              hidden={!content?.trim()}
+              onClick={() => setContent('')}
               variant='surface'
               color='gray'
-              highContrast
               className='px-4'
               radius='full'
               disabled={creatingTweet}

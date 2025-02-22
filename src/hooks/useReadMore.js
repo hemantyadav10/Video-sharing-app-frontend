@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 export function useReadMore(content) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -14,7 +14,7 @@ export function useReadMore(content) {
     }
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     checkContentLength();
   }, [content]);
 

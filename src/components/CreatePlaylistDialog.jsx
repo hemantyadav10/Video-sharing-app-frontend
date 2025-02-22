@@ -16,6 +16,7 @@ function CreatePlaylistDialog({
       description: ''
     }
   })
+  
   const { user } = useAuth()
   const { mutate: createPlaylist, isPending: creatingPlaylist } = useCreatePlaylist(user?._id)
 

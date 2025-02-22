@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import ThumbsUp from '../assets/ThumbsUpIcon'
 import ThumbsUpSolidIcon from '../assets/ThumbsUpSolidIcon'
 import { useAuth } from '../context/authContext'
+import { useAutoResize } from '../hooks/useAutoResize'
 import { useReadMore } from '../hooks/useReadMore'
 import { useToggleTweetLike } from '../lib/queries/likeQueries'
 import { useDeleteTweet, useUpdateTweet } from '../lib/queries/tweetQueries'
@@ -23,6 +24,7 @@ function TweetCard({
   const [content, setContent] = useState(tweetData?.content)
   const { mutate: updateTweet, isPending: updatingTweet } = useUpdateTweet(tweetData?._id, channelId)
   const textareaRef = useRef(null);
+  const autoResizeTextArea = useAutoResize(content, textareaRef)
   const cardRef = useRef(null)
   const {
     contentRef,
@@ -32,12 +34,6 @@ function TweetCard({
     setIsExpanded,
     setIsLongContent
   } = useReadMore(content)
-
-  const handleInput = () => {
-    const textarea = textareaRef.current;
-    textarea.style.height = "auto"; // Reset the height
-    textarea.style.height = `${textarea.scrollHeight}px`; // Set height based on scroll height
-  };
 
   const handleDeleteTweet = async () => {
     toast.promise(
@@ -79,8 +75,7 @@ function TweetCard({
 
   useEffect(() => {
     if (isEditable && textareaRef.current) {
-      handleInput();
-      // Adjust height when entering edit mode
+      autoResizeTextArea()
     }
     if (cardRef?.current && isEditable) {
       const offset = 124;
@@ -105,7 +100,6 @@ function TweetCard({
           autoFocus
           size={'3'}
           ref={textareaRef}
-          onInput={handleInput}
           placeholder='Add a tweet...'
           value={content}
           onChange={(e) => setContent(e.target.value)}
@@ -207,7 +201,7 @@ function TweetCard({
             onClick={() => {
               toggleExpand()
             }}
-            className='py-0 font-medium transition bg-transparent hover:text-[--gray-12]'
+            className='py-0 font-medium transition bg-transparent hover:underline hover:text-[--gray-12]'
           >
             {isExpanded ? "Show less" : "Read more"}
           </Button>

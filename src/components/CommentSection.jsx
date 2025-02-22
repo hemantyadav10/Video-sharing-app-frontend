@@ -1,17 +1,17 @@
 import { FaceIcon } from '@radix-ui/react-icons'
 import { Button, DropdownMenu, IconButton, Popover, Skeleton, Spinner, TextArea } from '@radix-ui/themes'
 import EmojiPicker from 'emoji-picker-react'
-import React, { useState } from 'react'
+import { ListFilter } from 'lucide-react'
+import { useTheme } from 'next-themes'
+import React, { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import SortIcon from '../assets/SortIcon'
 import { useAuth } from '../context/authContext'
+import { useAutoResize } from '../hooks/useAutoResize'
 import { useAddComment, useGetVideoComments } from '../lib/queries/commentQueries'
 import { queryClient } from '../main'
 import CommentCard from './CommentCard'
 import QueryErrorHandler from './QueryErrorHandler'
-import { useTheme } from 'next-themes'
-import { ListFilter } from 'lucide-react'
 // import { useInView } from 'react-intersection-observer'
 
 function CommentSection({ videoId }) {
@@ -20,6 +20,7 @@ function CommentSection({ videoId }) {
   const limit = 5
   const { mutate: addComment, isPending: addingComment } = useAddComment(videoId, sortBy, user)
   const { theme } = useTheme()
+  const textareaRef = useRef(null)
 
   // const { ref, inView } = useInView({
   //   rootMargin: '100px'
@@ -39,6 +40,7 @@ function CommentSection({ videoId }) {
   const totalComments = data?.pages[0].data.totalDocs
 
   const [commentText, setCommentText] = useState('')
+  useAutoResize(commentText, textareaRef)
   const navigate = useNavigate()
 
   const handleAddComment = async () => {
@@ -70,6 +72,7 @@ function CommentSection({ videoId }) {
     </div>
   )
 
+
   return (
     <div className='flex flex-col gap-6 p-3 sm:border rounded-xl border-[--gray-a6] sm:p-6 sm:mt-4 '>
       <div className='flex items-center font-medium '>
@@ -89,7 +92,7 @@ function CommentSection({ videoId }) {
               color='gray'
               className='font-medium'
             >
-              <ListFilter size={18}/> Sort by
+              <ListFilter size={18} /> Sort by
             </Button>
           </DropdownMenu.Trigger>
           <DropdownMenu.Content variant='soft' className='w-40'>
@@ -111,6 +114,7 @@ function CommentSection({ videoId }) {
       </div>
       <div>
         <TextArea
+          ref={textareaRef}
           value={commentText}
           placeholder='Add a comment...'
           onChange={e => setCommentText(e.target.value)}
@@ -149,7 +153,6 @@ function CommentSection({ videoId }) {
               onClick={() => {
                 setCommentText('')
               }}
-              hidden={!commentText?.trim() || addingComment}
               variant='surface'
               color='gray'
               radius='full'

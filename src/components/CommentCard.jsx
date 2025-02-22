@@ -1,14 +1,16 @@
 import { DotsVerticalIcon, Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
 import { Button, DropdownMenu, IconButton, Spinner, Text, TextArea } from '@radix-ui/themes'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { Link, useNavigate } from 'react-router-dom'
 import ThumbsUp from '../assets/ThumbsUpIcon'
 import ThumbsUpSolidIcon from '../assets/ThumbsUpSolidIcon'
 import { useAuth } from '../context/authContext'
+import { useReadMore } from '../hooks/useReadMore'
 import { useDeleteComment, useUpdateComment } from '../lib/queries/commentQueries'
 import { useToggleCommentLike } from '../lib/queries/likeQueries'
 import { timeAgo } from '../utils/formatTimeAgo'
+import { useAutoResize } from '../hooks/useAutoResize'
 
 function CommentCard({
   comment,
@@ -25,6 +27,17 @@ function CommentCard({
   const [isEditable, setIsEditable] = useState(false);
   const [content, setContent] = useState(comment?.content || '')
   const { mutate: updateComment, isPending: updatingComment } = useUpdateComment(videoId, sortBy, user)
+  const {
+    contentRef,
+    isExpanded,
+    isLongContent,
+    toggleExpand,
+    setIsExpanded,
+    setIsLongContent
+  } = useReadMore(content)
+  const textareaRef = useRef(null)
+  const autoResizeTextArea = useAutoResize(content, textareaRef)
+
 
   const handleToggleLike = async () => {
 
@@ -63,7 +76,9 @@ function CommentCard({
     updateComment({ commentId: comment?._id, content }, {
       onSuccess: () => {
         setIsEditable(false)
-        return toast('Comment updated')
+        toast('Comment updated')
+        setIsExpanded(true)
+        setIsLongContent(false)
       },
       onError: (error) => {
         const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
@@ -72,6 +87,11 @@ function CommentCard({
     })
   }
 
+  useEffect(() => {
+    if (isEditable && textareaRef.current) {
+      autoResizeTextArea()
+    }
+  }, [isEditable])
 
   return (
     <div className='relative'>
@@ -90,6 +110,7 @@ function CommentCard({
         </div>
         {isEditable && <div className='flex-1'>
           <TextArea
+            ref={textareaRef}
             autoFocus
             value={content}
             onChange={(e) => setContent(e.target.value)}
@@ -163,9 +184,25 @@ function CommentCard({
               )
             }
           </div>
-          <p className='break-words whitespace-pre-wrap'>
+          <p
+            ref={contentRef}
+            className={`pr-4 break-words whitespace-pre-wrap ${isExpanded ? "" : "line-clamp-3"}`}
+          >
             {comment?.content}
           </p>
+          {isLongContent && <div className='flex items-center'>
+            <Button
+              variant='ghost'
+              color='gray'
+              radius='full'
+              onClick={() => {
+                toggleExpand()
+              }}
+              className='font-medium transition bg-transparent hover:text-[--gray-12] hover:underline'
+            >
+              {isExpanded ? "Show less" : "Read more"}
+            </Button>
+          </div>}
           <div className='flex items-center gap-1 mt-2 text-xs'>
             <IconButton
               onClick={handleToggleLike}

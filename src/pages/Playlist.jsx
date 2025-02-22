@@ -10,6 +10,7 @@ import VideoCard2 from '../components/VideoCard2'
 import { useAuth } from '../context/authContext'
 import { useDeletePlaylist, useFetchPlaylistById, useUpdatePlaylist } from '../lib/queries/playlistQueries'
 import { timeAgo } from '../utils/formatTimeAgo'
+import { useReadMore } from '../hooks/useReadMore'
 
 function PlaylistVideos() {
   const { playlistId } = useParams();
@@ -28,6 +29,14 @@ function PlaylistVideos() {
 
   const name = watch('name')
   const description = watch('description')
+  const {
+    contentRef,
+    isExpanded,
+    isLongContent,
+    toggleExpand,
+    setIsExpanded,
+    setIsLongContent
+  } = useReadMore(playlist?.data?.description)
 
   useEffect(() => {
     if (playlist?.data) {
@@ -62,8 +71,6 @@ function PlaylistVideos() {
       });
     }
   };
-
-  console.log(playlist)
 
 
   // Function to delete playlist 
@@ -124,11 +131,15 @@ function PlaylistVideos() {
               </div>
               <Dialog.Root >
                 <Dialog.Trigger className='cursor-pointer'>
-                  <Text as='p' className='relative'>
-                    <span className='line-clamp-2 drop-shadow-lg'>
+                  <Text as='div' tabIndex={'0'} className='relative'>
+                    <Text
+                      ref={contentRef}
+                      as='p'
+                      className={`drop-shadow-lg ${isExpanded ? "" : "line-clamp-2"} break-words whitespace-pre-wrap`}
+                    >
                       {playlist?.data?.description}
-                    </span>
-                    <button className='absolute w-full font-semibold text-left drop-shadow-lg'>...more</button>
+                    </Text>
+                    {isLongContent && <button className='absolute w-full font-semibold text-left drop-shadow-lg'>...more</button>}
                   </Text>
                 </Dialog.Trigger>
                 <Dialog.Content>
