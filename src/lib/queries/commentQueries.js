@@ -13,7 +13,7 @@ const useGetVideoComments = (videoId, sortBy = 'newest', limit = 5, userId) => {
   return useInfiniteQuery({
     queryKey: ['comments', { videoId, sortBy, userId }],
     queryFn: ({ pageParam = 1 }) => fetchVideoComments(videoId, pageParam, limit, sortBy),
-    getNextPageParam: (lastPage) => lastPage?.data?.comments.nextPage || null,
+    getNextPageParam: (lastPage) => lastPage?.data?.comments?.nextPage || null,
     keepPreviousData: true,
     placeholderData: prevData => prevData
   })
