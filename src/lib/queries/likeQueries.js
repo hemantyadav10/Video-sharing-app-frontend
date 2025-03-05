@@ -79,7 +79,18 @@ const useToggleCommentLike = (commentId, videoId) => {
     mutationFn: () => toggleCommentLike(commentId),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['comments', videoId]
+        queryKey: ['comments', { videoId }]
+      })
+    }
+  })
+}
+
+const useToggleReplyLike = (commentId) => {
+  return useMutation({
+    mutationFn: toggleCommentLike,
+    onSuccess: () => {
+      queryClient.refetchQueries({
+        queryKey: ['comments', 'replies', { commentId }]
       })
     }
   })
@@ -90,7 +101,6 @@ const useToggleTweetLike = (tweetId, channelId, userId) => {
     mutationFn: () => toggleTweetLike(tweetId),
     onMutate: () => {
       const tweetData = queryClient.getQueryData(['userTweets', channelId, userId])
-      console.log(tweetData)
 
       queryClient.setQueryData(['userTweets', channelId, userId], prev => {
         if (!prev) return prev;
@@ -133,5 +143,6 @@ export {
   useGetUserLikedVideos,
   useToggleVideoLike,
   useToggleCommentLike,
-  useToggleTweetLike
+  useToggleTweetLike,
+  useToggleReplyLike
 }

@@ -1,21 +1,26 @@
-import { DotsVerticalIcon, Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
-import { Button, DropdownMenu, IconButton, Spinner, Text, TextArea } from '@radix-ui/themes'
-import React, { useEffect, useRef, useState } from 'react'
+import { ChatBubbleIcon, ChevronDownIcon, ChevronUpIcon, DotsVerticalIcon, Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
+import { Button, DropdownMenu, Flex, IconButton, Spinner, Text, TextArea } from '@radix-ui/themes'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { Link, useNavigate } from 'react-router-dom'
 import ThumbsUp from '../assets/ThumbsUpIcon'
 import ThumbsUpSolidIcon from '../assets/ThumbsUpSolidIcon'
 import { useAuth } from '../context/authContext'
+import { useAutoResize } from '../hooks/useAutoResize'
 import { useReadMore } from '../hooks/useReadMore'
 import { useDeleteComment, useUpdateComment } from '../lib/queries/commentQueries'
 import { useToggleCommentLike } from '../lib/queries/likeQueries'
 import { timeAgo } from '../utils/formatTimeAgo'
-import { useAutoResize } from '../hooks/useAutoResize'
+import ConfirmationDialog from './ConfirmationDialog'
+import ReplyCommentCard from './ReplyCommentCard'
+import ReplyCommentInput from './ReplyCommentInput'
+import ReplyCommentSection from './ReplyCommentSection'
 
 function CommentCard({
   comment,
   videoId,
-  sortBy
+  sortBy,
+  ownerId,
 }) {
   const { user, isAuthenticated } = useAuth()
   const [commentLikesCount, setCommentLikesCount] = useState(comment?.likesCount || 0)
@@ -37,6 +42,14 @@ function CommentCard({
   } = useReadMore(content)
   const textareaRef = useRef(null)
   const autoResizeTextArea = useAutoResize(content, textareaRef)
+  const [openReplyInput, setOpenReplyInput] = useState(false)
+  const [openReplySection, setOpenReplySection] = useState(false)
+  const [open, setOpen] = useState(false)
+  const [replyList, setReplyList] = useState([])
+  const [hasMorePages, setHasMorePages] = useState(true);
+  const handleHasNextPage = (value) => {
+    setHasMorePages(value); // Update state in the parent
+  };
 
 
   const handleToggleLike = async () => {
@@ -60,7 +73,7 @@ function CommentCard({
     }
   }
 
-  const handleDeleteComment = async () => {
+  const handleDeleteComment = useCallback(async () => {
     deleteComment(comment?._id, {
       onSuccess: () => {
         return toast('Comment deleted')
@@ -70,7 +83,7 @@ function CommentCard({
         toast.error(errorMessage);
       }
     })
-  }
+  }, [])
 
   const handleUpdateComment = async () => {
     updateComment({ commentId: comment?._id, content }, {
@@ -93,28 +106,29 @@ function CommentCard({
     }
   }, [isEditable])
 
+  if (updatingComment || deletingComment) return <Flex justify={'center'}><Spinner className='size-6' /></Flex>
+
+
   return (
-    <div className='relative'>
-      {deletingComment && (
-        <div className='absolute inset-0 z-10 flex items-center justify-center'>
-          <Spinner size={'3'} />
-        </div>
-      )}
-      <div className={`flex gap-4  ${deletingComment ? 'opacity-30' : ''}`}>
-        <div className='w-10 '>
+    <div>
+      <div className={`flex gap-4`}>
+        <Link
+          to={`/channel/${comment?.owner._id}`}
+          className='w-10 '
+        >
           <img
             src={comment?.owner.avatar}
             alt=""
-            className='object-cover object-center rounded-full size-10'
+            className='object-cover object-center w-full rounded-full aspect-square'
           />
-        </div>
+        </Link>
         {isEditable && <div className='flex-1'>
           <TextArea
             ref={textareaRef}
             autoFocus
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            disabled={updatingComment}
+            onFocus={(e) => e.target.setSelectionRange(content.length, content.length)}
             resize={'vertical'}
           />
           <div className='flex justify-end gap-2 mt-2 '>
@@ -126,61 +140,73 @@ function CommentCard({
               radius='full'
               variant='surface'
               color='gray'
-              hidden={updatingComment}
             >
               Cancel
             </Button>
             <Button
               onClick={handleUpdateComment}
-              disabled={!content?.trim() || content?.trim() === comment?.content || updatingComment}
+              disabled={!content?.trim() || content?.trim() === comment?.content}
               radius='full'
               highContrast
             >
-              <Spinner loading={updatingComment} /> {updatingComment ? "Saving" : "Save"}
+              Save
             </Button>
           </div>
         </div>}
         {!isEditable && <div className='flex flex-col flex-1 gap-1 text-sm'>
           <div className='flex items-center justify-between gap-1 text-sm '>
-            <div className='flex items-center gap-1 text-sm '>
-              <Link
-                to={`/channel/${comment?.owner._id}`}
-                className='font-medium'
-              >
-                @{comment?.owner.username}
-              </Link>
-              <Text as='span' color='gray' size={'1'}>
-                {timeAgo(comment?.createdAt)}
-                {comment?.createdAt !== comment?.updatedAt && ' (edited)'}
-              </Text>
-            </div>
+            <Link
+              to={`/channel/${comment?.owner._id}`}
+            >
+              <div className={`flex items-center gap-1 text-sm`}>
+                <div
+                  className={`font-medium ${comment?.owner._id === ownerId ? "bg-[--gray-a3] px-2 rounded-full" : ""}`}
+                >
+                  @{comment?.owner.username}
+                </div>
+                <Text as='span' color='gray' size={'1'}>
+                  {timeAgo(comment?.createdAt)}
+                  {comment?.createdAt !== comment?.updatedAt && ' (edited)'}
+                </Text>
+              </div>
+            </Link>
             {isAuthenticated &&
               (user?._id === comment?.owner._id &&
-                < DropdownMenu.Root >
-                  <DropdownMenu.Trigger>
-                    <IconButton
-                      variant='ghost'
-                      highContrast
-                      color='gray'
-                      radius='full'
-                      size={'3'}
-                      disabled={deletingComment}
+                <>
+                  < DropdownMenu.Root >
+                    <DropdownMenu.Trigger>
+                      <IconButton
+                        variant='ghost'
+                        highContrast
+                        color='gray'
+                        radius='full'
+                        size={'3'}
+                      >
+                        <DotsVerticalIcon width="18" height="18" />
+                      </IconButton>
+                    </DropdownMenu.Trigger>
+                    <DropdownMenu.Content
+                      variant='soft'
+                      className='w-48'
                     >
-                      <DotsVerticalIcon width="18" height="18" />
-                    </IconButton>
-                  </DropdownMenu.Trigger>
-                  <DropdownMenu.Content
-                    variant='soft'
-                    className='w-48'
-                  >
-                    <DropdownMenu.Item onClick={() => setIsEditable(true)}>
-                      <Pencil1Icon /> Edit
-                    </DropdownMenu.Item>
-                    <DropdownMenu.Item color='red' onClick={handleDeleteComment}>
-                      <TrashIcon /> Delete
-                    </DropdownMenu.Item>
-                  </DropdownMenu.Content>
-                </DropdownMenu.Root>
+                      <DropdownMenu.Item onClick={() => setIsEditable(true)}>
+                        <Pencil1Icon /> Edit
+                      </DropdownMenu.Item>
+                      <DropdownMenu.Item onClick={() => setOpen(true)} color='red' >
+                        <TrashIcon /> Delete
+                      </DropdownMenu.Item>
+                    </DropdownMenu.Content>
+                  </DropdownMenu.Root>
+                  {setOpen && (
+                    <ConfirmationDialog
+                      open={open}
+                      setOpen={setOpen}
+                      action={handleDeleteComment}
+                      title='Delete comment'
+                      descripion='Delete your comment permanently?'
+                    />
+                  )}
+                </>
               )
             }
           </div>
@@ -203,27 +229,95 @@ function CommentCard({
               {isExpanded ? "Show less" : "Read more"}
             </Button>
           </div>}
-          <div className='flex items-center gap-1 mt-2 text-xs'>
-            <IconButton
-              onClick={handleToggleLike}
-              variant='ghost'
+          <Flex align={'center'} gapX={'5'} mt={'2'}>
+            <div className='flex items-center gap-1 text-xs'>
+
+              <IconButton
+                onClick={handleToggleLike}
+                variant='ghost'
+                color='gray'
+                highContrast
+                radius='full'
+                disabled={isToggleLikePending}
+                className='text-[--gray-12]'
+              >
+                {isCommentLiked ?
+                  <ThumbsUpSolidIcon /> :
+                  <ThumbsUp />
+                }
+              </IconButton>
+              <Text as='span' color='gray' size={'1'}>
+                {commentLikesCount}
+              </Text>
+            </div>
+            <Button
               color='gray'
+              variant='ghost'
+              className='text-xs font-medium'
               highContrast
               radius='full'
-              disabled={deletingComment || isToggleLikePending}
-              className='text-[--gray-11]'
+              size={'3'}
+              onClick={() => {
+                if (!isAuthenticated) {
+                  return navigate('/login')
+                }
+                setOpenReplyInput(true)
+              }}
             >
-              {isCommentLiked ?
-                <ThumbsUpSolidIcon /> :
-                <ThumbsUp />
-              }
-            </IconButton>
-            <Text as='span' color='gray' size={'1'}>
-              {commentLikesCount}
-            </Text>
-          </div>
+              <ChatBubbleIcon height={16} width={16} /> Reply
+            </Button>
+          </Flex>
+          {openReplyInput &&
+            <ReplyCommentInput
+              closeInput={() => setOpenReplyInput(false)}
+              username={comment?.owner.username}
+              commentId={comment?._id}
+              videoId={videoId}
+              setReplyList={setReplyList}
+              sortBy={sortBy}
+            />
+          }
         </div>}
       </div>
+      {
+        comment?.repliesCount > 0 && <div className='ml-14'>
+          <Button
+            variant='ghost'
+            mt={'4'}
+            radius='full'
+            onClick={() => setOpenReplySection(prev => !prev)}
+            className='flex gap-2 font-medium'
+          >
+            {openReplySection ? <ChevronUpIcon /> : <ChevronDownIcon />}  {openReplySection ? "Hide replies" : `${comment?.repliesCount} ${comment?.repliesCount === 1 ? "reply" : "replies"}`}
+          </Button>
+          {openReplySection &&
+            <ReplyCommentSection
+              commentId={comment?._id}
+              ownerId={ownerId}
+              setReplyList={setReplyList}
+              replyList={replyList}
+              sendHasNextPage={handleHasNextPage}
+              videoId={videoId}
+              sortBy={sortBy}
+            />}
+        </div>
+      }
+
+      {(replyList?.length > 0 && (hasMorePages || !openReplySection)) && <Flex direction='column' className='ml-14' mt={'4'} gapY={'4'}>
+        {replyList.map(reply => (
+          <ReplyCommentCard
+            key={reply._id}
+            reply={reply}
+            videoOwnerId={ownerId}
+            commentId={comment?._id}
+            setReplyList={setReplyList}
+            replyList={replyList}
+            videoId={videoId}
+            sortBy={sortBy}
+          />
+        ))}
+      </Flex>}
+
     </div >
   )
 }

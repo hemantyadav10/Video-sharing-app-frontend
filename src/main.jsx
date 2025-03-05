@@ -58,6 +58,7 @@ export const queryClient = new QueryClient({
       staleTime: 60 * 2 * 1000,
       refetchOnReconnect: 'always',
       retry: 2,
+      refetchOnWindowFocus: false
     },
   },
 });

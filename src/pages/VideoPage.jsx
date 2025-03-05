@@ -44,7 +44,6 @@ function VideoPage() {
   }, [inView])
 
 
-
   const handleToggleLike = async () => {
     if (isAuthenticated) {
       toggleLike(video?.data, {
@@ -179,8 +178,8 @@ function VideoPage() {
                     className='group tabular-nums text-[--gray-12]'
                   >
                     {video?.data.isLiked
-                      ? <ThumbsUpSolidIcon className='size-[20px]'/>
-                      : <span className='transition-all group-active:scale-125 group-active:-rotate-[15deg]'><ThumbsUp className='size-[20px]'/></span>
+                      ? <ThumbsUpSolidIcon className='size-[20px]' />
+                      : <span className='transition-all group-active:scale-125 group-active:-rotate-[15deg]'><ThumbsUp className='size-[20px]' /></span>
                     } {video?.data.likesCount || 0}
                   </Button>
                 </Skeleton>
@@ -247,7 +246,9 @@ function VideoPage() {
 
         </div >}
         <div ref={ref}>
-          {loadCommentSection && < CommentSection hidden videoId={videoId} />}
+          {loadCommentSection &&
+            < CommentSection hidden videoId={videoId} ownerId={video?.data?.owner._id} />
+          }
         </div>
 
       </div>

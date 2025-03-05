@@ -1,5 +1,5 @@
 import { FaceIcon } from '@radix-ui/react-icons'
-import { Button, DropdownMenu, IconButton, Popover, Skeleton, Spinner, TextArea } from '@radix-ui/themes'
+import { Button, DropdownMenu, IconButton, Popover, Skeleton, Spinner, Text, TextArea } from '@radix-ui/themes'
 import EmojiPicker from 'emoji-picker-react'
 import { ListFilter } from 'lucide-react'
 import { useTheme } from 'next-themes'
@@ -14,10 +14,10 @@ import CommentCard from './CommentCard'
 import QueryErrorHandler from './QueryErrorHandler'
 // import { useInView } from 'react-intersection-observer'
 
-function CommentSection({ videoId }) {
+function CommentSection({ videoId, ownerId }) {
   const { user, isAuthenticated } = useAuth()
   const [sortBy, setSortBy] = useState('newest')
-  const limit = 5
+  const limit = 2
   const { mutate: addComment, isPending: addingComment } = useAddComment(videoId, sortBy, user)
   const { theme } = useTheme()
   const textareaRef = useRef(null)
@@ -37,7 +37,7 @@ function CommentSection({ videoId }) {
     error,
     refetch
   } = useGetVideoComments(videoId, sortBy, limit, user?._id)
-  const totalComments = data?.pages[0].data.totalDocs
+  const totalComments = data?.pages[0].data.totalCommentsCount
 
   const [commentText, setCommentText] = useState('')
   useAutoResize(commentText, textareaRef)
@@ -47,6 +47,7 @@ function CommentSection({ videoId }) {
     addComment(commentText, {
       onSuccess: () => {
         setCommentText('')
+        toast.success("Comment added")
       },
       onError: (error) => {
         const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
@@ -77,11 +78,9 @@ function CommentSection({ videoId }) {
     <div className='flex flex-col gap-6 p-3 sm:border rounded-xl border-[--gray-a6] sm:p-6 sm:mt-4 '>
       <div className='flex items-center font-medium '>
         <span>
-          <Skeleton loading={isFetching}>
-            {totalComments} Comments
-          </Skeleton>
+          {totalComments} Comments
         </span>
-        <DropdownMenu.Root >
+        <DropdownMenu.Root>
           <DropdownMenu.Trigger disabled={totalComments < 2}>
             <Button
               ml={'4'}
@@ -124,7 +123,6 @@ function CommentSection({ videoId }) {
             }
           }}
           resize={'vertical'}
-          disabled={addingComment}
         />
         <div className='relative flex items-center justify-between'>
           <Popover.Root>
@@ -165,7 +163,7 @@ function CommentSection({ videoId }) {
               highContrast
               radius='full'
             >
-              <Spinner loading={addingComment} />Comment
+              Comment
             </Button>
           </div>
         </div>
@@ -176,17 +174,16 @@ function CommentSection({ videoId }) {
         </div>
       )}
       {!!totalComments && totalComments > 0 && <div className='relative'>
-        {(isFetching && !isFetchingNextPage) && <div className='absolute inset-0 flex justify-center mt-20'>
-          <Spinner size={'3'} />
-        </div>}
-        {!isError && <div className={` flex flex-col gap-6 mt-2 ${(isFetching && !isFetchingNextPage) && 'opacity-30'} `}>
+        {!isError && <div className={` flex flex-col gap-6 mt-2`}>
           {data?.pages.map((comments) => (
-            comments.data.docs.map((comment =>
+            comments.data.comments.docs.map((comment =>
               <CommentCard
                 key={comment._id}
                 comment={comment}
                 videoId={videoId}
                 sortBy={sortBy}
+                ownerId={ownerId}
+                loading={false}
               />
 
             ))
@@ -195,7 +192,7 @@ function CommentSection({ videoId }) {
           {
             isFetchingNextPage &&
             <div className='mx-auto'>
-              <Spinner size={'3'} />
+              <Spinner size={"3"} />
             </div>
           }
           {/* Show load more button if there are more comments and no more comment are being loaded */}
@@ -204,17 +201,19 @@ function CommentSection({ videoId }) {
             // <div ref={ref}></div>
             <Button
               variant='ghost'
-              radius='full'
+              color='gray'
+              highContrast
               className='mx-auto font-medium w-max'
-              onClick={() => fetchNextPage()}
+              onClick={fetchNextPage}
             >
               Load more
             </Button>
           }
+          {!hasNextPage && <Text as='p' size={'1'} align={'center'} color='gray'>You have reached the end of the list</Text>}
         </div>}
       </div>}
     </div>
   )
 }
 
-export default CommentSection
+export default React.memo(CommentSection)

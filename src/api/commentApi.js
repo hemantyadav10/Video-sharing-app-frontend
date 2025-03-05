@@ -9,11 +9,21 @@ const fetchVideoComments = (videoId, page = 1, limit = 6, sortBy = 'newest') => 
   return res.data;
 });
 
+const fetchCommentReplies = (commentId, page = 1, limit = 5) => asyncHandler(async () => {
+  const res = await apiClient.get(`${COMMENTS_BASE_URL}/replies/${commentId}?page=${page}&limit=${limit}`)
+  return res.data
+})
+
 // Adds a new comment to a specific video
 const addComment = (content, videoId) => asyncHandler(async () => {
   const res = await apiClient.post(`${COMMENTS_BASE_URL}/${videoId}`, { content });
   return res.data;
 });
+
+const addReply = (content, videoId, commentId) => asyncHandler(async () => {
+  const res = await apiClient.post(`${COMMENTS_BASE_URL}/${videoId}/${commentId}`, { content })
+  return res.data;
+})
 
 // Deletes a specific comment by its ID
 const deleteComment = (commentId) => asyncHandler(async () => {
@@ -31,5 +41,7 @@ export {
   fetchVideoComments,
   addComment,
   deleteComment,
-  updateComment
+  updateComment,
+  fetchCommentReplies, 
+  addReply
 };

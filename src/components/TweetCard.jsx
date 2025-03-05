@@ -104,6 +104,7 @@ function TweetCard({
           value={content}
           onChange={(e) => setContent(e.target.value)}
           disabled={updatingTweet}
+          onFocus={(e) => e.target.setSelectionRange(content.length, content.length)}
         />
         <div className='flex justify-end gap-2 mt-2 '>
           <Button
@@ -138,6 +139,7 @@ function TweetCard({
               as='span'
               size={'2'}
               mr={'3'}
+              weight={'medium'}
             >
               {tweetData?.owner.fullName}
             </Text>
