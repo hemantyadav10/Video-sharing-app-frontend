@@ -72,7 +72,7 @@ function VideoCard2({
         </div>
       </Skeleton>
       <Skeleton loading={loading}>
-        <div className='relative w-full aspect-video rounded-xl sm:w-48'>
+        <div className='relative w-full aspect-video rounded-xl sm:max-w-48 sm:flex-1'>
           <img src={video?.thumbnail} alt="" className='object-cover object-center w-full h-full rounded-xl' />
           <Text
             className='absolute bottom-2 right-2 p-[2px] px-1 text-xs bg-black/70 text-white font-medium rounded-md'

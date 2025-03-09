@@ -46,7 +46,7 @@ function CreatePlaylistDialog({
       }}
     >
       <Dialog.Content
-        maxWidth={'600px'}
+        maxWidth={'500px'}
       >
         <Dialog.Title>
           New playlist
@@ -89,7 +89,7 @@ function CreatePlaylistDialog({
                 validate: value => value.trim() !== "" || "Please enter some text",
               })}
               placeholder="Add description…"
-              className={`${errors.description && 'shadow-inset-textarea'} min-h-32`}
+              className={`${errors.description && 'shadow-inset-textarea'} max-h-96`}
             />
             {errors.description &&
               <Text as='p' size={'1'} mt={'2'} color='red' className='flex items-center gap-1 '>

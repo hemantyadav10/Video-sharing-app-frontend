@@ -41,10 +41,10 @@ function ChannelCard({ channel, loading, isFetching }) {
             />
           </div>
           <div className="flex-1">
-            <Text as="span" size="5" mb="2">
+            <Text as="span" size="5" mb="2" title={channel?.fullName} className='line-clamp-2'>
               {channel?.fullName}
             </Text>
-            <div className="flex items-center gap-1">
+            <div className="flex flex-wrap items-center gap-1">
               <Text as="p" color="gray" size="1">
                 @{channel?.username} •
               </Text>

@@ -1,14 +1,16 @@
-import { Spinner } from '@radix-ui/themes'
+import { Flex, Spinner, Text } from '@radix-ui/themes'
 import { ListVideo } from 'lucide-react'
 import React from 'react'
 import { useOutletContext } from 'react-router-dom'
 import EmptyLibrary from '../../components/EmptyLibrary'
 import PlaylistCard from '../../components/PlaylistCard'
 import QueryErrorHandler from '../../components/QueryErrorHandler'
+import { useAuth } from '../../context/authContext'
 import { useFetchUserPlaylists } from '../../lib/queries/playlistQueries'
 
 function ChannelPlaylists() {
   const { userId } = useOutletContext()
+  const { user } = useAuth()
   const { data: playlists, isLoading, error, isError, refetch } = useFetchUserPlaylists(userId, true)
 
   if (isLoading) return <div className=''><Spinner className='h-6 mx-auto' /></div>
@@ -18,6 +20,11 @@ function ChannelPlaylists() {
 
   return (
     <div>
+      <Flex mt={'2'} align={'center'} justify={'between'}>
+        <Text as='span' weight={'medium'} size={'2'}>
+          Created playlists
+        </Text>
+      </Flex>
       {playlists?.data.length > 0
         ? (
           <div className='flex flex-col px-4 py-6 gap-y-8 gap-x-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:px-0'>

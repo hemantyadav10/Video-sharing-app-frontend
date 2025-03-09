@@ -58,17 +58,16 @@ function VideoTable({
 
 
   return (
-    <>
-
-      <Table.Root variant="surface" className='relative'>
-        <div className='absolute top-0 right-2 left-2'>
-          <BarLoader
-            color='#70b8ff'
-            width={'100%'}
-            height={'3px'}
-            loading={isPending}
-          />
-        </div>
+    <div className='relative'>
+      <div className='absolute top-0 z-10 right-2 left-2'>
+        <BarLoader
+          color='#70b8ff'
+          width={'100%'}
+          height={'3px'}
+          loading={isPending}
+        />
+      </div>
+      <Table.Root variant="surface" >
         <Table.Header>
           <Skeleton loading={loadingVideos}>
             <Table.Row >
@@ -301,7 +300,7 @@ function VideoTable({
           }
         </Table.Body>
       </Table.Root >
-    </>
+    </div>
   )
 }
 

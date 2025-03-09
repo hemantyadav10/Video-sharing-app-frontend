@@ -153,6 +153,7 @@ const SearchResults = () => {
 						{!isError && !loadingChannelResults && (data?.data.length > 0
 							? data?.data.map((subscription, i) => (
 								<ChannelCard
+									key={subscription?._id}
 									channel={subscription}
 									loading={loadingChannelResults}
 									isFetching={isFetching}

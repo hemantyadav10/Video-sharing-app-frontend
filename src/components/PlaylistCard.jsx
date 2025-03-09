@@ -67,7 +67,7 @@ function PlaylistCard({
               {`Updated ${timeAgo(playlistData?.updatedAt)}`}
             </Text>
           </div>
-          <div>
+          {playlistData?.owner === user?._id && <div>
             <DropdownMenu.Root>
               <DropdownMenu.Trigger hidden={!isAuthenticated}>
                 <IconButton
@@ -95,7 +95,7 @@ function PlaylistCard({
                 </DropdownMenu.Item>
               </DropdownMenu.Content>
             </DropdownMenu.Root>
-          </div>
+          </div>}
         </div>
       </Link>
     </Skeleton>

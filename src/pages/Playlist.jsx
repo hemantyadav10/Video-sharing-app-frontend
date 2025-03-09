@@ -203,7 +203,7 @@ function PlaylistVideos() {
                         </IconButton>
                       </Dialog.Trigger>
                     </Tooltip>
-                    <Dialog.Content maxWidth="600px">
+                    <Dialog.Content maxWidth="500px">
                       <Dialog.Title>Edit playlist</Dialog.Title>
                       <Dialog.Description size="2" mb="4">
                         Make changes to your playlist.
@@ -242,7 +242,7 @@ function PlaylistVideos() {
                               validate: value => value.trim() !== "" || "Please enter some text",
                             })}
                             placeholder="Add description…"
-                            className={`${errors.description && 'shadow-inset-textarea'} min-h-60`}
+                            className={`${errors.description && 'shadow-inset-textarea'} max-h-96`}
                           />
                           {errors.description &&
                             <Text as='p' size={'1'} mt={'2'} color='red' className='flex items-center gap-1 '>

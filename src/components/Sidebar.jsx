@@ -321,6 +321,7 @@ function Sidebar({ showMenu, toggleMenu }) {
                 </Text>
                 <div className='flex gap-2 border border-[--gray-a6] rounded-full w-max p-1'>
                   <IconButton
+                    title='Light'
                     variant='ghost'
                     color='gray'
                     size={'1'}
@@ -332,6 +333,7 @@ function Sidebar({ showMenu, toggleMenu }) {
                     <SunIcon />
                   </IconButton>
                   <IconButton
+                    title='Dark'
                     variant='ghost'
                     color='gray'
                     size={'1'}
@@ -343,6 +345,7 @@ function Sidebar({ showMenu, toggleMenu }) {
                     <MoonIcon />
                   </IconButton>
                   <IconButton
+                    title='System'
                     variant='ghost'
                     size={'1'}
                     color='gray'

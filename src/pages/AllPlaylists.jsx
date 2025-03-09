@@ -1,5 +1,5 @@
 import { PlusIcon } from '@radix-ui/react-icons'
-import { Button } from '@radix-ui/themes'
+import { Flex, IconButton, Text, Tooltip } from '@radix-ui/themes'
 import React, { useState } from 'react'
 import CreatePlaylistDialog from '../components/CreatePlaylistDialog'
 import NoContent from '../components/NoContent'
@@ -19,7 +19,33 @@ function AllPlaylists() {
 
   return (
     <div className='w-full p-6 mb-16 sm:mb-0'>
-      <h1 className='text-3xl font-semibold'>Playlists</h1>
+      <Flex align={'start'} justify={'between'}>
+        <Flex direction={'column'} gap={'1'}>
+          <Text as='span' size={'7'} weight={'bold'}>
+            Playlists
+          </Text>
+          <Text as='span' size={"1"} color='gray'>
+            Collections you have created
+          </Text>
+        </Flex>
+        <Tooltip content='Create Playlist' side='bottom'>
+          <IconButton
+            variant='soft'
+            color='gray'
+            highContrast
+            radius='full'
+            onClick={() => {
+              setOpenCreatePlaylist(true)
+            }}
+          >
+            <PlusIcon />
+          </IconButton>
+        </Tooltip>
+        <CreatePlaylistDialog
+          open={openCreatePlaylist}
+          toggleOpen={setOpenCreatePlaylist}
+        />
+      </Flex>
       {playlists?.data.length !== 0 &&
         <div className='flex flex-col py-6 gap-y-8 gap-x-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
           {isFetching &&
@@ -38,21 +64,6 @@ function AllPlaylists() {
           <NoContent
             description='Start creating your playlists to save your favorite videos in one place.'
             title='No Playlists Yet'
-          />
-          <Button
-            variant='soft'
-            highContrast
-            radius='full'
-            onClick={() => {
-              setOpenCreatePlaylist(true)
-            }}
-          >
-            <PlusIcon />Create playlist
-          </Button>
-          {/* Create new playlist */}
-          <CreatePlaylistDialog
-            open={openCreatePlaylist}
-            toggleOpen={setOpenCreatePlaylist}
           />
         </div>
       }
