@@ -21,7 +21,7 @@ function ChannelPlaylists() {
   return (
     <div>
       <Flex mt={'2'} align={'center'} justify={'between'}>
-        <Text as='span' weight={'medium'} size={'2'}>
+        <Text as='span' weight={'medium'} size={'2'} className='sm:px-0 px-4'>
           Created playlists
         </Text>
       </Flex>
