@@ -138,9 +138,8 @@ const useUpdateCoverImage = () => {
 }
 
 const useSearchUser = (query, searchType, userId) => {
-  console.log(query, searchType)
   return useQuery({
-    queryKey: ["search", 'channels', { query, userId}],
+    queryKey: ["search", 'channels', { query, userId }],
     queryFn: () => searchUser(query),
     enabled: !!query && searchType === "channels"
   })

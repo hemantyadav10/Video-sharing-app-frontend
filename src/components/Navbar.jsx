@@ -2,7 +2,7 @@ import { ArrowLeftIcon, AvatarIcon, Cross1Icon, DesktopIcon, ExitIcon, FileTextI
 import { Avatar, Button, DropdownMenu, Flex, IconButton, Text, TextField, Tooltip } from '@radix-ui/themes'
 import { ListVideo, SquarePen, SquarePlay } from 'lucide-react'
 import { useTheme } from 'next-themes'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { BarLoader } from 'react-spinners'
 import { useAuth } from '../context/authContext'
@@ -10,10 +10,14 @@ import { useFetchVideos } from '../lib/queries/videoQueries'
 import { getInitials } from '../utils/utils'
 import CreatePlaylistDialog from './CreatePlaylistDialog'
 import Logo from './Logo'
+import SearchHistoryDropdown from './SearchHistoryDropdown'
+import useDebounce from '../hooks/useDebounce'
+import { useSetSearchHistory } from '../lib/queries/searchHistoryQueries'
 
 function Navbar({ toggleMenu }) {
   const [searchParams, setSearchParams] = useSearchParams('')
   const [query, setQuery] = useState(searchParams.get('query') || '')
+  const debouncedQuery = useDebounce(query)
   const navigate = useNavigate();
   const [showSearchBar, setShowSearchBar] = useState(false)
   const { logout, isAuthenticated, user, logoutLoading } = useAuth()
@@ -23,6 +27,10 @@ function Navbar({ toggleMenu }) {
   const [openCreatePlaylist, setOpenCreatePlaylist] = useState(false)
   const isVideoRoute = pathname.startsWith('/watch')
   const { theme, setTheme } = useTheme()
+  const [openSearchHistory, setOpenSearchHistory] = useState(false)
+  const inputRef = useRef()
+  const { mutate: setSearchHistory } = useSetSearchHistory()
+
 
   const themeIcon = {
     "light": SunIcon,
@@ -35,6 +43,7 @@ function Navbar({ toggleMenu }) {
   const handleSearch = (e) => {
     e.preventDefault()
     if (query.trim()) {
+      setSearchHistory(query)
       navigate('/results')
       searchParams.set('query', query.trim())
       setSearchParams(searchParams)
@@ -48,6 +57,16 @@ function Navbar({ toggleMenu }) {
 
   return (
     <div className='fixed top-0 right-0 z-40 grid w-full h-16 grid-cols-2 px-6 py-3 bg-opacity-50 border-b sm:grid-cols-3 bg-[--color-background] border-b-[--gray-a6]'>
+      {openSearchHistory && (
+        <div className='absolute z-[101] w-full sm:w-[560px] sm:left-1/2 sm:-translate-x-1/2 top-full'>
+          <SearchHistoryDropdown
+            setOpen={setOpenSearchHistory}
+            query={debouncedQuery.toLowerCase()}
+            inputRef={inputRef}
+            setQuery={setQuery}
+          />
+        </div>
+      )}
       <div className='absolute top-0 left-0 right-0'>
         <BarLoader
           color='#70b8ff'
@@ -73,8 +92,10 @@ function Navbar({ toggleMenu }) {
       </span>
       <form onSubmit={handleSearch} className='hidden col-span-1 sm:flex'>
         <TextField.Root
+          ref={inputRef}
           value={query}
           onChange={e => setQuery(e.target.value)}
+          onClick={() => setOpenSearchHistory(true)}
           className='w-full rounded-l-full'
           size={'3'}
           placeholder="Search">
@@ -98,7 +119,7 @@ function Navbar({ toggleMenu }) {
         <Tooltip content="Search">
           <IconButton
             aria-label='Search'
-            type={query.trim() ? 'submit' : 'button'}
+            type={query?.trim() ? 'submit' : 'button'}
             highContrast
             variant='soft'
             size={'4'}
@@ -269,7 +290,17 @@ function Navbar({ toggleMenu }) {
       }
       <div className={`flex items-center justify-end cols-span-1 sm:hidden ${showSearchBar && 'hidden'} `}>
         <Tooltip content='Search'>
-          <IconButton onClick={() => setShowSearchBar(true)} size={'3'} variant='ghost' highContrast color='gray' radius='full'>
+          <IconButton
+            onClick={() => {
+              setShowSearchBar(true)
+              setOpenSearchHistory(true)
+            }}
+            size={'3'}
+            variant='ghost'
+            highContrast
+            color='gray'
+            radius='full'
+          >
             <MagnifyingGlassIcon height="22" width="22" />
           </IconButton>
         </Tooltip>
@@ -277,15 +308,20 @@ function Navbar({ toggleMenu }) {
       {
         showSearchBar && <div className='absolute left-0 right-0 flex items-center justify-center h-16 border-b bg-[var(--color-background)]  sm:hidden border-[--gray-a6] gap-4 px-6'>
           <Tooltip content='Back'>
-            <IconButton size={'3'} radius='full' color='gray' highContrast variant='ghost' onClick={() => setShowSearchBar(false)}>
+            <IconButton size={'3'} radius='full' color='gray' highContrast variant='ghost' onClick={() => {
+              setShowSearchBar(false)
+              setOpenSearchHistory(false)
+            }}
+            >
               <ArrowLeftIcon height={'24'} width={'24'} />
             </IconButton>
           </Tooltip>
           <form onSubmit={handleSearch} className='flex flex-1'>
             <TextField.Root
-              autoFocus
+              ref={inputRef}
               value={query}
               onChange={e => setQuery(e.target.value)}
+              onClick={() => setOpenSearchHistory(true)}
               className='w-full rounded-l-full'
               size={'3'}
               placeholder="Search">

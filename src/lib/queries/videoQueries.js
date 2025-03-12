@@ -20,7 +20,7 @@ const useFetchVideos = (searchParams, limit = 10) => {
     queryKey: ['videos', queryString],
     queryFn: ({ pageParam = 1 }) => fetchAllVideos(`${queryString}&page=${pageParam}`),
     getNextPageParam: (lastPage) => lastPage?.data?.nextPage || null,
-    keepPreviousData: true,
+    placeholderData: prev => prev,
     enabled: !!searchParams.get('query') && searchParams.get('type') !== "channels",
   });
 };

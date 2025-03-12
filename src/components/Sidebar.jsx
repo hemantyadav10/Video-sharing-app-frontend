@@ -186,7 +186,7 @@ function Sidebar({ showMenu, toggleMenu }) {
 
   return (
     <aside
-      className={`fixed w-64 md:w-auto top-0 md:h-[calc(100vh-64px)] h-screen transition-transform ease-in-out duration-[300ms] md:sticky md:top-16 ${showMenu ? ' translate-x-0' : ' md:translate-x-0 -translate-x-full'} z-[100] border-r border-[--gray-a6] bg-[--color-background]`}
+      className={`fixed w-64 md:w-auto top-0 md:h-[calc(100vh-64px)] h-screen transition-transform ease-in-out duration-[300ms] md:sticky md:top-16 ${showMenu ? ' translate-x-0' : ' md:translate-x-0 -translate-x-full'} z-[100] md:z-30 border-r border-[--gray-a6] bg-[--color-background]`}
     >
       <span ref={topTabTrap} tabIndex={"0"} />
       <ScrollArea
