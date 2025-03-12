@@ -1,5 +1,5 @@
 import { ArrowTopLeftIcon, Cross1Icon, TrashIcon } from '@radix-ui/react-icons'
-import { Badge, Flex, IconButton, ScrollArea, Separator, Spinner, Text } from '@radix-ui/themes'
+import { Badge, Flex, IconButton, ScrollArea, Separator, Skeleton, Spinner, Text } from '@radix-ui/themes'
 import { ArrowDown, ArrowUp, CornerDownLeft, History, Search } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import React, { useEffect, useRef, useState } from 'react'
@@ -25,7 +25,7 @@ function SearchHistoryDropdown({
   }) || []
 
 
-  const { data: searchData, isLoading: isloadingResults } = useFetchVideos(new URLSearchParams({ query: query }), 5)
+  const { data: searchData, isLoading: isloadingResults, isFetching: isFetchingResults } = useFetchVideos(new URLSearchParams({ query: query }), 5)
   const hasManyResults = searchData?.pages?.[0].data.totalPages > 1 || false
   const hasResult = searchData?.pages?.[0].data.totalDocs > 0 || false
   const dropDownRef = useRef()
@@ -104,7 +104,7 @@ function SearchHistoryDropdown({
   }, [focusedIndex]);
 
   return (
-    <div ref={dropDownRef} className={` border-y sm:border border-[--gray-a6] shadow-lg sm:rounded-xl  h-[calc(100vh-64px)] sm:h-auto bg-[--color-background] ${theme === "light" ? "" : "shadow-black/70"} sm:min-h-72 relative `}>
+    <div ref={dropDownRef} className={` border-y sm:border border-[--gray-a6] shadow-lg sm:rounded-xl  h-[calc(100vh-64px)] sm:h-auto bg-[--color-background] ${theme === "light" ? "bg-[--color-background]" : "shadow-black/70 bg-[--gray-2]"} sm:min-h-72 relative `}>
       <KeyboardNavigation />
       <ScrollArea type="auto" className='pt-4 sm:mb-10 pb-1 rounded-xl h-[calc(100vh-128px)] sm:h-72' scrollbars="vertical">
 
@@ -130,9 +130,10 @@ function SearchHistoryDropdown({
           isAuthenticated ? (
             <>
               {isLoadingHistory && (
-                <Flex justify={'center'}>
-                  <Spinner className='mx-auto' />
-                </Flex>
+                <>
+                  <SearchResultSkeleton Icon={History} />
+                  <SearchResultSkeleton Icon={History} className='w-3/4' />
+                </>
               )}
               {!isLoadingHistory && (
                 filteredData.length > 0 ? (
@@ -156,18 +157,26 @@ function SearchHistoryDropdown({
           ) : (
             <>
               <Text as='p' mx={'4'} size={'1'} mb={'2'} align={'center'}>
-              Sign in to see your recent searches.
+                Sign in to see your recent searches.
               </Text>
-              <Separator size={"4"} mb={'2'}/>
+              <Separator size={"4"} mb={'2'} />
             </>
           )
         }
         {query?.trim() && (
           <>
             <Separator size={'4'} my={'1'} mb={'4'} hidden={!isAuthenticated || !filteredData} />
-            <Text as='p' size={'1'} color='gray' className='px-4' mb={'1'}>
+            <Text as='p' size={'1'} color='gray' className='flex items-center justify-between px-4' mb={'1'}>
               Search Results
+              {isFetchingResults && <Spinner />}
             </Text>
+            {isloadingResults && (
+              <>
+                <SearchResultSkeleton />
+                <SearchResultSkeleton className='w-3/4' />
+                <SearchResultSkeleton className='w-[80%]' />
+              </>
+            )}
             {!isloadingResults && (
               hasResult ? (
                 <>
@@ -305,6 +314,25 @@ export function KeyboardNavigation() {
           close
         </Text>
       </Flex>
+    </div>
+  )
+}
+
+
+function SearchResultSkeleton({
+  Icon = Search,
+  className = 'w-[90%]'
+}) {
+  return (
+    <div
+      className={`flex items-center gap-3 p-2 mx-2`}
+    >
+      <Icon strokeWidth={1.25} size={18} className='opacity-50' />
+      <Skeleton >
+        <Text as='p' className={`${className} h-5`} weight={'medium'} size={'2'}>
+        </Text>
+      </Skeleton>
+      {/* <ArrowTopLeftIcon /> */}
     </div>
   )
 }
