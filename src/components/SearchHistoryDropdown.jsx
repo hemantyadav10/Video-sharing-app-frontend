@@ -104,9 +104,9 @@ function SearchHistoryDropdown({
   }, [focusedIndex]);
 
   return (
-    <div ref={dropDownRef} className={` border-y sm:border border-[--gray-a6] shadow-lg sm:rounded-xl  h-[calc(100vh-64px)] sm:h-auto bg-[--color-background] ${theme === "light" ? "bg-[--color-background]" : "shadow-black/70 bg-[--gray-2]"} sm:min-h-72 relative `}>
+    <div ref={dropDownRef} className={` border-y sm:border border-[--gray-a6] shadow-lg sm:rounded-xl  h-[calc(100vh-64px)] sm:h-auto bg-[--color-background] ${theme === "light" ? "bg-[--color-background]" : "shadow-black/70 sm:bg-[--gray-2] bg-[--color-background]"} sm:min-h-72 relative `}>
       <KeyboardNavigation />
-      <ScrollArea type="auto" className='pt-4 sm:mb-10 pb-1 rounded-xl h-[calc(100vh-128px)] sm:h-72' scrollbars="vertical">
+      <ScrollArea type="hover" className='pt-4 sm:mb-10 pb-1 rounded-xl h-[calc(100vh-128px)] sm:h-72' scrollbars="vertical">
 
         <Flex mb={'1'} className='px-4' justify={'between'} align={'center'}>
           <Text as='span' size={'1'} color='gray'  >
@@ -150,7 +150,7 @@ function SearchHistoryDropdown({
                   ))
                 ) : (
                   <Text as='p' mx={'4'} size={'2'} mb={'2'} align={'center'}>
-                    No recent searches.
+                    No recent searches
                   </Text>
                 ))}
             </>
@@ -240,14 +240,15 @@ export function SearchHistoryItem({ search, close, index, focusedIndex, handleSe
       tabIndex={0}
       onClick={handleLinkClick}
       aria-selected={index === focusedIndex}
-      className={`hover:bg-[--gray-a3] hover:cursor-pointer flex items-center gap-3 p-2 mx-2 rounded-md ${index === focusedIndex ? "bg-[--accent-a3] border-l-4 border-[--focus-8]" : ""}`}
+      className={`hover:bg-[--gray-a3] border-l-[3px] flex items-center gap-3 p-2 mx-2 rounded ${index === focusedIndex ? "bg-[--gray-a3]  border-[--focus-a8]" : "border-transparent"}`}
     >
       <Link
         to={`/results?query=${search}`}
-        className='flex items-center flex-1 gap-3'
+        className='flex items-center flex-1 gap-3 cursor-default'
+        title={search}
       >
         <History strokeWidth={1.25} size={18} />
-        <Text as='div' className='flex-1' weight={'medium'} size={'2'}>
+        <Text as='div' className='flex-1' size={'2'}>
           {search}
         </Text>
       </Link>
@@ -273,10 +274,10 @@ export function SearchResultItem({ result, close, index, focusedIndex, handleSet
       }}
       to={`/watch/${_id}`}
       aria-selected={index === focusedIndex}
-      className={`hover:bg-[--gray-a3] hover:cursor-pointer flex items-center gap-3 p-2 mx-2 rounded-md ${index === focusedIndex ? "bg-[--accent-a3] border-l-4 border-[--focus-8]" : ""}`}
+      className={`hover:bg-[--gray-a3] border-l-[3px] flex items-center gap-3 p-2 mx-2 rounded ${index === focusedIndex ? "bg-[--gray-a3]  border-[--focus-a8]" : "border-transparent"} cursor-default`}
     >
       <Search strokeWidth={1.25} size={18} />
-      <Text as='p' className='flex-1' weight={'medium'} size={'2'}>
+      <Text as='p' color='blue' className='flex-1' size={'2'} title={title.toLowerCase()}>
         {title.toLowerCase()}
       </Text>
       <ArrowTopLeftIcon />
@@ -329,10 +330,9 @@ function SearchResultSkeleton({
     >
       <Icon strokeWidth={1.25} size={18} className='opacity-50' />
       <Skeleton >
-        <Text as='p' className={`${className} h-5`} weight={'medium'} size={'2'}>
+        <Text as='p' className={`${className} h-5`}>
         </Text>
       </Skeleton>
-      {/* <ArrowTopLeftIcon /> */}
     </div>
   )
 }
