@@ -139,6 +139,21 @@ export default function ReplyCommentCard({
     })
   }
 
+
+  const highlightMentions = (text) => {
+    return text.split(/(@\w+)/g).map((part, index) => {
+      if (part.startsWith("@")) {
+
+        return (
+          <span key={index} className='text-[--accent-a11]'>
+            {part}
+          </span>
+        );
+      }
+      return part;
+    });
+  };
+
   if (isUpdatingReply || isDeletingReply) return <Flex justify={'center'}><Spinner className='size-6' /></Flex>
 
   return (
@@ -206,7 +221,7 @@ export default function ReplyCommentCard({
               ref={contentRef}
               className={`pr-4 break-words text-sm whitespace-pre-wrap ${isExpanded ? "" : "line-clamp-3"}`}
             >
-              {reply?.content}
+              {highlightMentions(reply?.content)}
             </p>
             {isLongContent && <div className='flex items-center'>
               <Button
