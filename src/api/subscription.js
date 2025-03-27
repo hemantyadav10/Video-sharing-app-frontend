@@ -21,8 +21,14 @@ const toggleSubscription = (channelId) => asyncHandler(async () => {
   return res.data;
 });
 
+const getSubscribers = (limit = 3, page = 1, sortField = "createdAt", sortOrder = "desc") => asyncHandler(async () => {
+  const { data } = await apiClient.get(`${SUBSCRIPTIONS_BASE_URL}?limit=${limit}&page=${page}&sortField=${sortField}&sortOrder=${sortOrder}`);
+  return data;
+});
+
 export {
   getUserSubscribedChannels,
   getVideosFromSubscribedChannels,
-  toggleSubscription
+  toggleSubscription,
+  getSubscribers
 };

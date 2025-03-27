@@ -6,11 +6,12 @@ export default function ConfirmationDialog({
   open,
   setOpen,
   title = "Delete",
-  descripion = "Are you sure you want to delete this?"
+  descripion = "Are you sure you want to delete this?",
+  maxWidth = '350px'
 }) {
   return (
     <AlertDialog.Root open={open} onOpenChange={setOpen}>
-      <AlertDialog.Content maxWidth="350px" >
+      <AlertDialog.Content maxWidth={maxWidth}>
         <AlertDialog.Title size={'3'} weight={'medium'}>{title}</AlertDialog.Title>
         <AlertDialog.Description size="2">
           {descripion}

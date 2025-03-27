@@ -27,7 +27,6 @@ const ErrorLine = ({ errors }) => {
 }
 
 function UploadVideoDialog({
-  children,
   isDialogOpen,
   setDialogOpen,
   limit,
@@ -49,7 +48,7 @@ function UploadVideoDialog({
     mode: "onChange"
   })
 
-
+console.log(limit, page)
 
   const { user } = useAuth()
   const imageFile = watch('thumbnail')
@@ -112,9 +111,7 @@ function UploadVideoDialog({
         }
       }}
     >
-      <Dialog.Trigger>
-        {children}
-      </Dialog.Trigger>
+
       <Dialog.Content
         className={`relative flex flex-col p-0 md:min-w-max`}
         aria-describedby={undefined}

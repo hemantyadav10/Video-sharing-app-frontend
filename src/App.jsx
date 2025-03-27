@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Outlet, useLocation, ScrollRestoration } from 'react-router-dom'
+import { Outlet, ScrollRestoration, useLocation } from 'react-router-dom'
 import BottomBar from './components/BottomBar.jsx'
 import Navbar from './components/Navbar.jsx'
 import OfflineBanner from './components/OfflineBanner.jsx'
@@ -7,11 +7,16 @@ import Sidebar from './components/Sidebar.jsx'
 import useIsOnline from './hooks/useIsOnline.js'
 
 function App() {
-  const [showMenu, setShowMenu] = useState(window.innerWidth < 1024 ? false : true)
   const { pathname } = useLocation()
-  const isDashboardRoute = pathname === '/dashboard'
+  const isDashboardRoute = pathname.startsWith('/dashboard')
   const isVideoRoute = pathname.startsWith('/watch')
+
+  const [showMenu, setShowMenu] = useState(isDashboardRoute ? false : window.innerWidth < 1024 ? false : true)
+  const toggleDashboardSidebar = () => setOpenDashboardSidebar(prev => !prev)
+
+  const [openDashboardSidebar, setOpenDashboardSidebar] = useState(isDashboardRoute ? (window.innerWidth < 1024 ? false : true) : false)
   const toggleMenu = () => setShowMenu(!showMenu)
+
   const isOnline = useIsOnline();
 
   useEffect(() => {
@@ -34,7 +39,7 @@ function App() {
   return (
     <div className='flex flex-col h-screen'>
       <ScrollRestoration />
-      <Navbar toggleMenu={toggleMenu} />
+      <Navbar toggleMenu={toggleMenu} toggleDashboardSidebar={toggleDashboardSidebar} />
       <div className='flex flex-1 pt-16'>
         {
           (!isDashboardRoute && !isVideoRoute) &&
@@ -44,8 +49,10 @@ function App() {
           />
         }
         {showMenu && (!isDashboardRoute && !isVideoRoute) && <div onClick={() => toggleMenu()} className='fixed md:hidden inset-0  bg-[--color-overlay] z-[90]'></div>}
+        
+        {openDashboardSidebar && (isDashboardRoute && !isVideoRoute) && <div onClick={() => toggleDashboardSidebar()} className='fixed lg:hidden inset-0  bg-[--color-overlay] z-[90]'></div>}
 
-        <Outlet context={[showMenu]} />
+        <Outlet context={[showMenu, openDashboardSidebar, toggleDashboardSidebar]} />
 
       </div>
       {!isDashboardRoute && <BottomBar />}

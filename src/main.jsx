@@ -19,7 +19,13 @@ import Channel from './pages/channel/Channel.jsx';
 import ChannelPlaylists from './pages/channel/ChannelPlaylists.jsx';
 import ChannelTweets from './pages/channel/ChannelTweets.jsx';
 import ChannelVideos from './pages/channel/ChannelVideos.jsx';
-import Dashboard from './pages/Dashboard.jsx';
+
+import Content from './pages/dashboard/Content.jsx';
+import Dashboard from './pages/dashboard/Dashboard.jsx';
+import DashboardLayout from './pages/dashboard/DashboardLayout.jsx';
+import PlaylistsTab from './pages/dashboard/PlaylistsTab.jsx';
+import TweetsTab from './pages/dashboard/TweetsTab.jsx';
+import VideosTab from './pages/dashboard/VideosTab.jsx';
 import Help from './pages/Help.jsx';
 import History from './pages/History.jsx';
 import Home from './pages/Home.jsx';
@@ -68,9 +74,6 @@ const router = createBrowserRouter(
     <Route>
       <Route path='/' element={<App />}>
         <Route index element={<Home />} />
-        <Route element={<ProtectedRoute />}>
-          <Route path='/dashboard' element={<Dashboard />} />
-        </Route>
         <Route path='channel/:userId' element={<Channel />}>
           <Route index element={<ChannelVideos />} />
           <Route path='videos' element={<ChannelVideos />} />
@@ -78,10 +81,21 @@ const router = createBrowserRouter(
           <Route path='tweets' element={<ChannelTweets />} />
         </Route>
         <Route element={<ProtectedRoute />}>
+          {/* Channel settings routes */}
           <Route path='settings' element={<Settings />}>
             <Route index element={<PersonalInfo />} />
             <Route path='change-password' element={<ChangePassword />} />
             <Route path='personalInfo' element={<PersonalInfo />} />
+          </Route>
+          {/* Dashboard routes */}
+          <Route path='/dashboard' element={<DashboardLayout />} >
+            <Route index element={<Dashboard />} />
+            <Route path='content' element={<Content />}>
+              <Route index element={<VideosTab />} />
+              <Route path='videos' element={<VideosTab />} />
+              <Route path='playlists' element={<PlaylistsTab />} />
+              <Route path='tweets' element={<TweetsTab />} />
+            </Route>
           </Route>
           <Route path='subscriptions/channels' element={<SubscribedChannels />} />
           <Route path='playlists' element={<AllPlaylists />} />

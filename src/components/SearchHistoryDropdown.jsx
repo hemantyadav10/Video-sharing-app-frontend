@@ -16,7 +16,7 @@ function SearchHistoryDropdown({
 }) {
   const { user, isAuthenticated } = useAuth()
   const { data, isLoading: isLoadingHistory } = useGetUserSearchHistory(user?._id)
-  const { theme } = useTheme()
+  const { resolvedTheme } = useTheme()
   const filteredData = data?.data?.searches?.filter((search) => {
     if (query?.trim() !== '') {
       return search.toLowerCase().includes(query.toLowerCase())
@@ -104,7 +104,7 @@ function SearchHistoryDropdown({
   }, [focusedIndex]);
 
   return (
-    <div ref={dropDownRef} className={` border-y sm:border border-[--gray-a6] shadow-lg sm:rounded-xl  h-[calc(100vh-64px)] sm:h-auto bg-[--color-background] ${theme === "light" ? "bg-[--color-background]" : "shadow-black/70 sm:bg-[--gray-2] bg-[--color-background]"} sm:min-h-72 relative `}>
+    <div ref={dropDownRef} className={` border-y sm:border border-[--gray-a6] shadow-lg sm:rounded-xl  h-[calc(100vh-64px)] sm:h-auto bg-[--color-background] ${resolvedTheme === "light" ? "bg-[--color-background]" : "shadow-black/70 sm:bg-[--gray-2] bg-[--color-background]"} sm:min-h-72 relative `}>
       <KeyboardNavigation />
       <ScrollArea type="hover" className='pt-4 sm:mb-10 pb-1 rounded-xl h-[calc(100vh-128px)] sm:h-72' scrollbars="vertical">
 

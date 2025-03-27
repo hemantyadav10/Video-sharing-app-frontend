@@ -5,11 +5,9 @@ import React, { useRef } from 'react'
 function PaginationComponent({
   page,
   setPage,
-  limit,
   setLimit,
   hasNextPage,
   hasPrevPage,
-  totalDocs,
   totalPages,
   isFetching
 }) {
@@ -19,57 +17,64 @@ function PaginationComponent({
     <Flex
       gap={'3'}
       align={'center'}
-      justify={'center'}
+      justify={'end'}
       wrap={'wrap'}
     >
       <Tooltip
         content="Go to first page"
       >
         <IconButton
-          variant='outline'
+          variant='ghost'
+          mr={'2'}
           color='gray'
           onClick={() => setPage(1)}
           disabled={!hasPrevPage || page === 1 || isFetching}
-
+          radius='full'
         >
-          <ChevronFirst size={18} />
+          <ChevronFirst size={20} />
         </IconButton>
       </Tooltip>
       <Tooltip
         content="Previous page"
       >
         <IconButton
-          variant='outline'
+          variant='ghost'
+          mr={'2'}
           color='gray'
           title='Previous page'
           onClick={() => setPage(prev => prev - 1)}
           disabled={!hasPrevPage || page === 1 || isFetching}
+          radius='full'
         >
-          <ChevronLeft size={18} />
+          <ChevronLeft size={20} />
         </IconButton>
       </Tooltip>
       <Tooltip
         content="Next page"
       >
         <IconButton
-          variant='outline'
+          variant='ghost'
+          mr={'2'}
           color='gray'
           onClick={() => setPage(prev => prev + 1)}
           disabled={!hasNextPage || page === totalPages || isFetching}
+          radius='full'
         >
-          <ChevronRight size={18} />
+          <ChevronRight size={20} />
         </IconButton>
       </Tooltip>
       <Tooltip
         content="Go to last page"
       >
         <IconButton
-          variant='outline'
+          variant='ghost'
+          mr={'2'}
           color='gray'
           onClick={() => setPage(totalPages)}
           disabled={!hasNextPage || page === totalPages || isFetching}
+          radius='full'
         >
-          <ChevronLast size={18} />
+          <ChevronLast size={20} />
         </IconButton>
       </Tooltip>
       <Text

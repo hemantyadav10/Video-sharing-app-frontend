@@ -145,7 +145,7 @@ function Channel() {
                         </Link>
                       </Skeleton>
                       <Skeleton loading={loadingProfileInfo}>
-                        <Link to={'/dashboard'} className='rounded-full'>
+                        <Link to={'/dashboard/content/videos'} className='rounded-full'>
                           <Button
                             variant='soft'
                             highContrast

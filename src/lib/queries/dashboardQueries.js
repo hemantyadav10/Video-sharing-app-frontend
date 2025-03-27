@@ -4,10 +4,10 @@ import {
   getChannelVideos
 } from "../../api/dashboardApi"
 
-const useGetChannleVideos = (isAuthenticated, limit = 5, page = 1) => {
+const useGetChannleVideos = (isAuthenticated, limit = 5, page = 1, sortBy = 'createdAt', sortOrder = 'desc') => {
   return useQuery({
     queryKey: ['channel_videos', { limit, page }],
-    queryFn: () => getChannelVideos(limit, page),
+    queryFn: () => getChannelVideos(limit, page, sortBy, sortOrder),
     enabled: isAuthenticated,
     keepPreviousData: true,
     placeholderData: (previousData) => previousData

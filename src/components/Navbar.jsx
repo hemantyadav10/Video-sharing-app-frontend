@@ -1,20 +1,20 @@
 import { ArrowLeftIcon, AvatarIcon, Cross1Icon, DesktopIcon, ExitIcon, FileTextIcon, GearIcon, HamburgerMenuIcon, LockClosedIcon, MagicWandIcon, MagnifyingGlassIcon, MoonIcon, PersonIcon, PlusIcon, QuestionMarkCircledIcon, SunIcon } from '@radix-ui/react-icons'
 import { Avatar, Button, DropdownMenu, Flex, IconButton, Text, TextField, Tooltip } from '@radix-ui/themes'
-import { ListVideo, SquarePen, SquarePlay } from 'lucide-react'
+import { ListPlus, SquarePen, Upload } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import React, { useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { BarLoader } from 'react-spinners'
 import { useAuth } from '../context/authContext'
+import useDebounce from '../hooks/useDebounce'
+import { useSetSearchHistory } from '../lib/queries/searchHistoryQueries'
 import { useFetchVideos } from '../lib/queries/videoQueries'
 import { getInitials } from '../utils/utils'
 import CreatePlaylistDialog from './CreatePlaylistDialog'
 import Logo from './Logo'
 import SearchHistoryDropdown from './SearchHistoryDropdown'
-import useDebounce from '../hooks/useDebounce'
-import { useSetSearchHistory } from '../lib/queries/searchHistoryQueries'
 
-function Navbar({ toggleMenu }) {
+function Navbar({ toggleMenu, toggleDashboardSidebar }) {
   const [searchParams, setSearchParams] = useSearchParams('')
   const [query, setQuery] = useState(searchParams.get('query') || '')
   const debouncedQuery = useDebounce(query)
@@ -22,7 +22,8 @@ function Navbar({ toggleMenu }) {
   const [showSearchBar, setShowSearchBar] = useState(false)
   const { logout, isAuthenticated, user, logoutLoading } = useAuth()
   const { pathname } = useLocation()
-  const dashboardRoute = pathname === '/dashboard'
+
+  const dashboardRoute = pathname.startsWith('/dashboard')
   const { isFetching } = useFetchVideos(searchParams)
   const [openCreatePlaylist, setOpenCreatePlaylist] = useState(false)
   const isVideoRoute = pathname.startsWith('/watch')
@@ -30,15 +31,13 @@ function Navbar({ toggleMenu }) {
   const [openSearchHistory, setOpenSearchHistory] = useState(false)
   const inputRef = useRef()
   const { mutate: setSearchHistory } = useSetSearchHistory()
-
-
+  
   const themeIcon = {
     "light": SunIcon,
     "dark": MoonIcon,
     "system": DesktopIcon
   }
   const ThemeIcon = themeIcon[theme]
-
 
   const handleSearch = (e) => {
     e.preventDefault()
@@ -53,7 +52,6 @@ function Navbar({ toggleMenu }) {
   const handleLogout = async () => {
     await logout()
   }
-
 
   return (
     <div className='fixed top-0 right-0 z-40 grid w-full h-16 grid-cols-2 px-6 py-3 bg-opacity-50 border-b sm:grid-cols-3 bg-[--color-background] border-b-[--gray-a6]'>
@@ -77,13 +75,18 @@ function Navbar({ toggleMenu }) {
       </div>
       <span className='flex items-center col-span-1 gap-3 '>
         <IconButton
-          onClick={toggleMenu}
+          onClick={() => {
+            if (dashboardRoute) {
+              return toggleDashboardSidebar()
+            }
+            toggleMenu()
+          }}
           variant='ghost'
           highContrast
           color='gray'
           radius='full'
           size={'3'}
-          className={`${(dashboardRoute || isVideoRoute) ? 'hidden' : ''}`}
+          className={`${(isVideoRoute) ? 'hidden' : ''}`}
           title='Click to expand sidebar'
         >
           <HamburgerMenuIcon height={20} width={20} />
@@ -152,9 +155,9 @@ function Navbar({ toggleMenu }) {
                 <Link
                   to={'/dashboard'}
                   state={{ openDialog: true }}
-                  replace:true
+                  replace={true}
                 >
-                  <SquarePlay strokeWidth={1.25} size={18} /> Upload video
+                  <Upload strokeWidth={1.25} size={18} /> Upload videos
                 </Link>
               </DropdownMenu.Item>
               <DropdownMenu.Item asChild>
@@ -167,7 +170,7 @@ function Navbar({ toggleMenu }) {
                   setOpenCreatePlaylist(true)
                 }}
               >
-                <ListVideo strokeWidth={1.25} size={18} /> Create new playlist
+                <ListPlus strokeWidth={1.25} size={18} /> New playlist
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>

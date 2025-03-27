@@ -108,7 +108,7 @@ const usePublishVideo = (userId, { limit, page }) => {
   return useMutation({
     mutationFn: (formData) => publishVideo(formData),
     onSuccess: (res) => {
-      queryClient.setQueryData(['channel_videos', { limit, page: 1 }], prev => {
+      queryClient.setQueryData(['channel_videos', { limit, page }], prev => {
         if (!prev) return;
 
         return {

@@ -1,5 +1,5 @@
 import { InfoCircledIcon } from '@radix-ui/react-icons'
-import { Button, Callout, Dialog, Flex, ScrollArea, Select, Text, TextArea, Tooltip } from '@radix-ui/themes'
+import { Button, Callout, Dialog, Flex, ScrollArea, Select, Text, TextArea } from '@radix-ui/themes'
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
@@ -12,13 +12,12 @@ import { categories } from '../utils/categories'
 import CloseButton from './CloseButton'
 import TagInputComponent from './TagInputComponent'
 
-
-
 function EditVideoDailog({
-  children,
   video,
   limit,
-  page
+  page,
+  open,
+  setOpen
 }) {
   const { _id: videoId } = video
   const { user } = useAuth()
@@ -35,7 +34,6 @@ function EditVideoDailog({
   const [tags, setTags] = useState(video.tags || [])
   const [tagName, setTagName] = useState('')
 
-  const [open, setOpen] = useState(false)
 
   const { mutate: updateVideo, isPending: updatingVideo, error, reset: resetError } = useUpdateVideo({ limit, page })
 
@@ -102,12 +100,6 @@ function EditVideoDailog({
         }
       }}
     >
-      <Tooltip content='Edit video' side='bottom' >
-        <Dialog.Trigger>
-          {children}
-        </Dialog.Trigger>
-      </Tooltip>
-
       <Dialog.Content maxWidth="600px" className='relative p-0'>
         <Dialog.Title className='flex justify-between p-4 pb-1'>
           <Text as='span' className='mr-auto'>

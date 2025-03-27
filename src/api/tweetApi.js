@@ -4,8 +4,8 @@ import apiClient from "./apiClient";
 const TWEETS_BASE_URL = '/tweets'
 
 // Fetches tweets from a specific user
-const getUserTweets = (userId) => asyncHandler(async () => {
-  const res = await apiClient.get(`${TWEETS_BASE_URL}/user/${userId}`);
+const getUserTweets = (userId, limit = null) => asyncHandler(async () => {
+  const res = await apiClient.get(`${TWEETS_BASE_URL}/user/${userId}?limit=${limit}`);
   return res.data;
 });
 

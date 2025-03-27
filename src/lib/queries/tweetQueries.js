@@ -2,10 +2,10 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 import { createTweet, deleteTweet, getUserTweets, updateTweet } from "../../api/tweetApi"
 import { queryClient } from "../../main"
 
-const useFetchUserTweets = (channelId, currentUserId) => {
+const useFetchUserTweets = (channelId, currentUserId, limit = null) => {
   return useQuery({
-    queryKey: ['userTweets', channelId, currentUserId],
-    queryFn: () => getUserTweets(channelId),
+    queryKey: ['userTweets', channelId, currentUserId, limit],
+    queryFn: () => getUserTweets(channelId, limit),
     enabled: !!channelId,
   })
 }
@@ -14,7 +14,7 @@ const useCreateTweet = (user, channelId) => {
   return useMutation({
     mutationFn: (content) => createTweet(content),
     onSuccess: (response, content) => {
-      queryClient.setQueryData(['userTweets', channelId, user._id], (prev) => {
+      queryClient.setQueryData(['userTweets', channelId, user._id, null], (prev) => {
         if (!prev) return prev;
         return {
           ...prev,
@@ -41,7 +41,7 @@ const useDeleteTweet = (tweetId, channelId) => {
   return useMutation({
     mutationFn: (tweetId) => deleteTweet(tweetId),
     onSuccess: () => {
-      queryClient.setQueryData(['userTweets', channelId, channelId], (prev) => {
+      queryClient.setQueryData(['userTweets', channelId, channelId, null], (prev) => {
         if (!prev) return prev;
 
         return {
@@ -60,7 +60,7 @@ const useUpdateTweet = (tweetId, channelId) => {
   return useMutation({
     mutationFn: (content) => updateTweet(tweetId, content),
     onSuccess: (response) => {
-      queryClient.setQueryData(['userTweets', channelId, channelId], (prev) => {
+      queryClient.setQueryData(['userTweets', channelId, channelId, null], (prev) => {
         if (!prev) return prev;
 
         return {
