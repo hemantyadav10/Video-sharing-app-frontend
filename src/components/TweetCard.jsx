@@ -218,7 +218,7 @@ function TweetCard({
             highContrast
             radius='full'
             disabled={deletingComment || likeTweetLoading}
-            className='text-[--gray-11]'
+            className='text-[--gray-12]'
           >
             {tweetData?.isLiked
               ? <ThumbsUpSolidIcon />

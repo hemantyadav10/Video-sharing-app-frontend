@@ -102,7 +102,7 @@ const useToggleTweetLike = (tweetId, channelId, userId) => {
     onMutate: () => {
       const tweetData = queryClient.getQueryData(['userTweets', channelId, userId])
 
-      queryClient.setQueryData(['userTweets', channelId, userId], prev => {
+      queryClient.setQueryData(['userTweets', channelId, userId, null], prev => {
         if (!prev) return prev;
 
         return {
