@@ -214,7 +214,7 @@ function CommentCard({
             ref={contentRef}
             className={`pr-4 break-words whitespace-pre-wrap ${isExpanded ? "" : "line-clamp-3"}`}
           >
-            {comment?.content}
+            {renderContentWithLinks(comment?.content)}
           </p>
           {isLongContent && <div className='flex items-center'>
             <Button
@@ -323,3 +323,23 @@ function CommentCard({
 }
 
 export default React.memo(CommentCard)
+
+const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+const renderContentWithLinks = (text) => {
+  return text.split(urlRegex).map((part, index) =>
+    urlRegex.test(part) ? (
+      <a
+        key={index}
+        href={part}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-[--accent-a11] hover:underline"
+      >
+        {part}
+      </a>
+    ) : (
+      part
+    )
+  );
+};

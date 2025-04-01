@@ -17,7 +17,7 @@ import QueryErrorHandler from './QueryErrorHandler'
 function CommentSection({ videoId, ownerId }) {
   const { user, isAuthenticated } = useAuth()
   const [sortBy, setSortBy] = useState('newest')
-  const limit = 2
+  const limit = 5
   const { mutate: addComment, isPending: addingComment } = useAddComment(videoId, sortBy, user)
   const { theme } = useTheme()
   const textareaRef = useRef(null)

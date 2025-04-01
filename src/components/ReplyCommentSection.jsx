@@ -18,7 +18,7 @@ function ReplyCommentSection({ commentId, ownerId, setReplyList, sendHasNextPage
     error,
     isError,
     refetch
-  } = useGetCommentReplies(commentId, 2)
+  } = useGetCommentReplies(commentId, 3)
 
 
   useLayoutEffect(() => {

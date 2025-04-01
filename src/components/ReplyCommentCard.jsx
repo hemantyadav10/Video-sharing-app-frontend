@@ -139,21 +139,6 @@ export default function ReplyCommentCard({
     })
   }
 
-
-  const highlightMentions = (text) => {
-    return text.split(/(@\w+)/g).map((part, index) => {
-      if (part.startsWith("@")) {
-
-        return (
-          <span key={index} className='text-[--accent-a11]'>
-            {part}
-          </span>
-        );
-      }
-      return part;
-    });
-  };
-
   if (isUpdatingReply || isDeletingReply) return <Flex justify={'center'}><Spinner className='size-6' /></Flex>
 
   return (
@@ -221,7 +206,7 @@ export default function ReplyCommentCard({
               ref={contentRef}
               className={`pr-4 break-words text-sm whitespace-pre-wrap ${isExpanded ? "" : "line-clamp-3"}`}
             >
-              {highlightMentions(reply?.content)}
+              {renderContentWithLinksAndMentions(reply?.content)}
             </p>
             {isLongContent && <div className='flex items-center'>
               <Button
@@ -336,3 +321,19 @@ export default function ReplyCommentCard({
     </Flex>
   )
 }
+
+
+const urlRegex = /(https?:\/\/[^\s]+)/g;
+const mentionRegex = /(@\w+)/g;
+
+const renderContentWithLinksAndMentions = (text) => {
+  text = text.replace(mentionRegex, (match) => {
+    return `<span class="text-[--accent-a11]">${match}</span>`;
+  });
+
+  text = text.replace(urlRegex, (match) => {
+    return `<a href="${match}" target="_blank" rel="noopener noreferrer" class="text-[--accent-a11] hover:underline">${match}</a>`;
+  });
+
+  return <span dangerouslySetInnerHTML={{ __html: text }} />;
+};
