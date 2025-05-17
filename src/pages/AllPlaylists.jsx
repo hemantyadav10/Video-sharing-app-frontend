@@ -18,7 +18,7 @@ function AllPlaylists() {
   }
 
   return (
-    <div className='w-full p-6 mb-16 sm:mb-0'>
+    <div className='w-full p-6 mb-16 sm:mb-0 max-w-[2560px] mx-auto'>
       <Flex align={'start'} justify={'between'}>
         <Flex direction={'column'} gap={'1'}>
           <Text as='span' size={'7'} weight={'bold'}>
@@ -47,9 +47,9 @@ function AllPlaylists() {
         />
       </Flex>
       {playlists?.data.length !== 0 &&
-        <div className='flex flex-col py-6 gap-y-8 gap-x-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+        <div className='flex flex-col py-6 gap-y-8 gap-x-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 [@media(min-width:1920px)]:grid-cols-5'>
           {isFetching &&
-            Array.from({ length: 8 }).fill(1).map((_, i) =>
+            Array.from({ length: 12 }).fill(1).map((_, i) =>
               <PlaylistCard key={i} loading={isFetching} />
             )
           }

@@ -56,8 +56,8 @@ function VideoPage() {
   }
 
   return (
-    <div className='flex flex-col w-full gap-4 mb-32 lg:gap-6 sm:p-6 lg:flex-row lg:justify-center lg:items-start'>
-      <div className='flex-1 lg:max-w-4xl'>
+    <div className='flex flex-col w-full gap-4 mb-32 lg:gap-6 sm:p-6 md:px-8 xl:px-16 2xl:px-24 lg:flex-row lg:justify-center lg:items-start'>
+      <div className='flex-1 max-w-screen-2xl'>
         {isError && (
           <div className='w-full border aspect-video border-[--gray-a6] rounded-xl flex items-center justify-center'>
             <QueryErrorHandler onRetry={refetch} error={error} />

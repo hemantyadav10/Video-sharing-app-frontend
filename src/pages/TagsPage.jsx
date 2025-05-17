@@ -35,47 +35,49 @@ function TagsPage() {
 
 
   return (
-    <div className='w-full mb-16 sm:mb-0'>
-      <div className='p-6 px-4 sm:px-6 lg:px-10 bg-gradient-to-t from-[--gray-1] from-30%  to-[--blue-a3] flex flex-col'>
-        <Text
-          weight={'medium'}
-          color='gray'
-          as='span'
-          size={'4'}
-        >
-          TAG
-        </Text>
-        <Text
-          size={'8'}
-          as='p'
-          weight={'bold'}
-        >
-          {tag}
-        </Text>
-        <Button
-          asChild
-          className='w-max'
-          variant='soft'
-        >
+    <div className='w-full mb-16 sm:mb-0 '>
+      <div className='bg-gradient-to-t from-[--gray-1] from-30%  to-[--blue-a3]'>
+        <div className='p-6 px-4 sm:px-6 lg:px-10  flex flex-col max-w-[2560px] mx-auto'>
           <Text
             weight={'medium'}
-            color='blue'
-            as='span'
-            my={'2'}
-          >
-            #{tag}
-          </Text>
-        </Button>
-        <Skeleton loading={isFetching}>
-          <Text
-            as='span'
             color='gray'
-            size={'2'}
-            className='w-max'
+            as='span'
+            size={'4'}
           >
-            {data?.pages[0]?.data?.totalDocs} videos
+            TAG
           </Text>
-        </Skeleton>
+          <Text
+            size={'8'}
+            as='p'
+            weight={'bold'}
+          >
+            {tag}
+          </Text>
+          <Button
+            asChild
+            className='w-max'
+            variant='soft'
+          >
+            <Text
+              weight={'medium'}
+              color='blue'
+              as='span'
+              my={'2'}
+            >
+              #{tag}
+            </Text>
+          </Button>
+          <Skeleton loading={isFetching}>
+            <Text
+              as='span'
+              color='gray'
+              size={'2'}
+              className='w-max'
+            >
+              {data?.pages[0]?.data?.totalDocs} videos
+            </Text>
+          </Skeleton>
+        </div>
       </div>
       <Separator size={'4'} />
 

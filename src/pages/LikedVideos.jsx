@@ -18,7 +18,7 @@ function LikedVideos() {
   }
 
   return (
-    <div className="flex flex-col w-full mb-16 sm:mb-0 lg:flex-row lg:p-6">
+    <div className="flex flex-col w-full mx-auto mb-16 sm:mb-0 lg:flex-row lg:p-6 max-w-[2560px]">
       {isAuthenticated && <>
         <Skeleton loading={isLoading}>
           <div className="relative  p-6 overflow-hidden lg:rounded-t-2xl lg:h-[calc(100vh-122px)] lg:sticky lg:top-[88px] md:px-6"

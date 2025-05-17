@@ -54,9 +54,9 @@ function Navbar({ toggleMenu, toggleDashboardSidebar }) {
   }
 
   return (
-    <div className='fixed top-0 right-0 z-40 grid w-full h-16 grid-cols-2 px-6 py-3 bg-opacity-50 border-b sm:grid-cols-3 bg-[--color-background] border-b-[--gray-a6]'>
+    <div className='fixed top-0 right-0 z-40 grid w-full h-16 grid-cols-2 px-6 py-3 bg-opacity-50 border-b sm:grid-cols-12 bg-[--color-background] border-b-[--gray-a6]'>
       {openSearchHistory && (
-        <div className='absolute z-[101] w-full sm:w-[560px] sm:left-1/2 sm:-translate-x-1/2 top-full'>
+        <div className='absolute z-[101] w-full sm:max-w-[640px] sm:left-1/2 sm:-translate-x-1/2 top-full'>
           <SearchHistoryDropdown
             setOpen={setOpenSearchHistory}
             query={debouncedQuery.toLowerCase()}
@@ -73,7 +73,7 @@ function Navbar({ toggleMenu, toggleDashboardSidebar }) {
           loading={logoutLoading}
         />
       </div>
-      <span className='flex items-center col-span-1 gap-3 '>
+      <span className='flex items-center col-span-1 gap-3 sm:col-span-3 '>
         <IconButton
           onClick={() => {
             if (dashboardRoute) {
@@ -93,7 +93,7 @@ function Navbar({ toggleMenu, toggleDashboardSidebar }) {
         </IconButton>
         <Logo />
       </span>
-      <form onSubmit={handleSearch} className='hidden col-span-1 sm:flex'>
+      <form onSubmit={handleSearch} className='hidden w-full max-w-screen-sm col-span-6 mx-auto sm:flex'>
         <TextField.Root
           ref={inputRef}
           value={query}
@@ -134,7 +134,7 @@ function Navbar({ toggleMenu, toggleDashboardSidebar }) {
         </Tooltip>
       </form>
       {isAuthenticated &&
-        <div className='items-center justify-end hidden col-span-1 gap-4 sm:flex'>
+        <div className='items-center justify-end hidden col-span-3 gap-4 sm:flex'>
           <DropdownMenu.Root>
             <DropdownMenu.Trigger>
               <Button
@@ -291,7 +291,7 @@ function Navbar({ toggleMenu, toggleDashboardSidebar }) {
           </Button>
         </Link>
       }
-      <div className={`flex items-center justify-end cols-span-1 sm:hidden ${showSearchBar && 'hidden'} `}>
+      <div className={`flex items-center justify-end col-span-1 sm:col-span-1 sm:hidden ${showSearchBar && 'hidden'} `}>
         <Tooltip content='Search'>
           <IconButton
             onClick={() => {

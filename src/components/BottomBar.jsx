@@ -1,7 +1,7 @@
 import { Avatar, IconButton, Text } from '@radix-ui/themes'
 import { CirclePlus, Home, TvMinimalPlay } from 'lucide-react'
 import React from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useMatch, useResolvedPath } from 'react-router-dom'
 import { useAuth } from '../context/authContext'
 
 function BottomBar() {
@@ -56,13 +56,16 @@ export default BottomBar
 export const NavItems = ({
   to = '/',
   children,
-  label=''
+  label = ''
 }) => {
+  const resolved = useResolvedPath(to);
+  const match = useMatch({ path: resolved.pathname, end: true });
+  const isActive = !!match;
 
   return (
     <NavLink
       to={to}
-      className={({ isActive }) => `${isActive ? 'font-medium text-[--blue-12]' : ''} col-span-1 flex flex-col items-center  justify-center p-2 rounded-lg  transition-all focus-visible:ring-[2px] ring-[--focus-8] outline-none active:bg-[--blue-a3]`}
+      className={({ isActive }) => `${isActive ? 'font-medium text-[--blue-11] relative' : ''} col-span-1 flex flex-col items-center  justify-center p-2 rounded-lg  transition-all focus-visible:ring-[2px] ring-[--focus-8] outline-none active:bg-[--blue-a3]`}
     >
       {children}
       <Text
@@ -72,6 +75,9 @@ export const NavItems = ({
       >
         {label}
       </Text>
-    </NavLink>
+      {isActive && (
+        <span className="absolute w-8 h-1 -translate-y-full bg-[--accent-11] rounded-t-full top-full" />
+      )}
+    </NavLink >
   )
 }

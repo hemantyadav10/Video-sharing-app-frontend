@@ -10,7 +10,7 @@ function SubscribedChannelCard({
 
   console.log(channel)
   return (
-    <div className='flex items-center justify-between w-full max-w-3xl gap-4 mx-auto '>
+    <div className='flex items-center justify-between w-full gap-4 mx-auto '>
       <Link to={`/channel/${channel?._id}`} className='flex items-center flex-1 gap-4 group' >
         <Skeleton loading={loading}>
           <div className='w-16 transition-all rounded-full sm:w-20 md:w-28 group-hover:brightness-75 group-active:brightness-100 aspect-square'>

@@ -85,7 +85,7 @@ function ChannelVideos() {
           </Link>}
         </div>
       }
-      {!isError && <div className='flex flex-col pt-4 gap-y-6 gap-x-2 sm:grid sm:grid-cols-2 lg:grid-cols-3'>
+      {!isError && <div className='flex flex-col pt-4 gap-y-6 gap-x-2 sm:grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4'>
         {videoData?.pages?.length > 0 && (
           videoData?.pages.map((page, pageIndex) => (
             <React.Fragment key={pageIndex}>

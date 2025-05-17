@@ -64,7 +64,7 @@ const SearchResults = () => {
 	]
 
 	return (
-		<div className='w-full py-4 mx-auto mb-16 sm:mb-0 lg:px-16 sm:px-6'>
+		<div className='w-full max-w-screen-xl py-4 mx-auto mb-16 sm:mb-0 lg:px-16 sm:px-6'>
 			<div className='flex items-center justify-between px-4 mb-6 sm:px-0'>
 				<div className='flex gap-2'>
 					<Button

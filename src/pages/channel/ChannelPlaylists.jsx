@@ -21,13 +21,13 @@ function ChannelPlaylists() {
   return (
     <div>
       <Flex mt={'2'} align={'center'} justify={'between'}>
-        <Text as='span' weight={'medium'} size={'2'} className='sm:px-0 px-4'>
+        <Text as='span' weight={'medium'} size={'2'} className='px-4 sm:px-0'>
           Created playlists
         </Text>
       </Flex>
       {playlists?.data.length > 0
         ? (
-          <div className='flex flex-col px-4 py-6 gap-y-8 gap-x-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:px-0'>
+          <div className='flex flex-col px-4 py-6 gap-y-8 gap-x-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 sm:px-0'>
             {playlists?.data.map((playlist) => (
               <PlaylistCard
                 key={playlist._id}

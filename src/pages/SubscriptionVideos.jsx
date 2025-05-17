@@ -46,7 +46,7 @@ function SubscriptionVideos() {
         />
       </>}
       {isAuthenticated && <>
-        <div className='flex items-center justify-between px-4 md:px-6 lg:px-10'>
+        <div className='flex items-center justify-between px-4 md:px-6 lg:px-10 mx-auto max-w-[2560px]'>
           <span className='text-xl font-semibold'>Latest</span>
           <Link to={'/subscriptions/channels'}>
             <Button size={'2'} radius='full' className='font-medium' variant='ghost'>Manage</Button>

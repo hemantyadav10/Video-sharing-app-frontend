@@ -23,7 +23,7 @@ function VideoCard({
 
 
   return (
-    <div className={`flex gap-4 mb-4 sm:rounded-xl ${list ? 'sm:grid sm:grid-cols-12 w-full sm:mb-0 flex-col max-w-6xl ' : 'flex-col '}  line-clamp-1 sm:p-1`}>
+    <div className={`flex gap-4 mb-4 sm:rounded-xl ${list ? 'sm:grid sm:grid-cols-12 w-full sm:mb-0 flex-col' : 'flex-col '}  line-clamp-1 sm:p-1 w-full`}>
       <Skeleton loading={loading}>
         <Link
           to={`/watch/${videoData?._id}`}

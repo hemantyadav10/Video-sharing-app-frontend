@@ -82,7 +82,7 @@ function Dashboard() {
   }, [location.state, navigate]);
 
   return (
-    <div className='px-6'>
+    <div className='px-6 mx-auto max-w-screen-2xl'>
       {openSubscriberDialog && <SubscribersDialog
         open={openSubscriberDialog}
         setOpen={setOpenSubscriberDialog}

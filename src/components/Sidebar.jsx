@@ -186,33 +186,33 @@ function Sidebar({ showMenu, toggleMenu }) {
 
   return (
     <aside
-      className={`fixed w-64 md:w-auto top-0 md:h-[calc(100vh-64px)] h-screen transition-transform ease-in-out duration-[300ms] md:sticky md:top-16 ${showMenu ? ' translate-x-0' : ' md:translate-x-0 -translate-x-full'} z-[100] md:z-30 border-r border-[--gray-a6] bg-[--color-background]`}
+      className={`fixed w-64  top-0 md:h-[calc(100vh-64px)] h-svh transition-transform ease-in-out duration-[300ms] md:sticky md:top-16 ${showMenu ? ' translate-x-0' : ' md:translate-x-0 -translate-x-full md:w-auto'} z-[100] md:z-30 border-r border-[--gray-a6] bg-[--color-background]`}
     >
       <span ref={topTabTrap} tabIndex={"0"} />
+      <div className="flex items-center h-16 gap-3 px-6 md:hidden bg-[--color-background] border-b border-[--gray-a6]">
+        <IconButton
+          autoFocus
+          tabIndex={"0"}
+          ref={firstFocusableElement}
+          onClick={() => toggleMenu()}
+          variant='ghost'
+          color='gray'
+          highContrast
+          radius='full'
+          size={'3'}
+        >
+          <HamburgerMenuIcon height={20} width={20} />
+        </IconButton>
+        <Logo />
+      </div>
       <ScrollArea
         scrollHideDelay={500}
         type="hover"
         scrollbars="vertical"
         draggable={true}
-        className='md:h-[calc(100vh-64px)] h-screen'
+        className={`${showMenu ? "pr-2" : ""} h-[calc(100svh-64px)]`}
       >
         <Box>
-          <div className="sticky top-0 flex items-center h-16 gap-3 px-[26px] md:hidden bg-[--color-background] border-b border-[--gray-a6]">
-            <IconButton
-              autoFocus
-              tabIndex={"0"}
-              ref={firstFocusableElement}
-              onClick={() => toggleMenu()}
-              variant='ghost'
-              color='gray'
-              highContrast
-              radius='full'
-              size={'3'}
-            >
-              <HamburgerMenuIcon height={20} width={20} />
-            </IconButton>
-            <Logo />
-          </div>
           <SidebarContext.Provider value={{ showMenu, toggleMenu }}>
             <ul className={`flex flex-col pt-6 pb-3 mx-6 md:mx-0`}>
               {sidebarItems.map(item => (

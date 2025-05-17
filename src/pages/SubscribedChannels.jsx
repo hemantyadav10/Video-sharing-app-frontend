@@ -31,8 +31,8 @@ function SubscribedChannels() {
   }, [inView, hasNextPage]);
 
   return (
-    <div className='w-full p-8 space-y-10'>
-      <h1 className='max-w-3xl mx-auto text-3xl font-semibold '>All subscriptions</h1>
+    <div className='w-full max-w-screen-lg p-8 mx-auto space-y-10'>
+      <h1 className='text-3xl font-semibold '>All subscriptions</h1>
       <div className='flex flex-col gap-8 '>
         {isError && (
           <QueryErrorHandler error={error} onRetry={refetch} />

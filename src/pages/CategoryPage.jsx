@@ -55,7 +55,7 @@ function CategoryPage() {
 
   return (
     <div className='w-full mb-16 sm:mb-0'>
-      <div className='flex items-center gap-4 p-6'>
+      <div className='flex items-center gap-4 p-6 max-w-[2560px] mx-auto'>
         {categories[category] &&
           <div className='size-[72px] rounded-full overflow-hidden border border-[--gray-a6]'>
             <img

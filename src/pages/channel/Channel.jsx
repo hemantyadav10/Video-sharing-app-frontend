@@ -18,13 +18,13 @@ function Channel() {
   const [openDialog, setOpenDialog] = useState(false)
 
   return (
-    <div className='relative flex flex-col flex-1 pt-4'>
+    <div className='relative flex flex-col flex-1 pt-4 '>
 
       {/* cover image and profile image */}
       {isError && <QueryErrorHandler error={error} onRetry={refetch} />}
       {!isError &&
         <>
-          <div className={`sm:aspect-[6/1] aspect-[7/2] mx-4 rounded-xl xl:mx-20 lg:mx-10 ${data?.data?.coverImage === '' && "hidden"}`}>
+          <div className={`sm:aspect-[6/1] aspect-[7/2] px-4 rounded-xl xl:px-20 lg:px-10 ${data?.data?.coverImage === '' && "hidden"} mx-auto max-w-screen-2xl w-full`}>
             <Skeleton loading={loadingProfileInfo} className='w-full h-full rounded-xl'>
 
               {data?.data?.coverImage && <img
@@ -37,7 +37,7 @@ function Channel() {
               {/* profile image */}
             </Skeleton>
           </div>
-          <div className='mx-4 mt-4 b xl:mx-20 lg:mx-10'>
+          <div className='w-full px-4 mx-auto mt-4 xl:px-20 lg:px-10 max-w-screen-2xl'>
             <div className='flex gap-4'>
               <Skeleton loading={loadingProfileInfo}>
                 <div className='md:size-40 size-20 sm:size-[120px] rounded-full'>
@@ -244,32 +244,34 @@ function Channel() {
         </>
       }
 
-      <div className=' grid grid-cols-3 sm:flex px-4 text-sm border-b border-[--gray-a6] font-medium mt-2 border-t border-t-[--color-background] xl:px-20 sticky top-[63px] z-30 bg-[--color-background] lg:px-10 gap-x-1'>
-        <NavLink
-          preventScrollReset={true}
-          to={`/channel/${userId}/videos`}
-          className={() => `tabNav ${isVideosActive ? "tabNav_active" : "tabNav_inactive"}`}
-        >
-          Videos
-        </NavLink>
-        <NavLink
-          preventScrollReset={true}
-          to={`/channel/${userId}/playlists`}
-          className={({ isActive }) => `tabNav ${isActive ? "tabNav_active" : "tabNav_inactive"} `}
-        >
-          Playlists
-        </NavLink>
-        <NavLink
-          preventScrollReset={true}
-          to={`/channel/${userId}/tweets`}
-          className={({ isActive }) => `tabNav ${isActive ? "tabNav_active" : "tabNav_inactive"} `}
-        >
-          Tweets
-        </NavLink>
+      <div className='border-t border-t-[--color-background] border-b border-[--gray-a6] mt-2 sticky top-[63px] z-30 bg-[--color-background]'>
+        <div className='grid w-full grid-cols-3 px-4 mx-auto text-sm font-medium max-w-screen-2xl sm:flex xl:px-20 lg:px-10 gap-x-1'>
+          <NavLink
+            preventScrollReset={true}
+            to={`/channel/${userId}/videos`}
+            className={() => `tabNav ${isVideosActive ? "tabNav_active" : "tabNav_inactive"}`}
+          >
+            Videos
+          </NavLink>
+          <NavLink
+            preventScrollReset={true}
+            to={`/channel/${userId}/playlists`}
+            className={({ isActive }) => `tabNav ${isActive ? "tabNav_active" : "tabNav_inactive"} `}
+          >
+            Playlists
+          </NavLink>
+          <NavLink
+            preventScrollReset={true}
+            to={`/channel/${userId}/tweets`}
+            className={({ isActive }) => `tabNav ${isActive ? "tabNav_active" : "tabNav_inactive"} `}
+          >
+            Tweets
+          </NavLink>
+        </div>
       </div>
       <div
         style={{ minHeight: 'calc(100vh - 102px)' }}
-        className='flex-1 py-4 mb-16 sm:mb-0 sm:px-4 lg:px-10 xl:px-20'>
+        className='flex-1 w-full py-4 mx-auto mb-16 sm:mb-0 sm:px-4 lg:px-10 xl:px-20 max-w-screen-2xl'>
         <Outlet
           context={{ userId }}
         />
