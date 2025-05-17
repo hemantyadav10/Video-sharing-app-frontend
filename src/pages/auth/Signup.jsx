@@ -66,7 +66,7 @@ function Signup() {
         <span className='mr-auto'>
           <Logo />
         </span>
-        <div className='flex flex-col items-center justify-center flex-1 w-full'>
+        <div className='flex flex-col items-center justify-center flex-1 w-full my-12'>
           <p className="text-3xl font-semibold text-center capitalize">
             Create Your Account
           </p>

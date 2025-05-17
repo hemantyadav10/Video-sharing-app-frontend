@@ -278,7 +278,7 @@ function Navbar({ toggleMenu, toggleDashboardSidebar }) {
         !isAuthenticated &&
         <Link
           to={'/login'}
-          className='items-center justify-end hidden ml-auto text-right rounded-md outline-none w-max focus:ring-2 sm:flex'
+          className='items-center justify-end hidden col-span-3 ml-auto text-right rounded-md outline-none w-max focus:ring-2 sm:flex'
         >
           <Button
             variant='outline'
@@ -291,7 +291,7 @@ function Navbar({ toggleMenu, toggleDashboardSidebar }) {
           </Button>
         </Link>
       }
-      <div className={`flex items-center justify-end col-span-1 sm:col-span-1 sm:hidden ${showSearchBar && 'hidden'} `}>
+      <div className={`flex items-center justify-end col-span-1 sm:hidden ${showSearchBar && 'hidden'} `}>
         <Tooltip content='Search'>
           <IconButton
             onClick={() => {
