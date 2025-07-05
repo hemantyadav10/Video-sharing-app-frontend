@@ -193,7 +193,7 @@ export default function ReplyCommentCard({
             <div className={`flex items-center gap-1 text-sm`}>
               <Link
                 to={`/channel/${reply?.owner._id}`}
-                className={`font-medium ${reply?.owner._id === videoOwnerId ? "bg-[--gray-a3] px-2 rounded-full" : ""}`}
+                className={`font-medium ${reply?.owner._id === videoOwnerId ? "bg-[--gray-a12] px-1 rounded text-[--gray-1]" : ""}`}
               >
                 @{reply?.owner.username}
               </Link>

@@ -5,6 +5,8 @@ import {
   deleteComment,
   fetchCommentReplies,
   fetchVideoComments,
+  pinComment,
+  unpinComment,
   updateComment,
 } from "../../api/commentApi"
 import { queryClient } from "../../main"
@@ -38,34 +40,36 @@ const useAddComment = (videoId, sortBy = 'newest', user) => {
         return {
           ...prev,
           pages: prev.pages.map((page, index) => {
-            if (index === 0) {
-              return {
-                ...page,
-                data: {
-                  comments: {
-                    ...page.data.comments,
-                    docs: [
-                      {
-                        ...newComment,
-                        owner: user,
-                        likesCount: 0,
-                        isLiked: false,
-                      },
-                      ...page.data.comments.docs,
-                    ],
-                    totalDocs: (page.data.comments.totalDocs || 0) + 1,
-                  },
-                  totalCommentsCount: (page.data.totalCommentsCount || 0) + 1
+            if (index !== 0) return page;
+
+            const existingDocs = page.data.comments.docs;
+            const newCommentObj = {
+              ...newComment,
+              owner: user,
+              likesCount: 0,
+              isLiked: false,
+            };
+
+            const isFirstPinned = existingDocs[0]?.isPinned === true;
+
+            const updatedDocs = isFirstPinned
+              ? [existingDocs[0], newCommentObj, ...existingDocs.slice(1)]
+              : [newCommentObj, ...existingDocs];
+
+            return {
+              ...page,
+              data: {
+                comments: {
+                  ...page.data.comments,
+                  docs: updatedDocs,
+                  totalDocs: (page.data.comments.totalDocs || 0) + 1,
                 },
-              };
-            }
-            return page;
+                totalCommentsCount: (page.data.totalCommentsCount || 0) + 1,
+              },
+            };
           }),
         };
       });
-
-      // Optionally, invalidate the query to refetch the latest data
-      // queryClient.invalidateQueries({ queryKey: ['comments', { videoId, sortBy, limit }] });
     },
   });
 };
@@ -276,6 +280,70 @@ const useDeleteReply = (commentId, replyId, sortBy, user, videoId) => {
   });
 }
 
+const usePinComment = () => {
+  return useMutation({
+    mutationFn: pinComment,
+    onSuccess: ({ data: updatedComment }, variables) => {
+      const { commentId, videoId, userId, sortBy } = variables;
+      queryClient.setQueryData(['comments', { videoId, userId, sortBy }], (prev) => {
+        if (!prev) return prev;
+
+        return {
+          ...prev,
+          pages: prev.pages.map((page) => ({
+            ...page,
+            data: {
+              ...page.data,
+              comments: {
+                ...page.data.comments,
+                docs: page.data.comments.docs.map((comment) => {
+                  return comment._id === commentId
+                    ? updatedComment
+                    : comment
+                }),
+              }
+            },
+          })),
+        };
+      });
+
+      queryClient.invalidateQueries({ queryKey: ['comments', { videoId }] })
+    },
+  })
+}
+
+const useunPinComment = () => {
+  return useMutation({
+    mutationFn: unpinComment,
+    onSuccess: ({ data: updatedComment }, variables) => {
+      const { commentId, videoId, userId, sortBy } = variables;
+      queryClient.setQueryData(['comments', { videoId, userId, sortBy }], (prev) => {
+        if (!prev) return prev;
+
+        return {
+          ...prev,
+          pages: prev.pages.map((page) => ({
+            ...page,
+            data: {
+              ...page.data,
+              comments: {
+                ...page.data.comments,
+                docs: page.data.comments.docs.map((comment) => {
+                  return comment._id === commentId
+                    ? updatedComment
+                    : comment
+                }),
+              }
+            },
+          })),
+        };
+      });
+
+      queryClient.invalidateQueries({ queryKey: ['comments', { videoId }] })
+    },
+  })
+}
+
 export {
   useAddComment,
   useDeleteComment,
@@ -284,5 +352,7 @@ export {
   useGetCommentReplies,
   useUpdateReplyComment,
   useDeleteReply,
-  useAddReply
+  useAddReply,
+  useunPinComment,
+  usePinComment
 }

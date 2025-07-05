@@ -1,4 +1,4 @@
-import { ChatBubbleIcon, ChevronDownIcon, ChevronUpIcon, DotsVerticalIcon, Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
+import { ChatBubbleIcon, ChevronDownIcon, ChevronUpIcon, DotsVerticalIcon, DrawingPinFilledIcon, DrawingPinIcon, Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
 import { Button, DropdownMenu, Flex, IconButton, Spinner, Text, TextArea } from '@radix-ui/themes'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
@@ -8,7 +8,7 @@ import ThumbsUpSolidIcon from '../assets/ThumbsUpSolidIcon'
 import { useAuth } from '../context/authContext'
 import { useAutoResize } from '../hooks/useAutoResize'
 import { useReadMore } from '../hooks/useReadMore'
-import { useDeleteComment, useUpdateComment } from '../lib/queries/commentQueries'
+import { useDeleteComment, usePinComment, useunPinComment, useUpdateComment } from '../lib/queries/commentQueries'
 import { useToggleCommentLike } from '../lib/queries/likeQueries'
 import { timeAgo } from '../utils/formatTimeAgo'
 import ConfirmationDialog from './ConfirmationDialog'
@@ -32,6 +32,10 @@ function CommentCard({
   const [isEditable, setIsEditable] = useState(false);
   const [content, setContent] = useState(comment?.content || '')
   const { mutate: updateComment, isPending: updatingComment } = useUpdateComment(videoId, sortBy, user)
+
+  const pinMutation = usePinComment({ userId: user?._id, sortBy });
+  const unpinMutation = useunPinComment({ userId: user?._id, sortBy });
+
   const {
     contentRef,
     isExpanded,
@@ -100,6 +104,33 @@ function CommentCard({
     })
   }
 
+  const handlePinUnpin = (isPinned) => {
+    const commentId = comment?._id;
+
+    if (isPinned) {
+      unpinMutation.mutate({ commentId, videoId, userId: user?._id, sortBy }, {
+        onSuccess: () => {
+          toast.success('Comment unpinned successfully.');
+        },
+        onError: (error) => {
+          const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+          toast.error(errorMessage);
+        }
+      });
+    } else {
+      pinMutation.mutate({ commentId, videoId, userId: user?._id, sortBy }, {
+        onSuccess: () => {
+          toast.success(`Pinned ${comment?.owner?.username}'s comment.`);
+        },
+        onError: (error) => {
+          const errorMessage = error?.response?.data?.message || 'Something went wrong. Please try again later';
+          toast.error(errorMessage);
+        }
+      });
+    }
+  };
+
+
   useEffect(() => {
     if (isEditable && textareaRef.current) {
       autoResizeTextArea()
@@ -154,60 +185,83 @@ function CommentCard({
           </div>
         </div>}
         {!isEditable && <div className='flex flex-col flex-1 gap-1 text-sm'>
-          <div className='flex items-center justify-between gap-1 text-sm '>
+          {comment?.isPinned && (
+            <Text as='p' className='flex items-center gap-1' color='gray' size={'1'}>
+              <DrawingPinIcon /> Pinned
+            </Text>
+          )}
+          <div className='flex items-center justify-between gap-3 text-sm'>
             <Link
               to={`/channel/${comment?.owner._id}`}
             >
-              <div className={`flex items-center gap-1 text-sm`}>
+              <div className={`flex items-center gap-1 text-sm  flex-wrap `}>
                 <div
-                  className={`font-medium ${comment?.owner._id === ownerId ? "bg-[--gray-a3] px-2 rounded-full" : ""}`}
+                  className={`font-medium ${comment?.owner._id === ownerId ? "bg-[--gray-a12] px-1 rounded text-[--gray-1]" : ""}`}
                 >
                   @{comment?.owner.username}
                 </div>
                 <Text as='span' color='gray' size={'1'}>
                   {timeAgo(comment?.createdAt)}
-                  {comment?.createdAt !== comment?.updatedAt && ' (edited)'}
+                  {comment?.isEdited && ' (edited)'}
                 </Text>
               </div>
             </Link>
-            {isAuthenticated &&
-              (user?._id === comment?.owner._id &&
-                <>
-                  < DropdownMenu.Root >
-                    <DropdownMenu.Trigger>
-                      <IconButton
-                        variant='ghost'
-                        highContrast
-                        color='gray'
-                        radius='full'
-                        size={'3'}
-                      >
-                        <DotsVerticalIcon width="18" height="18" />
-                      </IconButton>
-                    </DropdownMenu.Trigger>
-                    <DropdownMenu.Content
-                      variant='soft'
-                      className='w-48'
+
+            {isAuthenticated && (user?._id === ownerId || user?._id === comment?.owner._id) &&
+              <>
+                <DropdownMenu.Root>
+                  <DropdownMenu.Trigger>
+                    <IconButton
+                      variant='ghost'
+                      highContrast
+                      color='gray'
+                      radius='full'
+                      size={'3'}
                     >
-                      <DropdownMenu.Item onClick={() => setIsEditable(true)}>
-                        <Pencil1Icon /> Edit
-                      </DropdownMenu.Item>
-                      <DropdownMenu.Item onClick={() => setOpen(true)} color='red' >
-                        <TrashIcon /> Delete
-                      </DropdownMenu.Item>
-                    </DropdownMenu.Content>
-                  </DropdownMenu.Root>
-                  {setOpen && (
-                    <ConfirmationDialog
-                      open={open}
-                      setOpen={setOpen}
-                      action={handleDeleteComment}
-                      title='Delete comment'
-                      descripion='Delete your comment permanently?'
-                    />
-                  )}
-                </>
-              )
+                      <DotsVerticalIcon width="18" height="18" />
+                    </IconButton>
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Content
+                    variant='soft'
+                    className='w-48'
+                  >
+                    {user?._id === ownerId && (
+                      <>
+                        <DropdownMenu.Item onClick={() => handlePinUnpin(comment?.isPinned)}>
+                          {comment?.isPinned ? (
+                            <>
+                              <DrawingPinIcon />  Unpin
+                            </>
+                          ) : (
+                            <>
+                              <DrawingPinFilledIcon /> Pin
+                            </>
+                          )}
+                        </DropdownMenu.Item>
+                      </>
+                    )}
+                    {user?._id === comment?.owner._id && (
+                      <>
+                        <DropdownMenu.Item onClick={() => setIsEditable(true)}>
+                          <Pencil1Icon /> Edit
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item onClick={() => setOpen(true)} color='red' >
+                          <TrashIcon /> Delete
+                        </DropdownMenu.Item>
+                      </>
+                    )}
+                  </DropdownMenu.Content>
+                </DropdownMenu.Root>
+                {setOpen && (
+                  <ConfirmationDialog
+                    open={open}
+                    setOpen={setOpen}
+                    action={handleDeleteComment}
+                    title='Delete comment'
+                    descripion='Delete your comment permanently?'
+                  />
+                )}
+              </>
             }
           </div>
           <p

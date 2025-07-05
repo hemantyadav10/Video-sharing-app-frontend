@@ -37,11 +37,23 @@ const updateComment = (commentId, newComment) => asyncHandler(async () => {
   return res.data;
 });
 
+const pinComment = async ({ commentId, videoId }) => {
+  const res = await apiClient.patch(`${COMMENTS_BASE_URL}/${commentId}/${videoId}/pin`);
+  return res.data;
+}
+
+const unpinComment = async ({ commentId, videoId }) => {
+  const res = await apiClient.patch(`${COMMENTS_BASE_URL}/${commentId}/${videoId}/unpin`);
+  return res.data;
+}
+
 export {
   fetchVideoComments,
   addComment,
   deleteComment,
   updateComment,
-  fetchCommentReplies, 
-  addReply
+  fetchCommentReplies,
+  addReply,
+  pinComment,
+  unpinComment
 };
