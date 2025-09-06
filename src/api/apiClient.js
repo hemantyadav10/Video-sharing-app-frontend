@@ -1,10 +1,27 @@
 import axios from 'axios'
 import toast from 'react-hot-toast';
 import { logoutUser } from './userApi';
+import { getAuthSetters } from '../context/authContext';
+
+// variables to handle race conditions
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   withCredentials: true, // Enables sending cookies with every request
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -30,14 +47,38 @@ apiClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // If the error is 401 (Unauthorized), try to refresh the access token
+    // If no response object, it's likely a network error or timeout → just reject
+    if (!error.response) {
+      return Promise.reject(error);
+    }
+
+    // Prevent infinite loop: don't retry for the refresh-token endpoint itself
+    const isRefreshRequest = originalRequest.url.includes('/users/refresh-token');
+
+    // If the error is 401, try to refresh the access token
     if (
-      error.response &&
       error.response.status === 401 &&
-      error.response.data?.errors?.name === "TokenExpiredError" &&
-      !originalRequest._retry
+      !originalRequest._retry &&
+      !isRefreshRequest &&
+      error.response?.data?.message !== 'Invalid credentials'
     ) {
+      // If already refreshing, queue this request
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        }).then(token => {
+          if (token) {
+            originalRequest.headers['Authorization'] = `Bearer ${token}`;
+            return apiClient(originalRequest);
+          }
+          return Promise.reject(error);
+        }).catch(err => {
+          return Promise.reject(err);
+        });
+      }
+
       originalRequest._retry = true; // Mark this request as retried
+      isRefreshing = true;
 
       try {
         // Request a new access token using the refresh token
@@ -45,10 +86,13 @@ apiClient.interceptors.response.use(
 
         const newAccessToken = refreshResponse.data.data.accessToken;
 
+        localStorage.setItem('accessToken', newAccessToken);
+
+        // Process all queued requests with the new token
+        processQueue(null, newAccessToken);
+
         // Update the Authorization header with the new access token
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-
-        localStorage.setItem('accessToken', newAccessToken)
 
         // Retry the original request with the new token
         return apiClient(originalRequest);
@@ -56,13 +100,28 @@ apiClient.interceptors.response.use(
       } catch (refreshError) {
         console.error('Refresh token failed', refreshError);
 
+        // Process queued requests with error
+        processQueue(refreshError, null);
+
         toast('Your session has expired. Please log in again.')
 
-        // Remove any tokens from localStorage
-        await logoutUser()
+        // Clear local state immediately
         localStorage.removeItem('accessToken');
         localStorage.removeItem('user');
 
+        const { setUser, setIsAuthenticated } = getAuthSetters()
+        setUser(null);
+        setIsAuthenticated(false)
+
+        try {
+          await logoutUser();
+        } catch (logoutError) {
+          console.error('Logout failed:', logoutError);
+        }
+
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
 

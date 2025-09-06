@@ -2,6 +2,18 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useGetCurrentUser, useLoginUser, useRegisterUser, userLogoutUser } from "../lib/queries/userQueries";
 import toast from "react-hot-toast";
 
+let authSetters = {
+  setUser: () => { },
+  setIsAuthenticated: () => { }
+};
+
+export const setAuthSetters = (setUserFn, setAuthenticationFn) => {
+  authSetters.setUser = setUserFn;
+  authSetters.setIsAuthenticated = setAuthenticationFn
+};
+
+export const getAuthSetters = () => authSetters;
+
 const AuthContext = createContext({
   user: null,
   login: async () => { },
@@ -21,6 +33,8 @@ const AuthProvider = ({ children }) => {
   const { mutateAsync: registerMutation, isPending: registeringUser } = useRegisterUser()
   const { mutateAsync: logoutMutation, isPending: loggingOut } = userLogoutUser()
 
+  const [showSessionExpiredModal, setShowSessionExpiredModal] = useState(false);
+
   // Automatically update user state when `currentUser` changes
   useEffect(() => {
     if (currentUser?.data?.user) {
@@ -29,6 +43,10 @@ const AuthProvider = ({ children }) => {
       localStorage.setItem('user', JSON.stringify(currentUser.data.user));
     }
   }, [currentUser]);
+
+  useEffect(() => {
+    setAuthSetters(setUser, setIsAuthenticated)
+  }, [])
 
   const login = async (data) => {
     try {
@@ -55,7 +73,7 @@ const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await logoutMutation()
-      
+
       setIsAuthenticated(false)
       setUser(null)
       toast('Logged out successfully')
