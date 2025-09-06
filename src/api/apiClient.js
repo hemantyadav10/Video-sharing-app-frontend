@@ -21,7 +21,6 @@ const processQueue = (error, token = null) => {
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   withCredentials: true, // Enables sending cookies with every request
-  timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
   }

@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useGetCurrentUser, useLoginUser, useRegisterUser, userLogoutUser } from "../lib/queries/userQueries";
 import toast from "react-hot-toast";
+import apiClient from "../api/apiClient";
 
 let authSetters = {
   setUser: () => { },
@@ -43,6 +44,22 @@ const AuthProvider = ({ children }) => {
       localStorage.setItem('user', JSON.stringify(currentUser.data.user));
     }
   }, [currentUser]);
+
+  // Add server warm-up effect
+  useEffect(() => {
+    const warmUpServer = async () => {
+      try {
+        await apiClient.get('/healthcheck');
+        console.log('Server warmed up successfully');
+        return;
+      } catch {
+        console.log(`Warm-up request failed (likely cold start), continuing anyway`);
+      }
+    };
+
+    // Only warm up once when the app starts
+    warmUpServer();
+  }, []);
 
   useEffect(() => {
     setAuthSetters(setUser, setIsAuthenticated)
