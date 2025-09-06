@@ -1,11 +1,12 @@
-import { Button, Flex, Popover, Skeleton, Spinner, Text } from '@radix-ui/themes'
-import React, { useEffect, useState } from 'react'
+import { Button, Flex, Popover, Skeleton, Text } from '@radix-ui/themes'
+import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useInView } from 'react-intersection-observer'
 import { Link, useParams } from 'react-router-dom'
 import ThumbsUp from '../assets/ThumbsUpIcon'
 import ThumbsUpSolidIcon from '../assets/ThumbsUpSolidIcon'
 import CommentSection from '../components/CommentSection'
+import Loader from '../components/Loader'
 import MoreVideosFromChannelSection from '../components/MoreVideosFromChannelSection'
 import QueryErrorHandler from '../components/QueryErrorHandler'
 import RelatedVideoSection from '../components/RelatedVideoSection'
@@ -259,7 +260,7 @@ function VideoPage() {
             : loadingVideos
               ?
               <div className='lg:w-full lg:max-w-sm xl:max-w-[408px]'>
-                <Spinner className='h-6 mx-auto' />
+                <Loader center/>
               </div>
               : videoData?.pages[0]?.data.totalDocs > 1
               && <MoreVideosFromChannelSection

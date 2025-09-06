@@ -1,8 +1,9 @@
-import { Card, Flex, Spinner, Text } from '@radix-ui/themes'
-import React, { useEffect } from 'react'
+import { Card, Flex, Text } from '@radix-ui/themes'
+import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useOutletContext } from 'react-router-dom'
 import Container from '../components/Container'
+import Loader from '../components/Loader'
 import QueryErrorHandler from '../components/QueryErrorHandler'
 import VideoCard from '../components/VideoCard'
 import { useFetchAllVideos } from '../lib/queries/videoQueries'
@@ -56,7 +57,7 @@ function Home() {
           ))
         }
       </Container>
-      {isFetchingNextPage && <Spinner className='mx-auto my-4 size-6' />}
+      {isFetchingNextPage && <Loader center className='my-4' />}
       {(hasNextPage && !isFetchingNextPage) && <div ref={ref}></div>}
     </div>
   )

@@ -1,6 +1,7 @@
-import { ScrollArea, Separator, Spinner, Text } from '@radix-ui/themes'
+import { ScrollArea, Separator, Text } from '@radix-ui/themes'
 import React, { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
+import Loader from './Loader'
 import RelatedVideoCard from './RelatedVideoCard'
 
 function MoreVideosFromChannelSection({ channelName, videoData, isFetchingNextPage, hasNextPage, fetchNextPage }) {
@@ -38,7 +39,7 @@ function MoreVideosFromChannelSection({ channelName, videoData, isFetchingNextPa
                 </React.Fragment>
               ))
             )}
-            {isFetchingNextPage && <div className='my-2'><Spinner className='mx-auto my-4 size-6' /></div>}
+            {isFetchingNextPage && <div className='my-2'><Loader center className='my-4' /></div>}
             {(hasNextPage && !isFetchingNextPage) && <div className='h-6 ' ref={ref}></div>}
           </div>
 

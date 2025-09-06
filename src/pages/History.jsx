@@ -1,9 +1,10 @@
 import { TrashIcon, UpdateIcon } from '@radix-ui/react-icons'
-import { AlertDialog, Button, Flex, Separator, Skeleton, Spinner, Text } from '@radix-ui/themes'
+import { AlertDialog, Button, Flex, Separator, Skeleton, Text } from '@radix-ui/themes'
 import { HistoryIcon } from 'lucide-react'
 import React, { useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { useInView } from 'react-intersection-observer'
+import Loader from '../components/Loader'
 import QueryErrorHandler from '../components/QueryErrorHandler'
 import SignInPrompt from '../components/SignInPrompt '
 import VideoCard from '../components/VideoCard'
@@ -169,7 +170,7 @@ function History() {
           )
           )
         ))}
-        {isFetchingNextPage && <Spinner className='my-2 size-6' />}
+        {isFetchingNextPage && <Loader center className='my-2' />}
         {(hasNextPage && !isFetchingNextPage) && <div ref={ref}></div>}
 
         {watchHistory?.pages[0].data.totalDocs === 0 &&

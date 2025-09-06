@@ -1,11 +1,12 @@
 import { DotsVerticalIcon, PlusIcon } from '@radix-ui/react-icons'
-import { Button, Checkbox, Dialog, DropdownMenu, Flex, IconButton, Spinner, Text } from '@radix-ui/themes'
+import { Button, Checkbox, Dialog, DropdownMenu, Flex, IconButton, Text } from '@radix-ui/themes'
 import { Link, ListPlus, Share } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useAuth } from '../context/authContext'
 import { useAddVideoToPlaylist, useFetchUserPlaylists, useRemoveVideoFromPlaylist } from '../lib/queries/playlistQueries'
 import CreatePlaylistDialog from './CreatePlaylistDialog'
+import Loader from './Loader'
 
 function SaveToPlaylistButton({ videoData }) {
   const [openDialog, setOpenDialog] = useState(false)
@@ -148,7 +149,7 @@ function SaveToPlaylistButton({ videoData }) {
             {
               (loading || addingVideo || removingVideo) &&
               <div className='absolute inset-0 flex items-center justify-center'>
-                <Spinner className='mx-auto' size={'3'} />
+                <Loader />
               </div>
             }
             {playlist?.data.map((data) => (

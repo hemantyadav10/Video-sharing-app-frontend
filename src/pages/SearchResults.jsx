@@ -1,9 +1,10 @@
-import { Button, Spinner } from '@radix-ui/themes'
-import React, { useEffect } from 'react'
+import { Button } from '@radix-ui/themes'
+import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useSearchParams } from 'react-router-dom'
 import ChannelCard from '../components/ChannelCard'
 import FilterDialog from '../components/FilterDialog'
+import Loader from '../components/Loader'
 import NoContent from '../components/NoContent'
 import QueryErrorHandler from '../components/QueryErrorHandler'
 import VideoCard from '../components/VideoCard'
@@ -128,7 +129,7 @@ const SearchResults = () => {
 						</div>
 					))
 				)}
-				{isFetchingNextPage && <Spinner className='my-2 size-6' />}
+				{isFetchingNextPage && <Loader center className='my-2 ' />}
 				{(hasNextPage && !isFetchingNextPage) && <div ref={ref}></div>}
 				{!query && <NoContent
 					title='No results found'

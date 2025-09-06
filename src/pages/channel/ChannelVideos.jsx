@@ -1,9 +1,10 @@
 import { ChevronDownIcon, PlusIcon } from '@radix-ui/react-icons';
-import { Button, SegmentedControl, Separator, Spinner } from '@radix-ui/themes';
+import { Button, SegmentedControl, Separator } from '@radix-ui/themes';
 import { Play } from 'lucide-react';
 import React, { useState } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
 import EmptyLibrary from '../../components/EmptyLibrary';
+import Loader from '../../components/Loader';
 import QueryErrorHandler from '../../components/QueryErrorHandler';
 import VideoCard from '../../components/VideoCard';
 import { useAuth } from '../../context/authContext';
@@ -15,7 +16,7 @@ function ChannelVideos() {
   const { user } = useAuth()
 
   const { userId } = useOutletContext()
-  const { data: videoData, isLoading: loadingVideos, isFetchingNextPage, hasNextPage, fetchNextPage, isFetching, error, isError, refetch } = useFetchUserVideos(userId, filters, 6)
+  const { data: videoData, isLoading: loadingVideos, isFetchingNextPage, hasNextPage, fetchNextPage, isFetching, error, isError, refetch } = useFetchUserVideos(userId, filters, 10)
   const filterOptions = [
     { label: 'Latest', value: 'Latest', query: 'sortBy=createdAt&sortType=desc' },
     { label: 'Popular', value: 'Popular', query: 'sortBy=views&sortType=desc' },
@@ -54,7 +55,7 @@ function ChannelVideos() {
         </SegmentedControl.Root>
       </>}
 
-      {loadingVideos && <Spinner className='mx-auto my-4 size-6' />}
+      {loadingVideos && <Loader className='my-4' center/>}
       {isError &&
         <div className='border rounded-xl border-[--gray-a6] pt-0 p-6 mt-6'>
           <QueryErrorHandler error={error} onRetry={refetch} />
@@ -104,7 +105,7 @@ function ChannelVideos() {
           ))
         )}
       </div>}
-      {isFetchingNextPage && <div className='flex items-center h-8 my-4'><Spinner className='h-6 mx-auto' /></div>}
+      {isFetchingNextPage && <div className='h-8 my-4'><Loader center/></div>}
       {/* Load More Button */}
       {(hasNextPage && !isFetchingNextPage) &&
         < div className='flex items-center my-4'>

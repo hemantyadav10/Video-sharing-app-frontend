@@ -1,6 +1,6 @@
 import { ChatBubbleIcon, DotsVerticalIcon, Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
-import { Button, DropdownMenu, Flex, IconButton, Spinner, Text, TextArea } from '@radix-ui/themes'
-import React, { useEffect, useRef, useState } from 'react'
+import { Button, DropdownMenu, Flex, IconButton, Text, TextArea } from '@radix-ui/themes'
+import { useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { Link, useNavigate } from 'react-router-dom'
 import ThumbsUp from '../assets/ThumbsUpIcon'
@@ -12,6 +12,7 @@ import { useDeleteReply, useUpdateReplyComment } from '../lib/queries/commentQue
 import { useToggleReplyLike } from '../lib/queries/likeQueries'
 import { timeAgo } from '../utils/formatTimeAgo'
 import ConfirmationDialog from './ConfirmationDialog'
+import Loader from './Loader'
 import ReplyCommentInput from './ReplyCommentInput'
 
 
@@ -139,7 +140,7 @@ export default function ReplyCommentCard({
     })
   }
 
-  if (isUpdatingReply || isDeletingReply) return <Flex justify={'center'}><Spinner className='size-6' /></Flex>
+  if (isUpdatingReply || isDeletingReply) return <Loader center />
 
   return (
     <Flex className=''>

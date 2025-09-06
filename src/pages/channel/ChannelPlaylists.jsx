@@ -1,8 +1,8 @@
-import { Flex, Spinner, Text } from '@radix-ui/themes'
+import { Flex, Text } from '@radix-ui/themes'
 import { ListVideo } from 'lucide-react'
-import React from 'react'
 import { useOutletContext } from 'react-router-dom'
 import EmptyLibrary from '../../components/EmptyLibrary'
+import Loader from '../../components/Loader'
 import PlaylistCard from '../../components/PlaylistCard'
 import QueryErrorHandler from '../../components/QueryErrorHandler'
 import { useAuth } from '../../context/authContext'
@@ -13,7 +13,7 @@ function ChannelPlaylists() {
   const { user } = useAuth()
   const { data: playlists, isLoading, error, isError, refetch } = useFetchUserPlaylists(userId, true)
 
-  if (isLoading) return <div className=''><Spinner className='h-6 mx-auto' /></div>
+  if (isLoading) return <Loader center />;
   if (isError) return <div className='border rounded-xl border-[--gray-a6] pt-0 p-6 mt-6'>
     <QueryErrorHandler error={error} onRetry={refetch} />
   </div>

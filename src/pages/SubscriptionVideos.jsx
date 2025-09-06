@@ -1,10 +1,11 @@
-import { Button, Spinner, Text } from '@radix-ui/themes'
+import { Button, Text } from '@radix-ui/themes'
 import { TvMinimalPlay } from 'lucide-react'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { Link, useOutletContext } from 'react-router-dom'
 import no_content from '../assets/no_content.svg'
 import Container from '../components/Container'
+import Loader from '../components/Loader'
 import QueryErrorHandler from '../components/QueryErrorHandler'
 import SignInPrompt from '../components/SignInPrompt '
 import VideoCard from '../components/VideoCard'
@@ -73,7 +74,7 @@ function SubscriptionVideos() {
             ))
           )}
         </Container>
-        {isFetchingNextPage && <Spinner className='mx-auto my-4 size-6' />}
+        {isFetchingNextPage && <Loader className='my-4' center />}
         {(hasNextPage && !isFetchingNextPage) && <div ref={ref}></div>}
         {!isError && data?.pages[0]?.data?.totalDocs === 0 && (
           <section className='flex flex-col items-center justify-center flex-1'>

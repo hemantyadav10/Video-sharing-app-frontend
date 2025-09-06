@@ -1,5 +1,5 @@
 import { ChatBubbleIcon, ChevronDownIcon, ChevronUpIcon, DotsVerticalIcon, DrawingPinFilledIcon, DrawingPinIcon, Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
-import { Button, DropdownMenu, Flex, IconButton, Spinner, Text, TextArea } from '@radix-ui/themes'
+import { Button, DropdownMenu, Flex, IconButton, Text, TextArea } from '@radix-ui/themes'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { Link, useNavigate } from 'react-router-dom'
@@ -12,6 +12,7 @@ import { useDeleteComment, usePinComment, useunPinComment, useUpdateComment } fr
 import { useToggleCommentLike } from '../lib/queries/likeQueries'
 import { timeAgo } from '../utils/formatTimeAgo'
 import ConfirmationDialog from './ConfirmationDialog'
+import Loader from './Loader'
 import ReplyCommentCard from './ReplyCommentCard'
 import ReplyCommentInput from './ReplyCommentInput'
 import ReplyCommentSection from './ReplyCommentSection'
@@ -137,7 +138,7 @@ function CommentCard({
     }
   }, [isEditable])
 
-  if (updatingComment || deletingComment) return <Flex justify={'center'}><Spinner className='size-6' /></Flex>
+  if (updatingComment || deletingComment) return <Loader center/>
 
 
   return (

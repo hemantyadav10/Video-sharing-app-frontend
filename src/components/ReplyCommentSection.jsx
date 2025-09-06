@@ -1,10 +1,11 @@
-import { Button, Flex, Spinner } from '@radix-ui/themes'
+import { Button, Flex } from '@radix-ui/themes'
 import { CornerDownRightIcon } from 'lucide-react'
-import React, { useLayoutEffect } from 'react'
+import { useLayoutEffect } from 'react'
 import { useAuth } from '../context/authContext'
 import { useGetCommentReplies } from '../lib/queries/commentQueries'
-import ReplyCommentCard from './ReplyCommentCard'
+import Loader from './Loader'
 import QueryErrorHandler from './QueryErrorHandler'
+import ReplyCommentCard from './ReplyCommentCard'
 
 function ReplyCommentSection({ commentId, ownerId, setReplyList, sendHasNextPage, videoId, replyList, sortBy }) {
   const { user } = useAuth()
@@ -25,7 +26,7 @@ function ReplyCommentSection({ commentId, ownerId, setReplyList, sendHasNextPage
     sendHasNextPage(hasNextPage);
   }, [hasNextPage, sendHasNextPage]);
 
-  if (isLoading) return <Flex justify={'center'}><Spinner className='size-6' /></Flex>
+  if (isLoading) return <Loader center />
 
   if (isError) return (
     <div className='border rounded-xl border-[--gray-a6] p-6 pt-0'>
@@ -51,10 +52,7 @@ function ReplyCommentSection({ commentId, ownerId, setReplyList, sendHasNextPage
         ))
       ))}
       {
-        isFetchingNextPage &&
-        <div className='mx-auto'>
-          <Spinner size={"3"} />
-        </div>
+        isFetchingNextPage && <Loader center />
       }
       {
         (hasNextPage && !isFetchingNextPage) &&

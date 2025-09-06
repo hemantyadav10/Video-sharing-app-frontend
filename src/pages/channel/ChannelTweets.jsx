@@ -1,14 +1,15 @@
-import { Button, Spinner, TextArea } from '@radix-ui/themes'
+import { Button, TextArea } from '@radix-ui/themes'
 import { SquarePen } from 'lucide-react'
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useOutletContext } from 'react-router-dom'
 import EmptyLibrary from '../../components/EmptyLibrary'
+import Loader from '../../components/Loader'
 import QueryErrorHandler from '../../components/QueryErrorHandler'
 import TweetCard from '../../components/TweetCard'
 import { useAuth } from '../../context/authContext'
-import { useCreateTweet, useFetchUserTweets } from '../../lib/queries/tweetQueries'
 import { useAutoResize } from '../../hooks/useAutoResize'
+import { useCreateTweet, useFetchUserTweets } from '../../lib/queries/tweetQueries'
 
 function ChannelTweets() {
   const { userId } = useOutletContext()
@@ -33,7 +34,7 @@ function ChannelTweets() {
     })
   }
 
-  if (isLoading) return <div className=''><Spinner className='h-6 mx-auto' /></div>
+  if (isLoading) return <Loader center />;
 
   return (
     <div>

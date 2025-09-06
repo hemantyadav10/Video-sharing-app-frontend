@@ -1,7 +1,8 @@
-import { Spinner, Text } from '@radix-ui/themes'
-import React, { useEffect } from 'react'
+import { Text } from '@radix-ui/themes'
+import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import no_content from '../assets/no_content.svg'
+import Loader from '../components/Loader'
 import QueryErrorHandler from '../components/QueryErrorHandler'
 import SubscribedChannelCard from '../components/SubscribedChannelCard'
 import { useAuth } from '../context/authContext'
@@ -73,7 +74,7 @@ function SubscribedChannels() {
           )
         )
         }
-        {isFetchingNextPage && <Spinner className='mx-auto my-4 size-6' />}
+        {isFetchingNextPage && <Loader center className='my-4 ' />}
         {(hasNextPage && !isFetchingNextPage) && <div ref={ref}></div>}
 
       </div>

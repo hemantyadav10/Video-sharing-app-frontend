@@ -1,5 +1,5 @@
 import { FaceIcon } from '@radix-ui/react-icons'
-import { Button, DropdownMenu, IconButton, Popover, Skeleton, Spinner, Text, TextArea } from '@radix-ui/themes'
+import { Button, DropdownMenu, IconButton, Popover, Text, TextArea } from '@radix-ui/themes'
 import EmojiPicker from 'emoji-picker-react'
 import { ListFilter } from 'lucide-react'
 import { useTheme } from 'next-themes'
@@ -11,6 +11,7 @@ import { useAutoResize } from '../hooks/useAutoResize'
 import { useAddComment, useGetVideoComments } from '../lib/queries/commentQueries'
 import { queryClient } from '../main'
 import CommentCard from './CommentCard'
+import Loader from './Loader'
 import QueryErrorHandler from './QueryErrorHandler'
 // import { useInView } from 'react-intersection-observer'
 
@@ -67,11 +68,7 @@ function CommentSection({ videoId, ownerId }) {
     queryClient.invalidateQueries({ queryKey: ['comments', { videoId, sortBy: type }] })
   }
 
-  if (loadingComments) return (
-    <div className='p-3'>
-      <Spinner className='h-6 mx-auto' size={'3'} />
-    </div>
-  )
+  if (loadingComments) return <Loader center className='my-3' />
 
 
   return (
@@ -190,10 +187,7 @@ function CommentSection({ videoId, ownerId }) {
           ))}
           {/* Show loader when more comments are being fetched */}
           {
-            isFetchingNextPage &&
-            <div className='mx-auto'>
-              <Spinner size={"3"} />
-            </div>
+            isFetchingNextPage && <Loader center />
           }
           {/* Show load more button if there are more comments and no more comment are being loaded */}
           {

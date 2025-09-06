@@ -1,5 +1,5 @@
-import { Separator, Spinner, Text } from '@radix-ui/themes'
-import React, { useEffect } from 'react'
+import { Separator, Text } from '@radix-ui/themes'
+import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useOutletContext, useParams } from 'react-router-dom'
 import coursesImg from '../assets/animatedCourse.webp'
@@ -13,6 +13,7 @@ import sportsImg from '../assets/animatedSports.jpg'
 import trendingImg from '../assets/animatedTrending.webp'
 import no_content from '../assets/no_content.svg'
 import Container from '../components/Container'
+import Loader from '../components/Loader'
 import QueryErrorHandler from '../components/QueryErrorHandler'
 import VideoCard from '../components/VideoCard'
 import { useGetVideosByCategories } from '../lib/queries/videoQueries'
@@ -98,7 +99,7 @@ function CategoryPage() {
           ))
         }
       </Container>
-      {isFetchingNextPage && <Spinner className='mx-auto my-4 size-6' />}
+      {isFetchingNextPage && <Loader center className='my-4' />}
       {(hasNextPage && !isFetchingNextPage) && <div ref={ref}></div>}
       {!isError && data?.pages[0]?.data?.totalDocs === 0 && (
         <section className='flex flex-col items-center justify-center'>

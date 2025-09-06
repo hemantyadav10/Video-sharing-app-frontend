@@ -1,9 +1,10 @@
 import { CheckIcon, CopyIcon } from '@radix-ui/react-icons';
-import { Dialog, Flex, IconButton, Spinner, Text } from '@radix-ui/themes';
+import { Dialog, Flex, IconButton, Text } from '@radix-ui/themes';
 import { CalendarDays, Earth, Link2, SquarePlay, TrendingUp, UsersRound } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useGetChannelStats } from '../lib/queries/dashboardQueries';
+import Loader from './Loader';
 
 function AboutChannelDialog({ isOpen, setOpenDialog, joiningDate, channelId }) {
   const { data: stats, isFetching: loadingStats } = useGetChannelStats(channelId, false);
@@ -66,7 +67,7 @@ function AboutChannelDialog({ isOpen, setOpenDialog, joiningDate, channelId }) {
           </Dialog.Description>
         )}
         <Flex direction="column" gap="4">
-          {loadingStats && <Spinner className="h-6 mx-auto" />}
+          {loadingStats && <Loader className="h-6" center/>}
           {!loadingStats && stats?.data && (
             <>
               <Text as="p" size="2" className="flex items-center gap-3">
