@@ -40,6 +40,9 @@ dist-ssr
 .env.local
 .env.*.local
 
+# Always track env example files
+!.env.example
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
