@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   deleteVideo,
   fetchAllVideos,
@@ -9,7 +9,6 @@ import {
   togglePublishStatus,
   updateVideo,
 } from "../../api/videoApi";
-import { queryClient } from "../../main";
 
 const useFetchVideos = (searchParams, limit = 10) => {
   const clonedParams = new URLSearchParams(searchParams);
@@ -35,9 +34,9 @@ const useFetchAllVideos = (limit = 12) => {
 }
 
 const useFetchVideoById = (videoId, userId, ownerId) => {
+  const queryClient = useQueryClient();
   return useQuery({
     queryKey: ['video', videoId, userId],
-    queryFn: () => fetchVideoById(videoId),
     queryFn: async () => {
       const data = await fetchVideoById(videoId);
       // Invalidate the user history query
@@ -49,6 +48,7 @@ const useFetchVideoById = (videoId, userId, ownerId) => {
 }
 
 const useTogglePublishStatus = ({ limit, page }) => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (videoId) => togglePublishStatus(videoId),
     onSuccess: (response) => {
@@ -74,6 +74,7 @@ const useTogglePublishStatus = ({ limit, page }) => {
 }
 
 const useUpdateVideo = ({ limit, page }) => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ videoId, formData }) => updateVideo(videoId, formData),
     onSuccess: (res) => {
@@ -105,6 +106,7 @@ const useUpdateVideo = ({ limit, page }) => {
 }
 
 const usePublishVideo = (userId, { limit, page }) => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (formData) => publishVideo(formData),
     onSuccess: (res) => {
@@ -135,6 +137,7 @@ const usePublishVideo = (userId, { limit, page }) => {
 }
 
 const useDeleteVideo = ({ limit, page }) => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: deleteVideo,
     onSuccess: ({ data }) => {
@@ -196,11 +199,10 @@ export {
   useDeleteVideo,
   useFetchAllVideos,
   useFetchVideoById,
-  useFetchVideos,
-  useGetVideoByTag,
+  useFetchVideos, useGetRelatedVideos, useGetVideoByTag,
   useGetVideosByCategories,
   usePublishVideo,
   useTogglePublishStatus,
-  useUpdateVideo,
-  useGetRelatedVideos
+  useUpdateVideo
 };
+

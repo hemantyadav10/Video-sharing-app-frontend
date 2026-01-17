@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query"
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   changePassword,
   clearWatchHistory,
@@ -14,8 +14,6 @@ import {
   updateAvatar,
   updateCoverImage
 } from "../../api/userApi"
-import { queryClient } from "../../main"
-import toast from "react-hot-toast"
 
 const useFetchUserChannelInfo = (channelId, userId, fetchOnMount = true) => {
   return useQuery({
@@ -50,7 +48,8 @@ const useRegisterUser = () => {
   })
 }
 
-const userLogoutUser = () => {
+const useLogoutUser = () => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: logoutUser,
     onSuccess: () => {
@@ -93,6 +92,7 @@ const useUpdateAccountDetails = () => {
 }
 
 const useClearWatchHistory = () => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: clearWatchHistory,
     onSuccess: () => {
@@ -120,6 +120,7 @@ const useClearWatchHistory = () => {
 }
 
 const useUpdateAvatar = () => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: updateAvatar,
     onSuccess: () => {
@@ -129,6 +130,7 @@ const useUpdateAvatar = () => {
 }
 
 const useUpdateCoverImage = () => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: updateCoverImage,
     onSuccess: () => {
@@ -146,17 +148,8 @@ const useSearchUser = (query, searchType, userId) => {
 }
 
 export {
-  useFetchUserChannelInfo,
-  useFetchUserVideos,
-  useLoginUser,
-  userLogoutUser,
-  useGetCurrentUser,
-  useFetchUserWatchHistory,
-  useChangePassword,
-  useUpdateAccountDetails,
-  useClearWatchHistory,
-  useRegisterUser,
-  useUpdateAvatar,
-  useUpdateCoverImage,
-  useSearchUser
+  useChangePassword, useClearWatchHistory, useFetchUserChannelInfo,
+  useFetchUserVideos, useFetchUserWatchHistory, useGetCurrentUser, useLoginUser, useRegisterUser, useLogoutUser, useSearchUser, useUpdateAccountDetails, useUpdateAvatar,
+  useUpdateCoverImage
 }
+

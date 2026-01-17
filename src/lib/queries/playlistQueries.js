@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   addVideoToPlaylist,
   createPlaylist,
@@ -8,7 +8,6 @@ import {
   removeVideoFromPlaylist,
   updatePlaylist
 } from "../../api/playlistApi"
-import { queryClient } from "../../main"
 
 // Fetches all playlists for a specific user by their ID
 const useFetchUserPlaylists = (userId, fetch) => {
@@ -29,6 +28,7 @@ const useFetchPlaylistById = (playlistId) => {
 
 // Updates a playlist's details (name, description) and refreshes cache
 const useUpdatePlaylist = (playlistId) => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (data) => updatePlaylist(playlistId, data),
     onSuccess: (res) => {
@@ -54,6 +54,7 @@ const useUpdatePlaylist = (playlistId) => {
 
 // Deletes a playlist by its ID and removes it from the user’s playlist cache
 const useDeletePlaylist = (playlistId, userId) => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: () => deletePlaylist(playlistId),
     onSuccess: () => {
@@ -76,6 +77,7 @@ const useDeletePlaylist = (playlistId, userId) => {
 
 // Creates a new playlist and adds it to the 'all playlists' cache for the user
 const useCreatePlaylist = (userId) => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (data) => createPlaylist(data),
     onSuccess: (playlist) => {
@@ -103,6 +105,7 @@ const useCreatePlaylist = (userId) => {
 
 // Adds a video to a specific playlist and updates the relevant caches
 const useAddVideoToPlaylist = (video, userId) => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: ({ videoId, playlistId }) => addVideoToPlaylist(videoId, playlistId),
     onSuccess: (res) => {
@@ -150,6 +153,7 @@ const useAddVideoToPlaylist = (video, userId) => {
 
 // Removes a video from a playlist and updates the cache accordingly
 const useRemoveVideoFromPlaylist = (video, userId) => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: ({ videoId, playlistId }) => removeVideoFromPlaylist(videoId, playlistId),
     onSuccess: (res) => {
@@ -194,13 +198,6 @@ const useRemoveVideoFromPlaylist = (video, userId) => {
   });
 };
 
-
 export {
-  useFetchUserPlaylists,
-  useFetchPlaylistById,
-  useUpdatePlaylist,
-  useDeletePlaylist,
-  useCreatePlaylist,
-  useAddVideoToPlaylist,
-  useRemoveVideoFromPlaylist
+  useAddVideoToPlaylist, useCreatePlaylist, useDeletePlaylist, useFetchPlaylistById, useFetchUserPlaylists, useRemoveVideoFromPlaylist, useUpdatePlaylist
 }

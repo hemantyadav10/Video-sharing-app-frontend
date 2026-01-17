@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useGetCurrentUser, useLoginUser, useRegisterUser, userLogoutUser } from "../lib/queries/userQueries";
+import { useGetCurrentUser, useLoginUser, useRegisterUser, useLogoutUser } from "../lib/queries/userQueries";
 import toast from "react-hot-toast";
 import apiClient from "../api/apiClient";
 
@@ -32,7 +32,7 @@ const AuthProvider = ({ children }) => {
 
   const { mutateAsync: loginMutation, isPending: loggingIn } = useLoginUser()
   const { mutateAsync: registerMutation, isPending: registeringUser } = useRegisterUser()
-  const { mutateAsync: logoutMutation, isPending: loggingOut } = userLogoutUser()
+  const { mutateAsync: logoutMutation, isPending: loggingOut } = useLogoutUser()
 
   const [showSessionExpiredModal, setShowSessionExpiredModal] = useState(false);
 

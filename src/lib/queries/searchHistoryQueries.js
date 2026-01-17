@@ -1,6 +1,5 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { clearSearchHistory, deleteSearchItem, fetchUserSearchHistory, setSearchHistory } from "../../api/searchHistoryApi"
-import { queryClient } from "../../main"
 import toast from "react-hot-toast"
 
 const useGetUserSearchHistory = (userId) => {
@@ -12,6 +11,7 @@ const useGetUserSearchHistory = (userId) => {
 }
 
 const useClearSearchHistory = () => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: clearSearchHistory,
     onSuccess: () => {
@@ -36,6 +36,7 @@ const useClearSearchHistory = () => {
 
 
 const useDeleteSearchItem = () => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (searchTerm) => deleteSearchItem(searchTerm),
     onMutate: async (searchTerm) => {
@@ -70,9 +71,11 @@ const useDeleteSearchItem = () => {
 }
 
 const useSetSearchHistory = () => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (searchTerm) => setSearchHistory(searchTerm),
     onSuccess: (_data, searchTerm) => {
+      const previousSearches = queryClient.getQueryData(["search_history"])
       queryClient.setQueryData(["search_history"], (prev) => {
         if (!prev) return previousSearches;
         return {

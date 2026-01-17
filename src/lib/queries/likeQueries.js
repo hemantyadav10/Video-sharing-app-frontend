@@ -1,6 +1,5 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { getUserLikedVideos, toggleCommentLike, toggleTweetLike, toggleVideoLike } from "../../api/likeApi"
-import { queryClient } from "../../main"
 
 const useGetUserLikedVideos = (user) => {
   return useQuery({
@@ -11,6 +10,7 @@ const useGetUserLikedVideos = (user) => {
 }
 
 const useToggleVideoLike = (videoId, userId) => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (video) => toggleVideoLike(video._id || videoId),
     onMutate: (data) => {
@@ -75,6 +75,7 @@ const useToggleVideoLike = (videoId, userId) => {
 }
 
 const useToggleCommentLike = (commentId, videoId) => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: () => toggleCommentLike(commentId),
     onSuccess: () => {
@@ -86,6 +87,7 @@ const useToggleCommentLike = (commentId, videoId) => {
 }
 
 const useToggleReplyLike = (commentId) => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: toggleCommentLike,
     onSuccess: () => {
@@ -97,6 +99,7 @@ const useToggleReplyLike = (commentId) => {
 }
 
 const useToggleTweetLike = (tweetId, channelId, userId) => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: () => toggleTweetLike(tweetId),
     onMutate: () => {
@@ -138,11 +141,7 @@ const useToggleTweetLike = (tweetId, channelId, userId) => {
   })
 }
 
-
 export {
-  useGetUserLikedVideos,
-  useToggleVideoLike,
-  useToggleCommentLike,
-  useToggleTweetLike,
-  useToggleReplyLike
+  useGetUserLikedVideos, useToggleCommentLike, useToggleReplyLike, useToggleTweetLike, useToggleVideoLike
 }
+

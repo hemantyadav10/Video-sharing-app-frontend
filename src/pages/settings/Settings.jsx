@@ -1,6 +1,6 @@
 import { Button, Heading, IconButton, Text } from '@radix-ui/themes';
 import { Camera } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import placeholder from '../../assets/bannerPlaceholder.webp';
 import UpdatePictureDialog from '../../components/UpdatePictureDialog';
@@ -57,7 +57,6 @@ function Settings() {
         />
         <img
           src={user?.coverImage || placeholder}
-          // src="https://storage.googleapis.com/support-kms-prod/Ch5HG5RGzGnfHhvVSD93gdoEvWm5IPGUkOnS"
           alt="A house in a forest"
           className='object-cover object-center w-full h-32 cursor-pointer sm:h-40 md:h-48 lg:h-52'
         />

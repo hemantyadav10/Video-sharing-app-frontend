@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useMutation } from "@tanstack/react-query"
+import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import {
   addComment,
   addReply,
@@ -9,7 +9,6 @@ import {
   unpinComment,
   updateComment,
 } from "../../api/commentApi"
-import { queryClient } from "../../main"
 
 const useGetVideoComments = (videoId, sortBy = 'newest', limit = 5, userId) => {
   return useInfiniteQuery({
@@ -31,6 +30,7 @@ const useGetCommentReplies = (commentId, limit = 5) => {
 }
 
 const useAddComment = (videoId, sortBy = 'newest', user) => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (content) => addComment(content, videoId),
     onSuccess: ({ data: newComment }) => {
@@ -75,6 +75,7 @@ const useAddComment = (videoId, sortBy = 'newest', user) => {
 };
 
 const useAddReply = (videoId, commentId, user, sortBy) => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (content) => addReply(content, videoId, commentId),
     onSuccess: ({ data: newReply }) => {
@@ -141,6 +142,7 @@ const useAddReply = (videoId, commentId, user, sortBy) => {
 }
 
 const useUpdateComment = (videoId, sortBy = 'newest', user) => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: ({ commentId, content }) => updateComment(commentId, content),
     onSuccess: ({ data: updatedComment }) => {
@@ -170,6 +172,7 @@ const useUpdateComment = (videoId, sortBy = 'newest', user) => {
 };
 
 const useUpdateReplyComment = (commentId, user) => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: ({ replyId, content }) => updateComment(replyId, content),
     onSuccess: ({ data: updatedReply }) => {
@@ -197,6 +200,7 @@ const useUpdateReplyComment = (commentId, user) => {
 }
 
 const useDeleteComment = (videoId, sortBy = 'newest', commentId, userId) => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: deleteComment,
     onSuccess: () => {
@@ -228,6 +232,7 @@ const useDeleteComment = (videoId, sortBy = 'newest', commentId, userId) => {
 };
 
 const useDeleteReply = (commentId, replyId, sortBy, user, videoId) => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: deleteComment,
     onSuccess: () => {
@@ -281,6 +286,7 @@ const useDeleteReply = (commentId, replyId, sortBy, user, videoId) => {
 }
 
 const usePinComment = () => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: pinComment,
     onSuccess: ({ data: updatedComment }, variables) => {
@@ -312,7 +318,8 @@ const usePinComment = () => {
   })
 }
 
-const useunPinComment = () => {
+const useUnpinComment = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: unpinComment,
     onSuccess: ({ data: updatedComment }, variables) => {
@@ -345,14 +352,6 @@ const useunPinComment = () => {
 }
 
 export {
-  useAddComment,
-  useDeleteComment,
-  useGetVideoComments,
-  useUpdateComment,
-  useGetCommentReplies,
-  useUpdateReplyComment,
-  useDeleteReply,
-  useAddReply,
-  useunPinComment,
-  usePinComment
+  useAddComment, useAddReply, useDeleteComment, useDeleteReply, useGetCommentReplies, useGetVideoComments, usePinComment, useUnpinComment, useUpdateComment, useUpdateReplyComment
 }
+

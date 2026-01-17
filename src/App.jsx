@@ -1,65 +1,70 @@
-import React, { useEffect, useState } from 'react'
-import { Outlet, ScrollRestoration, useLocation } from 'react-router-dom'
-import BottomBar from './components/BottomBar.jsx'
-import Navbar from './components/Navbar.jsx'
-import OfflineBanner from './components/OfflineBanner.jsx'
-import Sidebar from './components/Sidebar.jsx'
-import useIsOnline from './hooks/useIsOnline.js'
+import { Spinner, Theme } from "@radix-ui/themes";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { ThemeProvider } from "next-themes";
+import { Toaster } from "react-hot-toast";
+import TopLoadingBar from "./components/TopLoadingBar";
+import AuthProvider from "./context/authContext";
+import AppRouter from "./providers/RouterProvider";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 2 * 1000,
+      refetchOnReconnect: "always",
+      retry: 2,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+const toastStyles = {
+  backgroundColor: "#09090b",
+  minWidth: "240px",
+  fontSize: "14px",
+  color: "#fafafa",
+  border: "1px solid #484848",
+  padding: "12px",
+  boxShadow:
+    "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+};
+
+const toastErrorStyles = {
+  backgroundColor: "#7f1d1d",
+  border: "1px solid #7f1d1d",
+};
 
 function App() {
-  const { pathname } = useLocation()
-  const isDashboardRoute = pathname.startsWith('/dashboard')
-  const isVideoRoute = pathname.startsWith('/watch')
-
-  const [showMenu, setShowMenu] = useState(isDashboardRoute ? false : window.innerWidth < 1024 ? false : true)
-  const toggleDashboardSidebar = () => setOpenDashboardSidebar(prev => !prev)
-
-  const [openDashboardSidebar, setOpenDashboardSidebar] = useState(isDashboardRoute ? (window.innerWidth < 1024 ? false : true) : false)
-  const toggleMenu = () => setShowMenu(!showMenu)
-
-  const isOnline = useIsOnline();
-
-  useEffect(() => {
-    if (showMenu && window.innerWidth < 768) {
-      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
-      document.body.style.overflow = "hidden";
-      document.body.style.paddingRight = `${scrollBarWidth}px`; // Add padding to match scrollbar width
-    } else {
-      document.body.style.overflow = "auto";
-      document.body.style.paddingRight = ""; // Reset padding
-    }
-
-    // Cleanup on unmount
-    return () => {
-      document.body.style.overflow = "auto";
-      document.body.style.paddingRight = ""; // Reset padding
-    };
-  }, [showMenu]);
-
   return (
-    <div className='flex flex-col h-screen'>
-      <ScrollRestoration />
-      <Navbar toggleMenu={toggleMenu} toggleDashboardSidebar={toggleDashboardSidebar} />
-      <div className='flex flex-1 pt-16'>
-        {
-          (!isDashboardRoute && !isVideoRoute) &&
-          <Sidebar
-            showMenu={showMenu}
-            toggleMenu={toggleMenu}
-          />
-        }
-        {showMenu && (!isDashboardRoute && !isVideoRoute) && <div onClick={() => toggleMenu()} className='fixed md:hidden inset-0  bg-[--color-overlay] z-[90]'></div>}
-        
-        {openDashboardSidebar && (isDashboardRoute && !isVideoRoute) && <div onClick={() => toggleDashboardSidebar()} className='fixed lg:hidden inset-0  bg-[--color-overlay] z-[90]'></div>}
-
-        <Outlet context={[showMenu, openDashboardSidebar, toggleDashboardSidebar]} />
-
-      </div>
-      {!isDashboardRoute && <BottomBar />}
-
-      {!isOnline && <OfflineBanner />}
-    </div>
-  )
+    <>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <ThemeProvider
+            attribute={"class"}
+            disableTransitionOnChange
+            defaultTheme="dark"
+          >
+            <Theme accentColor="blue">
+              <AppRouter />
+              <Toaster
+                position="bottom-left"
+                toastOptions={{
+                  style: toastStyles,
+                  error: {
+                    icon: false,
+                    style: toastErrorStyles,
+                  },
+                  success: { icon: false },
+                  loading: { icon: <Spinner size={"3"} /> },
+                }}
+              />
+              <ReactQueryDevtools initialIsOpen={false} />
+            </Theme>
+          </ThemeProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </>
+  );
 }
 
-export default App
+export default App;
