@@ -1,88 +1,111 @@
-import { ArrowTopLeftIcon, Cross1Icon, TrashIcon } from '@radix-ui/react-icons'
-import { Badge, Flex, IconButton, ScrollArea, Separator, Skeleton, Spinner, Text } from '@radix-ui/themes'
-import { ArrowDown, ArrowUp, CornerDownLeft, History, Search } from 'lucide-react'
-import { useTheme } from 'next-themes'
-import React, { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/authContext'
-import { useClearSearchHistory, useDeleteSearchItem, useGetUserSearchHistory, useSetSearchHistory } from '../lib/queries/searchHistoryQueries'
-import { useFetchVideos } from '../lib/queries/videoQueries'
+import { ArrowTopLeftIcon, Cross1Icon, TrashIcon } from "@radix-ui/react-icons";
+import {
+  Badge,
+  Flex,
+  IconButton,
+  ScrollArea,
+  Separator,
+  Skeleton,
+  Spinner,
+  Text,
+} from "@radix-ui/themes";
+import {
+  ArrowDown,
+  ArrowUp,
+  CornerDownLeft,
+  History,
+  Search,
+} from "lucide-react";
+import { useTheme } from "next-themes";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/authContext";
+import {
+  useClearSearchHistory,
+  useDeleteSearchItem,
+  useGetUserSearchHistory,
+  useSetSearchHistory,
+} from "../lib/queries/searchHistoryQueries";
+import { useFetchVideos } from "../lib/queries/videoQueries";
 
-function SearchHistoryDropdown({
-  setOpen,
-  query = '',
-  inputRef,
-  setQuery
-}) {
-  const { user, isAuthenticated } = useAuth()
-  const { data, isLoading: isLoadingHistory } = useGetUserSearchHistory(user?._id)
-  const { resolvedTheme } = useTheme()
-  const filteredData = data?.data?.searches?.filter((search) => {
-    if (query?.trim() !== '') {
-      return search.toLowerCase().includes(query.toLowerCase())
-    }
-    return true
-  }) || []
+function SearchHistoryDropdown({ setOpen, query = "", inputRef, setQuery }) {
+  const { user, isAuthenticated } = useAuth();
+  const { data, isLoading: isLoadingHistory } = useGetUserSearchHistory(
+    user?._id,
+  );
+  const { resolvedTheme } = useTheme();
+  const filteredData =
+    data?.data?.searches?.filter((search) => {
+      if (query?.trim() !== "") {
+        return search.toLowerCase().includes(query.toLowerCase());
+      }
+      return true;
+    }) || [];
 
+  const {
+    data: searchData,
+    isLoading: isloadingResults,
+    isFetching: isFetchingResults,
+  } = useFetchVideos(new URLSearchParams({ query: query }), 5);
+  const hasManyResults = searchData?.pages?.[0].data.totalPages > 1 || false;
+  const hasResult = searchData?.pages?.[0].data.totalDocs > 0 || false;
+  const dropDownRef = useRef();
 
-  const { data: searchData, isLoading: isloadingResults, isFetching: isFetchingResults } = useFetchVideos(new URLSearchParams({ query: query }), 5)
-  const hasManyResults = searchData?.pages?.[0].data.totalPages > 1 || false
-  const hasResult = searchData?.pages?.[0].data.totalDocs > 0 || false
-  const dropDownRef = useRef()
-
-  const [focusedIndex, setFocusedIndex] = useState(-1) // -1 means no focus
+  const [focusedIndex, setFocusedIndex] = useState(-1); // -1 means no focus
   const allItems = [
     ...filteredData,
-    ...(searchData?.pages?.[0]?.data.docs?.map(item => item.title) || [])
+    ...(searchData?.pages?.[0]?.data.docs?.map((item) => item.title) || []),
   ];
   const totalItems = allItems.length + (hasManyResults ? 1 : 0);
-  const { mutate: clearHistory, isPending: isDeletingSearchHistory } = useClearSearchHistory()
-  const { mutate: setSearchHistory } = useSetSearchHistory()
+  const { mutate: clearHistory, isPending: isDeletingSearchHistory } =
+    useClearSearchHistory();
+  const { mutate: setSearchHistory } = useSetSearchHistory();
   const handleDeleteHistory = async () => {
-    clearHistory()
-  }
+    clearHistory();
+  };
   const handleSetHistory = async (searchTern) => {
-    setSearchHistory(searchTern.toLowerCase())
-  }
-
+    setSearchHistory(searchTern.toLowerCase());
+  };
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
-        setOpen(false)
+      if (e.key === "Escape") {
+        setOpen(false);
       }
-      if (totalItems === 0) return
+      if (totalItems === 0) return;
 
-      if (e.key === 'ArrowDown') {
-        e.preventDefault()
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
         setFocusedIndex((prev) => (prev + 1) % totalItems);
       }
-      if (e.key === 'ArrowUp') {
-        e.preventDefault()
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
         setFocusedIndex((prev) => (prev - 1 + totalItems) % totalItems);
       }
-      if (e.key === 'Enter' && focusedIndex >= 0) {
-        e.preventDefault()
+      if (e.key === "Enter" && focusedIndex >= 0) {
+        e.preventDefault();
         if (focusedIndex === allItems.length) {
-          document.getElementById('see-all-results')?.click();
+          document.getElementById("see-all-results")?.click();
         } else {
           document.getElementById(`search-item-${focusedIndex}`)?.click();
         }
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleKeyDown)
+    document.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [allItems, focusedIndex])
-
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [allItems, focusedIndex]);
 
   useEffect(() => {
     const handleClick = (e) => {
       if (!dropDownRef.current || !inputRef.current) return;
 
-      if (!dropDownRef.current.contains(e.target) && e.target !== inputRef.current) {
+      if (
+        !dropDownRef.current.contains(e.target) &&
+        e.target !== inputRef.current
+      ) {
         setOpen(false);
       }
     };
@@ -94,91 +117,110 @@ function SearchHistoryDropdown({
 
   useEffect(() => {
     if (focusedIndex >= 0) {
-      const focusedElement = document.getElementById(`search-item-${focusedIndex}`);
-      focusedElement?.scrollIntoView({ block: 'nearest' });
+      const focusedElement = document.getElementById(
+        `search-item-${focusedIndex}`,
+      );
+      focusedElement?.scrollIntoView({ block: "nearest" });
 
       if (focusedIndex === allItems.length) {
-        document.getElementById('see-all-results')?.scrollIntoView({ block: 'nearest' });
+        document
+          .getElementById("see-all-results")
+          ?.scrollIntoView({ block: "nearest" });
       }
     }
   }, [focusedIndex]);
 
   return (
-    <div ref={dropDownRef} className={` border-y sm:border border-[--gray-a6] shadow-lg sm:rounded-xl  h-[calc(100vh-64px)] sm:h-auto bg-[--color-background] ${resolvedTheme === "light" ? "bg-[--color-background]" : "shadow-black/70 sm:bg-[--gray-2] bg-[--color-background]"} sm:min-h-72 relative `}>
+    <div
+      ref={dropDownRef}
+      className={` border-y sm:border border-[--gray-a6] shadow-lg sm:rounded-xl  h-[calc(100vh-64px)] sm:h-auto bg-[--color-background] ${resolvedTheme === "light" ? "bg-[--color-background]" : "shadow-black/70 sm:bg-[--gray-2] bg-[--color-background]"} sm:min-h-72 relative `}
+    >
       <KeyboardNavigation />
-      <ScrollArea type="hover" className='pt-4 sm:mb-10 pb-1 rounded-xl h-[calc(100vh-128px)] sm:h-72' scrollbars="vertical">
-
-        <Flex mb={'1'} className='px-4' justify={'between'} align={'center'}>
-          <Text as='span' size={'1'} color='gray'  >
+      <ScrollArea
+        type="hover"
+        className="pt-4 sm:mb-10 pb-1 rounded-xl h-[calc(100vh-128px)] sm:h-72"
+        scrollbars="vertical"
+      >
+        <Flex mb={"1"} className="px-4" justify={"between"} align={"center"}>
+          <Text as="span" size={"1"} color="gray">
             Recent
           </Text>
           <IconButton
             disabled={filteredData?.length === 0}
             loading={isDeletingSearchHistory}
-            title='Clear history'
-            aria-label='Clear history'
+            title="Clear history"
+            aria-label="Clear history"
             variant="ghost"
-            mt={'1'}
-            color='gray'
+            mt={"1"}
+            color="gray"
             onClick={handleDeleteHistory}
-            size={'1'}
+            size={"1"}
           >
             <TrashIcon />
           </IconButton>
         </Flex>
-        {
-          isAuthenticated ? (
-            <>
-              {isLoadingHistory && (
-                <>
-                  <SearchResultSkeleton Icon={History} />
-                  <SearchResultSkeleton Icon={History} className='w-3/4' />
-                </>
-              )}
-              {!isLoadingHistory && (
-                filteredData.length > 0 ? (
-                  filteredData.map((search, idx) => (
-                    <SearchHistoryItem
-                      search={search}
-                      key={idx}
-                      index={idx}
-                      focusedIndex={focusedIndex}
-                      close={() => setOpen(false)}
-                      setQuery={() => setQuery(search)}
-                      handleSetHistory={handleSetHistory}
-                    />
-                  ))
-                ) : (
-                  <Text as='p' mx={'4'} size={'2'} mb={'2'} align={'center'}>
-                    No recent searches
-                  </Text>
-                ))}
-            </>
-          ) : (
-            <>
-              <Text as='p' mx={'4'} size={'1'} mb={'2'} align={'center'}>
-                Sign in to see your recent searches.
-              </Text>
-              <Separator size={"4"} mb={'2'} />
-            </>
-          )
-        }
+        {isAuthenticated ? (
+          <>
+            {isLoadingHistory && (
+              <>
+                <SearchResultSkeleton Icon={History} />
+                <SearchResultSkeleton Icon={History} className="w-3/4" />
+              </>
+            )}
+            {!isLoadingHistory &&
+              (filteredData.length > 0 ? (
+                filteredData.map((search, idx) => (
+                  <SearchHistoryItem
+                    search={search}
+                    key={idx}
+                    index={idx}
+                    focusedIndex={focusedIndex}
+                    close={() => setOpen(false)}
+                    setQuery={() => setQuery(search)}
+                    handleSetHistory={handleSetHistory}
+                  />
+                ))
+              ) : (
+                <Text as="p" mx={"4"} size={"2"} mb={"2"} align={"center"}>
+                  No recent searches
+                </Text>
+              ))}
+          </>
+        ) : (
+          <>
+            <Text as="p" mx={"4"} size={"1"} mb={"2"} align={"center"}>
+              Sign in to see your recent searches.
+            </Text>
+            <Separator size={"4"} mb={"2"} />
+          </>
+        )}
         {query?.trim() && (
           <>
-            <Separator size={'4'} my={'1'} mb={'4'} hidden={!isAuthenticated || !filteredData} />
-            <Text as='p' size={'1'} color='gray' className='flex items-center justify-between px-4' mb={'1'}>
+            <Separator
+              size={"4"}
+              my={"1"}
+              mb={"4"}
+              hidden={!isAuthenticated || !filteredData}
+            />
+            <Text
+              as="p"
+              size={"1"}
+              color="gray"
+              className="flex items-center justify-between px-4"
+              mb={"1"}
+            >
               Search Results
               {isFetchingResults && <Spinner />}
             </Text>
             {isloadingResults && (
               <>
                 <SearchResultSkeleton />
-                <SearchResultSkeleton className='w-3/4' />
-                <SearchResultSkeleton className='w-[80%]' />
+                <SearchResultSkeleton className="w-3/4" />
+                <SearchResultSkeleton className="w-[80%]" />
               </>
             )}
-            {!isloadingResults && (
-              hasResult ? (
+            {!isloadingResults &&
+              (hasResult ? (
                 <>
                   {searchData?.pages?.[0].data.docs.map((result, idx) => (
                     <SearchResultItem
@@ -191,48 +233,65 @@ function SearchHistoryDropdown({
                     />
                   ))}
                   {hasManyResults && (
-                    <Text asChild color='blue' size={'2'} className={`flex items-center justify-end w-full gap-2 mx-4 mb-1 cursor-pointer hover:underline ${focusedIndex === allItems.length ? "ring-2" : ""} w-max ml-auto`}>
+                    <Text
+                      asChild
+                      color="blue"
+                      size={"2"}
+                      className={`flex items-center justify-end w-full gap-2 mx-4 mb-1 cursor-pointer hover:underline ${focusedIndex === allItems.length ? "ring-2" : ""} w-max ml-auto`}
+                    >
                       <Link
                         id="see-all-results"
                         to={`/results?query=${query}`}
                         onClick={() => setOpen(false)}
                       >
-                        <ArrowTopLeftIcon />  See all results
+                        <ArrowTopLeftIcon /> See all results
                       </Link>
                     </Text>
                   )}
                 </>
               ) : (
-                <Text as='p' size={'2'} align={'center'}>
-                  No results for "<Text as='span' weight={'medium'}>{query}</Text>"
+                <Text as="p" size={"2"} align={"center"}>
+                  No results for "
+                  <Text as="span" weight={"medium"}>
+                    {query}
+                  </Text>
+                  "
                 </Text>
-              )
-            )}
+              ))}
           </>
         )}
       </ScrollArea>
     </div>
-  )
+  );
 }
 
-export default React.memo(SearchHistoryDropdown)
+export default React.memo(SearchHistoryDropdown);
 
-export function SearchHistoryItem({ search, close, index, focusedIndex, handleSetHistory, setQuery }) {
-  const { mutate, isPending } = useDeleteSearchItem()
-  const navigate = useNavigate()
+export function SearchHistoryItem({
+  search,
+  close,
+  index,
+  focusedIndex,
+  handleSetHistory,
+  setQuery,
+}) {
+  const { mutate, isPending } = useDeleteSearchItem();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const handleLinkClick = (e) => {
-    handleSetHistory(search)
-    navigate(`/results?query=${search}`)
-    close()
-    setQuery()
-  }
+    if (isAuthenticated) {
+      handleSetHistory(search);
+    }
+    navigate(`/results?query=${search}`);
+    close();
+    setQuery();
+  };
   const handleDeletItem = async (e) => {
-    e.stopPropagation()
-    e.preventDefault()
+    e.stopPropagation();
+    e.preventDefault();
 
-    mutate(search)
-  }
-
+    mutate(search);
+  };
 
   return (
     <div
@@ -244,95 +303,100 @@ export function SearchHistoryItem({ search, close, index, focusedIndex, handleSe
     >
       <Link
         to={`/results?query=${search}`}
-        className='flex items-center flex-1 gap-3 cursor-default'
+        className="flex items-center flex-1 gap-3 cursor-default"
         title={search}
       >
         <History strokeWidth={1.25} size={18} />
-        <Text as='div' className='flex-1' size={'2'}>
+        <Text as="div" className="flex-1" size={"2"}>
           {search}
         </Text>
       </Link>
-      <IconButton
-        variant='ghost'
-        radius='full'
-        onClick={handleDeletItem}
-      >
+      <IconButton variant="ghost" radius="full" onClick={handleDeletItem}>
         <Cross1Icon />
       </IconButton>
     </div>
-  )
+  );
 }
 
-export function SearchResultItem({ result, close, index, focusedIndex, handleSetHistory }) {
-  const { _id, title } = result
+export function SearchResultItem({
+  result,
+  close,
+  index,
+  focusedIndex,
+  handleSetHistory,
+}) {
+  const { _id, title } = result;
+  const { isAuthenticated } = useAuth();
+
   return (
     <Link
       id={`search-item-${index}`}
       onClick={() => {
-        handleSetHistory(title)
-        close()
+        if (isAuthenticated) {
+          handleSetHistory(title);
+        }
+        close();
       }}
       to={`/watch/${_id}`}
       aria-selected={index === focusedIndex}
       className={`hover:bg-[--gray-a3] border-l-[3px] flex items-center gap-3 p-2 mx-2 rounded ${index === focusedIndex ? "bg-[--gray-a3]  border-[--focus-a8]" : "border-transparent"} cursor-default`}
     >
       <Search strokeWidth={1.25} size={18} />
-      <Text as='p' color='blue' className='flex-1' size={'2'} title={title.toLowerCase()}>
+      <Text
+        as="p"
+        color="blue"
+        className="flex-1"
+        size={"2"}
+        title={title.toLowerCase()}
+      >
         {title.toLowerCase()}
       </Text>
       <ArrowTopLeftIcon />
-    </Link >
-  )
+    </Link>
+  );
 }
 
 export function KeyboardNavigation() {
   return (
-    <div className='absolute bottom-0 w-full px-3 border-t bg-[--color-surface] border-[--gray-a6] sm:flex items-center text-[10px] justify-between rounded-b-xl h-10 hidden'>
-      <Flex align={'center'} gap={'1'}>
-        <Badge color="gray" variant="soft" className=''>
-          <CornerDownLeft size={'14'} />
+    <div className="absolute bottom-0 w-full px-3 border-t bg-[--color-surface] border-[--gray-a6] sm:flex items-center text-[10px] justify-between rounded-b-xl h-10 hidden">
+      <Flex align={"center"} gap={"1"}>
+        <Badge color="gray" variant="soft" className="">
+          <CornerDownLeft size={"14"} />
         </Badge>
-        <Text as='span' color='gray' >
+        <Text as="span" color="gray">
           select
         </Text>
       </Flex>
-      <Flex align={'center'} gap={'1'}>
+      <Flex align={"center"} gap={"1"}>
         <Badge color="gray" variant="soft">
-          <ArrowUp size={'14'} />
+          <ArrowUp size={"14"} />
         </Badge>
         <Badge color="gray" variant="soft">
-          <ArrowDown size={'14'} />
+          <ArrowDown size={"14"} />
         </Badge>
-        <Text as='span' color='gray' >
+        <Text as="span" color="gray">
           navigate
         </Text>
       </Flex>
-      <Flex align={'center'} gap={'1'}>
-        <Badge color="gray" variant="soft" className='text-[10px]'>
+      <Flex align={"center"} gap={"1"}>
+        <Badge color="gray" variant="soft" className="text-[10px]">
           Esc
         </Badge>
-        <Text as='span' color='gray' >
+        <Text as="span" color="gray">
           close
         </Text>
       </Flex>
     </div>
-  )
+  );
 }
 
-
-function SearchResultSkeleton({
-  Icon = Search,
-  className = 'w-[90%]'
-}) {
+function SearchResultSkeleton({ Icon = Search, className = "w-[90%]" }) {
   return (
-    <div
-      className={`flex items-center gap-3 p-2 mx-2`}
-    >
-      <Icon strokeWidth={1.25} size={18} className='opacity-50' />
-      <Skeleton >
-        <Text as='p' className={`${className} h-5`}>
-        </Text>
+    <div className={`flex items-center gap-3 p-2 mx-2`}>
+      <Icon strokeWidth={1.25} size={18} className="opacity-50" />
+      <Skeleton>
+        <Text as="p" className={`${className} h-5`}></Text>
       </Skeleton>
     </div>
-  )
+  );
 }

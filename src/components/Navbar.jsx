@@ -42,7 +42,9 @@ function Navbar({ toggleMenu, toggleDashboardSidebar }) {
   const handleSearch = (e) => {
     e.preventDefault()
     if (query.trim()) {
-      setSearchHistory(query)
+      if(isAuthenticated){
+        setSearchHistory(query)
+      }
       navigate('/results')
       searchParams.set('query', query.trim())
       setSearchParams(searchParams)
