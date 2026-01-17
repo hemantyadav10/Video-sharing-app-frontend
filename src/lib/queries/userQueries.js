@@ -58,12 +58,12 @@ const useLogoutUser = () => {
   })
 }
 
-const useGetCurrentUser = (userId) => {
+const useGetCurrentUser = (options = {}) => {
   return useQuery({
     queryKey: ['currentUser'],
     queryFn: getCurrentUser,
-    enabled: !!userId,
-    retry: false
+    retry: false,
+    ...options
   })
 }
 

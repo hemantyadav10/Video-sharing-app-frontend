@@ -1,128 +1,136 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { useGetCurrentUser, useLoginUser, useRegisterUser, useLogoutUser } from "../lib/queries/userQueries";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import toast from "react-hot-toast";
-import apiClient from "../api/apiClient";
+import {
+  useGetCurrentUser,
+  useLoginUser,
+  useLogoutUser,
+  useRegisterUser,
+} from "../lib/queries/userQueries";
 
 let authSetters = {
-  setUser: () => { },
-  setIsAuthenticated: () => { }
+  setUser: () => {},
 };
 
-export const setAuthSetters = (setUserFn, setAuthenticationFn) => {
+export const setAuthSetters = (setUserFn) => {
   authSetters.setUser = setUserFn;
-  authSetters.setIsAuthenticated = setAuthenticationFn
 };
 
 export const getAuthSetters = () => authSetters;
 
 const AuthContext = createContext({
   user: null,
-  login: async () => { },
-  register: async () => { },
-  logout: async () => { },
+  login: async () => {},
+  register: async () => {},
+  logout: async () => {},
   isLoading: false,
-  isAuthenticated: false
-})
+  isAuthenticated: false,
+});
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
-  const [isAuthenticated, setIsAuthenticated] = useState(!!user)
+  const [user, setUser] = useState(() => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch {
+      localStorage.removeItem("user");
+      return null;
+    }
+  });
 
-  const { data: currentUser, isLoading: loadingUserData } = useGetCurrentUser(user?._id)
+  const hasAccessToken = Boolean(localStorage.getItem("accessToken"));
 
-  const { mutateAsync: loginMutation, isPending: loggingIn } = useLoginUser()
-  const { mutateAsync: registerMutation, isPending: registeringUser } = useRegisterUser()
-  const { mutateAsync: logoutMutation, isPending: loggingOut } = useLogoutUser()
+  const { data: currentUser, isLoading: loadingUserData } = useGetCurrentUser({
+    enabled: !!user?._id && hasAccessToken,
+  });
 
-  const [showSessionExpiredModal, setShowSessionExpiredModal] = useState(false);
+
+  const { mutateAsync: loginMutation, isPending: loggingIn } = useLoginUser();
+  const { mutateAsync: registerMutation, isPending: registeringUser } =
+    useRegisterUser();
+  const { mutateAsync: logoutMutation, isPending: loggingOut } =
+    useLogoutUser();
+
+  const isAuthenticated = Boolean(currentUser?.data || user);
+  const isLoading =
+    loadingUserData || loggingIn || loggingOut || registeringUser;
+
+  // const [showSessionExpiredModal, setShowSessionExpiredModal] = useState(false);
 
   // Automatically update user state when `currentUser` changes
   useEffect(() => {
-    if (currentUser?.data?.user) {
-      setUser(currentUser.data.user);
-      setIsAuthenticated(true);
-      localStorage.setItem('user', JSON.stringify(currentUser.data.user));
+    if (currentUser?.data) {
+      setUser(currentUser.data);
+      localStorage.setItem("user", JSON.stringify(currentUser.data));
+    } else if (!currentUser && !user?._id) {
+      localStorage.removeItem("user");
+      setUser(null);
     }
   }, [currentUser]);
 
-  // Add server warm-up effect
   useEffect(() => {
-    const warmUpServer = async () => {
-      try {
-        await apiClient.get('/healthcheck');
-        console.log('Server warmed up successfully');
-        return;
-      } catch {
-        console.log(`Warm-up request failed (likely cold start), continuing anyway`);
-      }
-    };
-
-    // Only warm up once when the app starts
-    warmUpServer();
+    setAuthSetters(setUser);
   }, []);
 
-  useEffect(() => {
-    setAuthSetters(setUser, setIsAuthenticated)
-  }, [])
+  const login = useCallback(
+    async (data) => {
+      const res = await loginMutation(data);
+      const { user, accessToken } = res.data;
 
-  const login = async (data) => {
+      setUser(user);
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      return res;
+    },
+    [loginMutation],
+  );
+
+  const register = useCallback(
+    async (formData) => {
+      await registerMutation(formData);
+    },
+    [registerMutation],
+  );
+
+  const logout = useCallback(async () => {
     try {
-      const res = await loginMutation(data)
-      const { user, accessToken } = res.data
-
-      setUser(user)
-      setIsAuthenticated(true)
-      localStorage.setItem('accessToken', accessToken)
-      localStorage.setItem('user', JSON.stringify(user))
+      await logoutMutation();
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("user");
+      setUser(null);
+      toast.success("Logged out successfully");
     } catch (error) {
-      throw error
+      console.error("Logout failed:", error);
+      toast.error("Logout failed. Please try again.");
     }
-  }
-
-  const register = async (formData) => {
-    try {
-      await registerMutation(formData)
-    } catch (error) {
-      throw error
-    }
-  }
-
-  const logout = async () => {
-    try {
-      await logoutMutation()
-
-      setIsAuthenticated(false)
-      setUser(null)
-      toast('Logged out successfully')
-
-      localStorage.removeItem('accessToken')
-      localStorage.removeItem('user')
-    } catch (error) {
-      console.log('Logout failed', error)
-      toast.error('Logout unsuccessful. Please try again.')
-    }
-  }
+  }, [logoutMutation]);
 
   const data = {
-    user: currentUser?.data?.user || user,
+    user: currentUser?.data || user,
     setUser,
     login,
     register,
     logout,
     isAuthenticated,
-    setIsAuthenticated,
-    isLoading: loadingUserData || loggingIn || loggingOut || registeringUser,
+    isLoading,
     logoutLoading: loggingOut,
+  };
+
+  return <AuthContext.Provider value={data}>{children}</AuthContext.Provider>;
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within AuthProvider");
   }
+  return context;
+};
 
-  return (
-    <AuthContext.Provider value={data}>
-      {children}
-    </AuthContext.Provider>
-  )
-
-}
-
-export const useAuth = () => useContext(AuthContext)
-
-export default AuthProvider
+export default AuthProvider;

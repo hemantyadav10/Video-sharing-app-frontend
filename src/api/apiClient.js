@@ -1,7 +1,7 @@
-import axios from 'axios'
+import axios from 'axios';
 import toast from 'react-hot-toast';
-import { logoutUser } from './userApi';
 import { getAuthSetters } from '../context/authContext';
+import { logoutUser } from './userApi';
 
 // variables to handle race conditions
 let isRefreshing = false;
@@ -108,9 +108,8 @@ apiClient.interceptors.response.use(
         localStorage.removeItem('accessToken');
         localStorage.removeItem('user');
 
-        const { setUser, setIsAuthenticated } = getAuthSetters()
+        const { setUser } = getAuthSetters()
         setUser(null);
-        setIsAuthenticated(false)
 
         try {
           await logoutUser();
