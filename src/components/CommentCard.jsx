@@ -16,6 +16,7 @@ import {
   Text,
   TextArea,
 } from "@radix-ui/themes";
+import { formatDistanceToNow } from "date-fns";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
@@ -31,7 +32,6 @@ import {
   useUpdateComment,
 } from "../lib/queries/commentQueries";
 import { useToggleCommentLike } from "../lib/queries/likeQueries";
-import { timeAgo } from "../utils/formatTimeAgo";
 import ConfirmationDialog from "./ConfirmationDialog";
 import Loader from "./Loader";
 import ReplyCommentCard from "./ReplyCommentCard";
@@ -244,7 +244,11 @@ function CommentCard({ comment, videoId, sortBy, ownerId }) {
                     @{comment?.owner.username}
                   </div>
                   <Text as="span" color="gray" size={"1"}>
-                    {timeAgo(comment?.createdAt)}
+                    {comment?.createdAt &&
+                      formatDistanceToNow(new Date(comment?.createdAt), {
+                        addSuffix: true,
+                        includeSeconds: true,
+                      })}
                     {comment?.isEdited && " (edited)"}
                   </Text>
                 </div>
